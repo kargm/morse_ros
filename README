@@ -1,0 +1,5 @@
+This is the ROS-stack for the MORSE-simulator. Currently it provides bindings for the navigation stack and for broadcasting tfs using the robot state-publisher and simulator truepose.
+
+This stack is still under development. If have any questions or would like to join developing, don´t hesitate to contact me here:
+
+kargm@in.tum.de 
