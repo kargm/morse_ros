@@ -1,0 +1,15 @@
+<package>
+  <description brief="pr2_nav_pcontroller">
+
+     pr2_nav_pcontroller
+
+  </description>
+  <author>Lorenz Moesenlechner</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pr2_nav_pcontroller</url>
+  <depend package="nav_pcontroller"/>
+
+</package>
+
+

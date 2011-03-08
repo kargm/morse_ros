@@ -1,0 +1,5 @@
+This is the 2d-navigation package for the MORSE morse-simulator (http://www.openrobots.org/wiki/morse)
+
+The actual launch-file uses a very simple URDF of the Jido robot to broadcast the tf-transforms of the robot. The ROS navigation-stack is used to navigate the robot. Currently you can use "move_base" or "pcontroller" to steer the robot. Pcontroller can be used by "/goal" topic while "move_base" can be used by "move_base_simple"-topic
+
+The odom->map and the odom_init tf-frames have to be posted by MORSE (see example .blend-file for configuration) 

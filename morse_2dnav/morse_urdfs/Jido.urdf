@@ -1,0 +1,17 @@
+<robot name="Jido">
+  <link name="base_footprint" />
+  <link name="base_link" />
+  <link name="base_laser_link" />
+  
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_laser_link"/>
+    <origin xyz="0.38 0 0.3" rpy="0 0 0" />
+  </joint>
+
+</robot>
