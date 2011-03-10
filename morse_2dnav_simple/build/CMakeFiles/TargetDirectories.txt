@@ -1,0 +1,15 @@
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/ROSBUILD_genmsg_cpp.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/ROSBUILD_genmsg_lisp.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/ROSBUILD_gensrv_cpp.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/ROSBUILD_gensrv_lisp.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/clean-test-results.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/rosbuild_precompile.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/rosbuild_premsgsrvgen.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/rospack_genmsg.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/rospack_genmsg_libexe.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/rospack_gensrv.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/test.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/test-future.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/test-results.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/test-results-run.dir
+/usr/wiss/kargm/work/ros/morse_ros/morse_2dnav_simple/build/CMakeFiles/tests.dir
