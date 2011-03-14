@@ -1,0 +1,12 @@
+<stack>
+  <description brief="morse_ros">morse_ros</description>
+  <author>Maintained by Michael Karg</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/morse_ros</url>
+  <depend stack="ias_nav" /> <!-- nav_pcontroller -->
+  <depend stack="navigation" /> <!-- move_base, map_server -->
+  <depend stack="robot_model" /> <!-- robot_state_publisher -->
+  <depend stack="ros" />
+
+</stack>

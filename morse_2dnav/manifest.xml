@@ -8,8 +8,12 @@
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/morse_2dnav</url>
-  <depend package="morse_pcontroller"/>
-  <depend package="morse_move_base"/>
+  <depend package="nav_pcontroller"/>
+  <depend package="move_base"/>
+  <depend package="nav_pcontroller"/>
+  <depend package="map_server"/>
+  <depend package="morse_tf"/>
+  <depend package="robot_state_publisher"/>
 
 </package>
 
