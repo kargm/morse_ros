@@ -2,18 +2,17 @@
 #include "std_msgs/String.h"
 #include "nav_msgs/Path.h"
 #include <sstream>
+#include <pluginlib/class_list_macros.h>
 
-PLUGINLIB_REGISTER_CLASS(SBPLLatticePlanner, sbpl_lattice_planner::SBPLLatticePlanner, nav_core::BaseGlobalPlanner);
+PLUGINLIB_REGISTER_CLASS(HumanAwareNavigation, human_aware_navigation::HumanAwareNavigation, nav_core::BaseGlobalPlanner);
 /**
- * This tutorial demonstrates simple sending of messages over the ROS system.
+ * A human-aware-navigation-plugin to replace the global planner of nav_core
  */
 
-namespace sbpl_lattice_planner{
+namespace human_aware_navigation{
 
 int HumanAwareNavigation()
 {
-
-  ros::init(argc, argv, "talker");
 
   ros::NodeHandle n;
 

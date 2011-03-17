@@ -4,7 +4,7 @@
   <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
     <param name="footprint_padding" value="0.01" />
     <param name="controller_frequency" value="10.0" />
-    <param name="controller_patience" value="100.0" />
+    <param name="controller_patience" value="100.0" /> 
     <param name="base_global_planner" value="SBPLLatticePlanner" />
     <param name="SBPLLatticePlanner/primitive_filename" value="$(find morse_2dnav)/morse_sbpl/matlab/mprim/pr2.mprim" />
     <rosparam file="$(find morse_2dnav)/morse_sbpl/launch/move_base/costmap_common_params.yaml" command="load" ns="global_costmap" />
