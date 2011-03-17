@@ -12,31 +12,39 @@ PLUGINLIB_REGISTER_CLASS(HumanAwareNavigation, human_aware_navigation::HumanAwar
 
 namespace human_aware_navigation{
 
-int HumanAwareNavigation(int argc, char **argv) {
+int HumanAwareNavigation() {
+  // constructor
+}
 
-  ros::init(argc, argv, "talker");
-  ros::NodeHandle n;
+bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
+                                 const geometry_msgs::PoseStamped& goal,
+                                 std::vector<geometry_msgs::PoseStamped>& plan){
 
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+  // create dummy path consisting of 2 poses for testing (will be removed later)
+  ROS_INFO("[sbpl_lattice_planner] getting start point (%g,%g) goal point (%g,%g)",
+               start.pose.position.x, start.pose.position.y,goal.pose.position.x, goal.pose.position.y);
 
-  ros::Rate loop_rate(10);
-  int count = 0;
-  while (ros::ok())
-  {
-    // Create dummy messages
-    std_msgs::String msg;
-    std::stringstream ss;
-    ss << "hello world " << count;
-    msg.data = ss.str();
-    ROS_INFO("%s", msg.data.c_str());
-    chatter_pub.publish(msg);
+  geometry_msgs::PoseStamped pose1;
+  pose1.header.stamp = ros::Time::now();
+  pose1.header.frame_id = "odom";
+  pose1.pose.position.x = 1;
+  pose1.pose.position.y = 1;
+  pose1.pose.orientation.w = 1;
 
-    ros::spinOnce();
-    loop_rate.sleep();
-    ++count;
-  }
+  geometry_msgs::PoseStamped pose2;
+  pose2.header.stamp = ros::Time::now();
+  pose2.header.frame_id = "odom";
+  pose2.pose.position.x = 2;
+  pose2.pose.position.y = 1;
+  pose2.pose.orientation.w = 1;
 
+  plan.push_back(pose1);
+  plan.push_back(pose2);
 
-  return 0;
+  // read PoseStamped array from xmlrpc and fill it into plan-vector
+
+  // optional: Post path message for visualization
+
+  return true;
 }
 };
