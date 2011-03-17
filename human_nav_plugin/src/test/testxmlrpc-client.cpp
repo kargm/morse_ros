@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <human_aware_navigation/Moved3dXmlRpcClient.h>
+#include <human_aware_navigation/Move3dXmlRpcClient.hpp>
 #include <math.h>
 
 using namespace human_aware_navigation;
@@ -27,7 +27,14 @@ int main(int argc, char* argv[])
 
   Moved3dXmlRpcClient* c =  new Moved3dXmlRpcClient(host, port);
 
-  c->planPath();
+  AbsoluteTrajectory waypoints; // result
+  Human humans;
+
+  c->planPath(5.0, 5.0, 0.0, // pos
+                      6.0, 6.0, 0.0, // goal
+                      &humans, 0, // humans
+                      &waypoints,
+                      0);
 
   return 0;
 }
