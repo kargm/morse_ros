@@ -3,6 +3,7 @@
 #include "nav_msgs/Path.h"
 #include <sstream>
 #include <pluginlib/class_list_macros.h>
+#include <human_aware_navigation/human_aware_navigation.h>
 
 PLUGINLIB_REGISTER_CLASS(HumanAwareNavigation, human_aware_navigation::HumanAwareNavigation, nav_core::BaseGlobalPlanner);
 /**
@@ -11,9 +12,9 @@ PLUGINLIB_REGISTER_CLASS(HumanAwareNavigation, human_aware_navigation::HumanAwar
 
 namespace human_aware_navigation{
 
-int HumanAwareNavigation()
-{
+int HumanAwareNavigation(int argc, char **argv) {
 
+  ros::init(argc, argv, "talker");
   ros::NodeHandle n;
 
   ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
