@@ -10,6 +10,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <iostream>
 
 #include <human_aware_navigation/Move3dXmlRpcClient.hpp>
 #include <math.h>
@@ -35,6 +36,8 @@ int main(int argc, char* argv[])
                       &humans, 0, // humans
                       &waypoints,
                       0);
+
+  std::cout << "Got path with costs " << waypoints.costs;
 
   return 0;
 }

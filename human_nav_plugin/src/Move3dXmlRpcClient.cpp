@@ -58,15 +58,35 @@ Moved3dXmlRpcClient::~Moved3dXmlRpcClient() {
    XmlRpcValue booleanFalse(false);
    params["makeSafe"] = booleanFalse;
 
-   XmlRpcValue result;
 
+   /********* make the calll **/
+   XmlRpcValue result;
    if (client.execute(MXR_REQUEST_PATH_METHOD_NAME, params, result)) {
      std::cout << "\nMethods:\n " << params << "\n\n";
    } else {
      std::cout << "Error calling"<<MXR_REQUEST_PATH_METHOD_NAME<<" \n\n";
    }
 
-   return 0;
+   /******** parse result */
+   std::cout << "Result: " << result["code"] <<"\n";
+   int code = result["code"];
+
+   if (code < 0) {
+     std::cerr<<"Got Code:" << code << "\n";
+   } else {
+     waypoints->costs = result["costs"];
+     XmlRpcValue waypointarr = result["waypoint_array"];
+     std::cout<<"Got " << waypointarr.size() << " waypoints\n";
+
+     for (int wp_i = 0; wp_i < waypointarr.size() ; wp_i++) {
+       XmlRpcValue waypoint = waypointarr[wp_i];
+       waypoints->seg[wp_i].x = waypoint["x"];
+       waypoints->seg[wp_i].y = waypoint["y"];
+       waypoints->seg[wp_i].az = waypoint["az"];
+     }
+   }
+
+   return code;
  }
 
 
