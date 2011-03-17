@@ -26,7 +26,7 @@ public:
   /**
    * @brief  Default constructor for the NavFnROS object
    */
-  HumanAwareNavigation();
+  HumanAwareNavigation(){}
 
 
   /**
@@ -34,7 +34,7 @@ public:
    * @param  name The name of this planner
    * @param  costmap_ros A pointer to the ROS wrapper of the costmap to use
    */
-  HumanAwareNavigation(std::string name, costmap_2d::Costmap2DROS* costmap_ros);
+  HumanAwareNavigation(std::string name, costmap_2d::Costmap2DROS* costmap_ros){}
 
 
   /**

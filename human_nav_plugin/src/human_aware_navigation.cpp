@@ -5,6 +5,8 @@
 #include <pluginlib/class_list_macros.h>
 #include <human_aware_navigation/human_aware_navigation.h>
 
+//PLUGINLIB_DECLARE_CLASS(morse_2dnav, HumanAwareNavigation, human_aware_navigation::HumanAwareNavigation, nav_core::BaseGlobalPlanner)
+
 PLUGINLIB_REGISTER_CLASS(HumanAwareNavigation, human_aware_navigation::HumanAwareNavigation, nav_core::BaseGlobalPlanner);
 /**
  * A human-aware-navigation-plugin to replace the global planner of nav_core
@@ -12,9 +14,6 @@ PLUGINLIB_REGISTER_CLASS(HumanAwareNavigation, human_aware_navigation::HumanAwar
 
 namespace human_aware_navigation{
 
-int HumanAwareNavigation() {
-  // constructor
-}
 
 bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
                                  const geometry_msgs::PoseStamped& goal,
