@@ -12,9 +12,18 @@ namespace human_aware_navigation {
 
 class Moved3dXmlRpcClient {
 public:
-  Moved3dXmlRpcClient();
+  Moved3dXmlRpcClient(const char* host, int port);
   virtual ~Moved3dXmlRpcClient();
+
+  int planPath();
+
+private:
+  const char* host;
+  int port;
+
+
 };
+
 
 }
 

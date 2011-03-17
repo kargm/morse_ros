@@ -12,7 +12,8 @@
   <depend package="roscpp"/>
   <depend package="nav_msgs"/>
   <depend package="pluginlib"/>
-  <depend package="sbpl"/>
+  <!-- <depend package="sbpl"/> -->
+  <depend package="xmlrpcpp"/>
   <depend package="costmap_2d"/>
   <depend package="nav_core"/>
   <depend package="pluginlib"/>
