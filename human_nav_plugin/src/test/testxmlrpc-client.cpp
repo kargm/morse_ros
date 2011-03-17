@@ -29,11 +29,23 @@ int main(int argc, char* argv[])
   Moved3dXmlRpcClient* c =  new Moved3dXmlRpcClient(host, port);
 
   AbsoluteTrajectory waypoints; // result
-  Human humans;
+  Human humans[MHPD_MAX_HUMANS];
+
+  Human h1;
+  h1.x = 5.5;
+  h1.y = 5.5;
+  h1.az = 0.0;
+  h1.pose = STANDING_TRANSPARENT;
+  h1.locked = 0;
+  h1.exists = 1;
+  h1.lastMoveTimeStampSecs = 0;
+  humans[0] = h1;
+
+  int human_no = 1;
 
   c->planPath(5.0, 5.0, 0.0, // pos
                       6.0, 6.0, 0.0, // goal
-                      &humans, 0, // humans
+                      humans, human_no, // humans
                       &waypoints,
                       0);
 

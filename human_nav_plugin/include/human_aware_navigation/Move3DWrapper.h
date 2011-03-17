@@ -8,6 +8,14 @@
 #ifndef MOVE3DWRAPPER_H_
 #define MOVE3DWRAPPER_H_
 
+typedef enum STRUCT_HUMAN_STATE_ENUM{
+  // must be the same as BT_... constants in Move3d hri_planner
+  STANDING = 0,
+  SITTING = 1,
+  MOVING = 2,
+  STANDING_TRANSPARENT = 3// if planner may plan through this human
+} HUMAN_STATE_ENUM;
+
 /**
   * A structure to capture all known / relevant humans in the environment
   */

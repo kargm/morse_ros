@@ -50,7 +50,7 @@ Moved3dXmlRpcClient::~Moved3dXmlRpcClient() {
        humanstruct["y"] = humans[human_i].y;
        humanstruct["az"] = humans[human_i].az;
        humanstruct["pose"] = humans[human_i].pose;
-       humanstruct["locked"] = humans[human_i].locked;
+       humanstruct["state"] = humans[human_i].locked;
      }
      humanarr[human_i] = humanstruct;
    }
