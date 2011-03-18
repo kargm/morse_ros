@@ -16,7 +16,7 @@
 
 using namespace XmlRpc;
 
-namespace human_aware_navigation {
+namespace human_nav_plugin {
 
 
 Moved3dXmlRpcClient::Moved3dXmlRpcClient(const char* host, int port) {
@@ -76,6 +76,7 @@ Moved3dXmlRpcClient::~Moved3dXmlRpcClient() {
    } else {
      waypoints->costs = result["costs"];
      XmlRpcValue waypointarr = result["waypoint_array"];
+     waypoints->numberOfSegments = waypointarr.size();
      std::cout<<"Got " << waypointarr.size() << " waypoints\n";
 
      for (int wp_i = 0; wp_i < waypointarr.size() ; wp_i++) {

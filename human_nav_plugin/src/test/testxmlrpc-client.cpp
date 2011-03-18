@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 //    return -1;
 //  }
   int port = 7011; // 7011 standard port
-  const char* host = "localhost";
+  const char* host = "lapbeetz6";
 
   Moved3dXmlRpcClient* c =  new Moved3dXmlRpcClient(host, port);
 

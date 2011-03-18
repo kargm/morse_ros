@@ -1,5 +1,5 @@
 <library path="lib/libhuman_nav_plugin">
-  <class name="HumanAwareNavigation" type="human_aware_navigation::HumanAwareNavigation" base_class_type="nav_core::BaseGlobalPlanner">
+  <class name="human_nav_plugin/HumanAwareNavigation" type="human_nav_plugin::HumanAwareNavigation" base_class_type="nav_core::BaseGlobalPlanner">
     <description>
       A global path-planner for human aware navigation
     </description>

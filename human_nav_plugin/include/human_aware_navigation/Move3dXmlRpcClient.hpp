@@ -10,7 +10,7 @@
 
 #include <human_aware_navigation/Move3DWrapper.h>
 
-namespace human_aware_navigation {
+namespace human_nav_plugin {
 
 class Moved3dXmlRpcClient {
 public:

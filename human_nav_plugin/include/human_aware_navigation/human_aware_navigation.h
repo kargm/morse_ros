@@ -12,13 +12,10 @@ using namespace std;
 // Costmap used for the map representation
 #include <costmap_2d/costmap_2d_ros.h>
 
-// sbpl headers
-#include <sbpl/headers.h>
-
 //global representation
 #include <nav_core/base_global_planner.h>
 
-namespace human_aware_navigation{
+namespace human_nav_plugin{
 
 class HumanAwareNavigation: public nav_core::BaseGlobalPlanner{
 public:
@@ -43,7 +40,7 @@ public:
    * @param  costmap_ros A pointer to the ROS wrapper of the costmap to use
    */
   virtual void initialize(std::string name,
-                          costmap_2d::Costmap2DROS* costmap_ros);
+                          costmap_2d::Costmap2DROS* costmap_ros) {}
 
   /**
    * @brief Given a goal pose in the world, compute a plan
@@ -64,7 +61,7 @@ private:
                     const geometry_msgs::PoseStamped& start,
                     const geometry_msgs::PoseStamped& goal);
   */
-  bool initialized_;
+  //bool initialized_;
 
 /*  SBPLPlanner* planner_;
   EnvironmentNAVXYTHETALAT* env_;
@@ -89,10 +86,10 @@ private:
   costmap_2d::Costmap2DROS* costmap_ros_; *< manages the cost map for us
   costmap_2d::Costmap2D cost_map_;        *< local copy of the costmap underlying cost_map_ros_ */
 
-  ros::Publisher plan_pub_;
+  //ros::Publisher plan_pub_;
   //ros::Publisher stats_publisher_;
 
-  std::vector<geometry_msgs::Point> footprint_;
+  //std::vector<geometry_msgs::Point> footprint_;
 
 };
 };
