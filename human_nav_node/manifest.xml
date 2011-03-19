@@ -1,0 +1,19 @@
+<package>
+  <description brief="human_nav_node">
+
+     human_nav_node
+
+  </description>
+  <author>Thibault Kruse</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/human_nav_node</url>
+  <depend package="roscpp"/>
+  <depend package="nav_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="std_msgs"/>
+  <depend package="libmove3d"/>
+
+</package>
+
+
