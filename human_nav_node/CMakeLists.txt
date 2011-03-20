@@ -35,6 +35,6 @@ include_directories(${MOVE3D_INCLUDE_DIRS})
 link_directories(${MOVE3D_LIBRARY_DIRS})
 
 
-rosbuild_add_executable(hanp_node src/NavigationNode.cpp)
+rosbuild_add_executable(hanp_node src/NavigationNode.cpp src/MotionPlanner.cpp)
 
 target_link_libraries(hanp_node ${MOVE3D_LIBRARIES})
