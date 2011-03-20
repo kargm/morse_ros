@@ -1,0 +1,4 @@
+string pdfilename
+bool showInterface
+---
+int8 resultcode

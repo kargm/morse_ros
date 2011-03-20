@@ -1,0 +1,88 @@
+/*****************************************************************************
+*
+* Emrah Akin Sisbot
+* November 06
+*
+* File    : mhpConst.h
+* Brief   :
+*
+******************************************************************************/
+
+#ifndef MHP_CONST_H
+#define MHP_CONST_H
+
+#define MHP_MAX_AGENT_NB 7
+
+// HUMAN CONSTANTS
+
+#define MHP_DEFAULT_HUMAN_FOA_H 30
+#define MHP_DEFAULT_HUMAN_FOV_H 160
+#define MHP_HUMAN_DEFAULT_HEAD_HAND_DIST 1.2
+
+#define MHP_HUMAN_DEFAULT_UPDATE_DIST 0.05
+#define MHP_HUMAN_DEFAULT_UPDATE_ANGLE 0.1
+#define MHP_HUMAN_DEFAULT_HAND_UPDATE_DIST 0.03
+#define MHP_HUMAN_DEFAULT_UPDATE_BIG_JUMP_DIST 0.4
+#define MHP_HUMAN_DEFAULT_UPDATE_BIG_JUMP_ANGLE M_PI_2
+
+#define MHP_HUMAN_DEFAULT_SITTING_HEAD_HEIGHT 1.4
+
+
+// ----------------------
+
+// COMPATIBILITY WITH OTHER MODULES
+
+#define MHP_MOCAP_FRAME_TRANSLATION_X 4.6
+#define MHP_MOCAP_FRAME_TRANSLATION_Y -3
+
+// ----------------------
+
+// OBJECT CONSTANTS
+
+#define MHP_OBJ_STATE_MAX 30
+#define MHP_OBJECT_DEFAULT_UPDATE_DIST 0.02
+
+// --------------------
+
+// SITUATION ASSESSMENT CONSTANTS
+
+#define MHP_FAR_LIMIT 5
+#define MHP_SPREL_MAX 200
+#define MHP_DEFAULT_VISIBILITY_RATIO 50
+#define MHP_HUMAN_DEFAULT_MOTION_THRESHOLD 0.2
+
+#define MHP_OBJECT_HISTORY_LENGTH 5
+#define MHP_HUMAN_HISTORY_LENGTH 5
+// ------------------
+
+
+#define MHP_GIK_DEFAULT_STEP_JUMP_NO 3
+#define MHP_GIK_DEFAULT_STEP_DISTANCE 0.05
+#define MHP_GIK_DEFAULT_REACH_DISTANCE 0.05
+#define MHP_GIK_DEFAULT_MAXIMUM_STEP_NO 400
+#define MHP_GIK_DEFAULT_PERTURBATION 0
+#define MHP_GIK_DEFAULT_PERTURBATION_FORCE 2.85
+
+#define MHP_GIK_MAX_JOINT_NO 10
+#define MHP_GIK_MAX_TASK_NO 5
+
+/* Navigation Constants */
+
+
+#define MHP_NAV_DEFAULT_PATH_SEG_LENGTH 0.6    /* in meters */
+#define MHP_NAV_DEFAULT_GRID_SAMPLING 0.1      /* 10cm is okay in many cases */
+#define MHP_NAV_DEFAULT_FOLLOW_DIST 0.5
+
+#define MHP_NAV_MAX_TRAJ_LENTGH 80
+#define MHP_NAV_MAX_OBSTACLES 100
+
+#define PSP_MAX_PARAMS 15
+#define PSP_MAX_OBJECTS 500
+#define PSP_MAX_SECUENTIAL_COUNT 100
+
+#define MHP_MAX_NO_THINGS 40
+
+#define MHP_ARM_NB_MAX_TRAJ 10
+
+#endif
+
