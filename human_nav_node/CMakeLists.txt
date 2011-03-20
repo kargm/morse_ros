@@ -30,10 +30,25 @@ rosbuild_gensrv()
 #target_link_libraries(example ${PROJECT_NAME})
 
 include($ENV{ROS_ROOT}/core/rosbuild/FindPkgConfig.cmake)
+
 pkg_check_modules (MOVE3D REQUIRED libmove3d)
+
 include_directories(${MOVE3D_INCLUDE_DIRS})
 link_directories(${MOVE3D_LIBRARY_DIRS})
 
+# cflags for move3d
+add_definitions(${MOVE3D_CFLAGS_OTHER})
+IF(UNIX)
+  ADD_DEFINITIONS(-DUNIX)
+  IF(APPLE)
+    ADD_DEFINITIONS(-DMACOSX -x c++)
+    SET (CMAKE_SHARED_LINKER_FLAGS "-dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup")
+  ELSE(APPLE)
+    ADD_DEFINITIONS(-DLINUX)
+  ENDIF(APPLE)
+ELSE(UNIX)
+ MESSAGE (FATAL_ERROR "Not supported Platform")
+ENDIF(UNIX)
 
 rosbuild_add_executable(hanp_node src/NavigationNode.cpp src/MotionPlanner.cpp)
 
