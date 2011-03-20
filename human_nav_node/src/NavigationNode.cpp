@@ -30,8 +30,12 @@ bool planPath(HANaviPlan::Request &req,
 
 bool initWorld(InitWorld::Request &req,
                             InitWorld::Response &res) {
-  planner.init(req.pdfilename.c_str(), req.showInterface == 1);
-  return false;
+  int result = planner.init(req.pdfilename.c_str(), req.showInterface == 1);
+  if (result == 0) {
+      return true;
+  } else {
+      return false;
+  }
 }
 }
 
