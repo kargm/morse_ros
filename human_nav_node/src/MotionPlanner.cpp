@@ -112,8 +112,7 @@ int MotionPlanner::init(string filename, bool showInterface) {
 	int argc;
 	char *filename_char = new char[filename.size()+1];
 	strcpy(filename_char, filename.c_str());
-	delete filename_char;
-	argv[1] = filename_char;
+
 
 	cout<<"Loading file: "<<filename<<"\n";
 
@@ -124,7 +123,9 @@ int MotionPlanner::init(string filename, bool showInterface) {
 	p3d_filter_switch_filter_mechanism(FILTER_TO_BE_SET_ACTIVE);
 
 	argv[0] = (char*) "MHP";
+	argv[1] = filename_char;
 	argc = 2;
+
 	if(showInterface){
 #ifdef USE_GLUT
 		glutWin = new GlutWindowDisplay(argc,argv);
@@ -139,7 +140,7 @@ int MotionPlanner::init(string filename, bool showInterface) {
 		p3d_col_set_mode(p3d_col_mode_none);
 		p3d_BB_set_mode_close();
 		if ( p3d_read_desc(filename_char) == FALSE){
-			printf("Bad file type or file does not exist\n");
+			cerr<<"Bad file type or file does not exist: "<<filename.c_str()<<"\n";
 			return S_mhp_FILE_NOT_FOUND;
 		}
 
@@ -185,7 +186,7 @@ int MotionPlanner::init(string filename, bool showInterface) {
 
 	  printf ("\n****************** MHP INITIALIZED *********************\n");
 
-
+	delete filename_char;
 	isInitialized = true;
 	return 0;
 }
