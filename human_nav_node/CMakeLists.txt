@@ -33,6 +33,10 @@ include($ENV{ROS_ROOT}/core/rosbuild/FindPkgConfig.cmake)
 
 pkg_check_modules (MOVE3D REQUIRED libmove3d)
 
+
+message(STATUS "Move3d Flags: " ${MOVE3D_CFLAGS_OTHER})
+
+
 include_directories(${MOVE3D_INCLUDE_DIRS})
 link_directories(${MOVE3D_LIBRARY_DIRS})
 
