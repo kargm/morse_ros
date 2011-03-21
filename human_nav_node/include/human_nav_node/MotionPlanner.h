@@ -12,8 +12,10 @@
 
 class MotionPlanner {
 public:
-  MotionPlanner();
-  virtual ~MotionPlanner();
+  MotionPlanner() {
+	  isInitialized = false;
+	}
+  virtual ~MotionPlanner() {}
 
   int init(std::string filename, bool showInterface);
 
