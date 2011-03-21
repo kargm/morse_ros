@@ -32,16 +32,21 @@ rosbuild_gensrv()
 include($ENV{ROS_ROOT}/core/rosbuild/FindPkgConfig.cmake)
 
 pkg_check_modules (MOVE3D REQUIRED libmove3d)
-
+pkg_check_modules (GBM REQUIRED gbM)
+pkg_check_modules (SOFTMOTION REQUIRED softMotion-libs)
 
 message(STATUS "Move3d Flags: " ${MOVE3D_CFLAGS_OTHER})
+message(STATUS "GBM : " ${GBM_LIBRARY_DIRS})
+message(STATUS "SOFTMOTION : " ${SOFTMOTION_LIBRARY_DIRS})
 
 
-include_directories(${MOVE3D_INCLUDE_DIRS})
-link_directories(${MOVE3D_LIBRARY_DIRS})
+include_directories(${MOVE3D_INCLUDE_DIRS} ${GBM_INCLUDE_DIRS} ${SOFTMOTION_INCLUDE_DIRS})
+link_directories(${MOVE3D_LIBRARY_DIRS} ${GBM_LIBRARY_DIRS} ${SOFTMOTION_LIBRARY_DIRS})
 
 # cflags for move3d
 add_definitions(${MOVE3D_CFLAGS_OTHER})
+add_definitions(${GBM_CFLAGS_OTHER})
+add_definitions(${SOFTMOTION_CFLAGS_OTHER})
 IF(UNIX)
   ADD_DEFINITIONS(-DUNIX)
   IF(APPLE)
@@ -56,4 +61,4 @@ ENDIF(UNIX)
 
 rosbuild_add_executable(hanp_node src/NavigationNode.cpp src/MotionPlanner.cpp)
 
-target_link_libraries(hanp_node ${MOVE3D_LIBRARIES})
+target_link_libraries(hanp_node ${MOVE3D_LIBRARIES} ${GBM_LIBRARIES} ${SOFTMOTION_LIBRARIES})
