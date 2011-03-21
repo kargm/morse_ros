@@ -101,11 +101,11 @@ void mhp_initialize_interface()
 
 void interface_MainLoopEvent(){
 #ifdef USE_GLUT
-   glutMainLoopEvent ();
+		glutMainLoopEvent ();
 #endif
 }
 
-int MotionPlanner::init(string filename, bool showInterface) {
+int MotionPlanner::init(string filename, bool initShowInterface) {
 	int col_mode_to_be_set = p3d_col_mode_pqp;
 	int FILTER_TO_BE_SET_ACTIVE = FALSE ;
 	char *argv[2];
@@ -113,6 +113,7 @@ int MotionPlanner::init(string filename, bool showInterface) {
 	char *filename_char = new char[filename.size()+1];
 	strcpy(filename_char, filename.c_str());
 
+	showInterface = initShowInterface;
 
 	cout<<"Loading file: "<<filename<<"\n";
 
@@ -188,5 +189,23 @@ int MotionPlanner::init(string filename, bool showInterface) {
 
 	delete filename_char;
 	isInitialized = true;
+
+	if (initShowInterface) {
+	while (true) {
+		interface_MainLoopEvent();
+	}
+	}
+
 	return 0;
 }
+
+//void MotionPlanner::updateInterfaceCycle() {
+//#ifdef USE_GLUT
+//    glutPostRedisplay ();
+//#else
+//#ifdef QT_LIBRARY
+//    mhpInterfaceOpenGlWidget->updateGL ();
+//#endif
+//#endif
+
+//}

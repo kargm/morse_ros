@@ -14,12 +14,15 @@ class MotionPlanner {
 public:
   MotionPlanner() {
 	  isInitialized = false;
+	  showInterface = false;
 	}
   virtual ~MotionPlanner() {}
 
   int init(std::string filename, bool showInterface);
+  void updateInterfaceCycle();
 
   bool isInitialized;
+  bool showInterface;
 };
 
 #endif /* MOTIONPLANNER_H_ */

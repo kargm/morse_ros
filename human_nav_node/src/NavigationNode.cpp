@@ -48,6 +48,8 @@ int main(int argc, char **argv)
 
   ros::ServiceServer planservice = n.advertiseService("HANaviPlan", human_nav_node::planPath);
   ros::ServiceServer initservice = n.advertiseService("InitWorld", human_nav_node::initWorld);
+//  ros::ServiceServer initservice = n.advertiseService("StartInterfaceThread", human_nav_node::startUpdateLoop);
+//  ros::ServiceServer initservice = n.advertiseService("StopInterfaceThread", human_nav_node::stopUpdateLoop);
   ROS_INFO("Ready to plan.");
   ros::spin();
 
