@@ -78,6 +78,13 @@ extern hri_bitmapset * MHP_BTSET;
 
 extern int mhp_fetch_and_update_env(int *report);
 
+#ifndef OK
+#define OK 0
+#endif
+#ifndef ERROR
+#define ERROR (-1)
+#endif
+
 //extern gik_task_joints * mhp_create_defaut_gik_tasks( void );
 //extern ACTIVITY_EVENT mhp_initialize_manipulation(int *report);
 //extern ACTIVITY_EVENT mhp_initialize_navigation(int *report);

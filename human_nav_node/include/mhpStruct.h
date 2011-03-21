@@ -733,10 +733,10 @@ typedef struct MHPPILO_TRAJECTORY {
 } MHPPILO_TRAJECTORY;
 
 
-typedef struct STRUCT_MHP_ARM_PLAN_GOTO_Q_PARAMS {
-  Gb_q7 armConfig;
-  GEN_BOOL cartesian;
-} STRUCT_MHP_ARM_PLAN_GOTO_Q_PARAMS;
+//typedef struct STRUCT_MHP_ARM_PLAN_GOTO_Q_PARAMS {
+//  Gb_q7 armConfig;
+//  GEN_BOOL cartesian;
+//} STRUCT_MHP_ARM_PLAN_GOTO_Q_PARAMS;
 
 typedef enum ENUM_MHP_MANIPULATION_TASK {
   MHP_ARM_FREE = 1, /*!< move the arm from a free configuration (in the air) to another free configuration */
@@ -766,17 +766,17 @@ typedef struct STRUCT_MHP_ARM_PLAN_PARAMS {
 } STRUCT_MHP_ARM_PLAN_PARAMS ;
 #endif
 
-typedef struct STRUCT_TRAJ_INFO {
-   Gb_q7 armQGoto;
-   Gb_v3 armXAbsGoto;
-   double trajExecTime; // in second
-} STRUCT_TRAJ_INFO ;
-
-typedef struct STRUCT_GRAB_OBJECT {
-  GEN_BOOL startIsCurrent;
-  Gb_q7 armStart;
-  GEN_STRING128 objectName;
-} STRUCT_GRAB_OBJECT;
+//typedef struct STRUCT_TRAJ_INFO {
+//   Gb_q7 armQGoto;
+//   Gb_v3 armXAbsGoto;
+//   double trajExecTime; // in second
+//} STRUCT_TRAJ_INFO ;
+//
+//typedef struct STRUCT_GRAB_OBJECT {
+//  GEN_BOOL startIsCurrent;
+//  Gb_q7 armStart;
+//  GEN_STRING128 objectName;
+//} STRUCT_GRAB_OBJECT;
 
 #ifdef JIDO
 typedef struct STRUCT_ARM_TRAJ_ARRAY {

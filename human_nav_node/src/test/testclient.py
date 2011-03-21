@@ -6,6 +6,7 @@ import sys
 
 import rospy
 from human_nav_node.srv import *
+from human_nav_node.msg import *
 
 def initWorld():
     rospy.wait_for_service('InitWorld')
@@ -13,6 +14,21 @@ def initWorld():
         proxy = rospy.ServiceProxy('InitWorld', InitWorld)
         testpath = roslib.packages.get_pkg_dir("laas_assets") + "/laas-assets/MorseTutorial/empty.p3d"
         resp1 = proxy(testpath, 1)
+
+        return resp1.resultcode
+    except rospy.ServiceException, e:
+        print "Service call failed: %s"%e
+
+def planPath(x1, y1, x2, y2):
+    rospy.wait_for_service('HANaviPlan')
+    try:
+        proxy = rospy.ServiceProxy('HANaviPlan', HANaviPlan)
+        start = geometry_msgs.msg.Pose(geometry_msgs.msg.Point(1,2, 0), None)
+        goal = geometry_msgs.msg.Pose(geometry_msgs.msg.Point(4,4, 0), None)
+        humans = None
+        request = NavigationPlanRequest(None, start, goal, humans)
+        path = proxy(request)
+        print path
         return resp1.resultcode
     except rospy.ServiceException, e:
         print "Service call failed: %s"%e
@@ -30,3 +46,4 @@ if __name__ == "__main__":
 
     # print "%s + %s = %s"%(x, y, add_two_ints_client(x, y))
     initWorld()
+    planPath(1, 2, 3, 4)

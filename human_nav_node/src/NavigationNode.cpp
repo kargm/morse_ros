@@ -12,25 +12,68 @@
 #include "human_nav_node/InitWorld.h"
 #include "human_nav_node/HANaviPlan.h"
 #include "human_nav_node/MotionPlanner.h"
+#include "human_nav_node/HumanState.h"
 
 #include "geometry_msgs/Pose.h"
-
+#include "nav_msgs/Path.h"
+#include "geometry_msgs/PoseStamped.h"
 
 namespace human_nav_node {
 
+using namespace std;
 
 MotionPlanner planner;
 
 bool planPath(HANaviPlan::Request &req,
-                            HANaviPlan::Response &res) {
-//  Pose start = req.start;
-//  Pose goal = req.goal;
-  return false;
+		HANaviPlan::Response &res) {
+	geometry_msgs::Pose start = req.request.start;
+	geometry_msgs::Pose goal = req.request.goal;
+	std::vector<human_nav_node::HumanState> humans = req.request.humans;
+
+	MHP_UPD_FINDPATH requestStruct;
+	requestStruct.search_definition.startpos.x = start.position.x;
+	requestStruct.search_definition.startpos.y = start.position.y;
+	requestStruct.search_definition.startpos.th = start.orientation.z;
+	requestStruct.search_definition.goalpos.x = goal.position.x;
+	requestStruct.search_definition.goalpos.y = goal.position.y;
+	requestStruct.search_definition.goalpos.th = goal.orientation.z;
+
+	requestStruct.search_definition.configuration = 0;
+	requestStruct.search_definition.linelen = 0;
+
+	// TODO: map id to numbers
+	requestStruct.humpos1.id = -1;
+	requestStruct.humpos2.id = -1;
+	requestStruct.humpos3.id = -1;
+	requestStruct.humpos4.id = -1;
+	requestStruct.humpos5.id = -1;
+
+	cout<<"Requesting path ...\n";
+	int result;
+	planner.updPosAndFindNavTrajExec(&requestStruct, &result);
+	cout<<"Result: "<<result<<"\n";
+
+	nav_msgs::Path path;
+	for (int i = 0; i < 5; ++i) {
+		geometry_msgs::PoseStamped pose;
+		pose.pose.position.x = i;
+		pose.pose.position.y = i;
+		pose.pose.position.z = 0;
+		pose.pose.orientation.x = 0;
+		pose.pose.orientation.y = 0;
+		pose.pose.orientation.z = 0;
+		pose.pose.orientation.w = 1;
+		path.poses.push_back(pose);
+	}
+	res.path = path;
+
+	return false;
 }
 
 bool initWorld(InitWorld::Request &req,
                             InitWorld::Response &res) {
   int result = planner.init(req.pdfilename.c_str(), req.showInterface == 1);
+  res.resultcode = result;
   if (result == 0) {
       return true;
   } else {
@@ -56,9 +99,9 @@ int main(int argc, char **argv)
 //  ros::ServiceServer initservice = n.advertiseService("StopInterfaceThread", human_nav_node::stopUpdateLoop);
   ROS_INFO("Ready to plan.");
 
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(5);
 
-  while(true) {
+  while(ros::ok()) {
 	  ros::spinOnce();
 	  human_nav_node::spinInterface();
 	  loop_rate.sleep();
