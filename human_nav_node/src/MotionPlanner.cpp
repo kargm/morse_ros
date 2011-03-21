@@ -215,7 +215,38 @@ int MotionPlanner::init(string filename, bool initShowInterface) {
 		  return S_mhp_NAV_NOT_INITIALIZED;
 	  }
 
+	  // TODO: remove
+	  MHP_CAM_POS pos;
+	  pos.dist = 4;
+	  pos.hrot = 0;
+	  pos.vrot = 0.2;
+	  pos.xdest = 2;
+	  pos.ydest = 0;
+	  pos.zdest = 2;
+	  changeCameraPosMain(&pos,&report);
+
 	return 0;
+}
+
+
+int MotionPlanner::changeCameraPosMain(MHP_CAM_POS *cam_pos, int *report)
+{
+  G3D_Window *window = g3d_get_win_by_name((char*)"Move3D");
+
+  if(!showInterface){
+    printf("The Interface is disabled. Cannot change the camera position.\n");
+    *report = S_mhp_NO_INTERFACE_LAUCHED;
+    return OK;
+  }
+
+  else{
+    if(window){
+      printf("Changing camera position of the window\n");
+      g3d_set_win_camera(window->vs, cam_pos->xdest, cam_pos->ydest, cam_pos->zdest,
+			 cam_pos->dist, cam_pos->hrot, cam_pos->vrot, 0.0, 0.0, 1.0);
+    }
+  }
+  return OK;
 }
 
 int MotionPlanner::initialize_navigation()

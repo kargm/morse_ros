@@ -24,6 +24,7 @@ public:
   void updateInterface();
   int updPosAndFindNavTrajExec(MHP_UPD_FINDPATH *findpath_params, int *report);
   int findNavTrajExec(MHP_NAV_POS *MotionCoord, int *report);
+  int changeCameraPosMain(MHP_CAM_POS *cam_pos, int *report);
   int mhpPlaceAgentMain(MHP_AGENT_POSITION *addedAgent, int *report);
   int initialize_navigation();
 
