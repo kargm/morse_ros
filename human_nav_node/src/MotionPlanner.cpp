@@ -105,6 +105,18 @@ void interface_MainLoopEvent(){
 #endif
 }
 
+/**
+ *
+ */
+void MotionPlanner::updateInterface() {
+	if (isInitialized && showInterface) {
+		interface_MainLoopEvent();
+	}
+}
+
+/**
+ * loads p3d file
+ */
 int MotionPlanner::init(string filename, bool initShowInterface) {
 	int col_mode_to_be_set = p3d_col_mode_pqp;
 	int FILTER_TO_BE_SET_ACTIVE = FALSE ;
@@ -190,22 +202,11 @@ int MotionPlanner::init(string filename, bool initShowInterface) {
 	delete filename_char;
 	isInitialized = true;
 
-	if (initShowInterface) {
-	while (true) {
-		interface_MainLoopEvent();
-	}
-	}
+
 
 	return 0;
 }
 
-//void MotionPlanner::updateInterfaceCycle() {
-//#ifdef USE_GLUT
-//    glutPostRedisplay ();
-//#else
-//#ifdef QT_LIBRARY
-//    mhpInterfaceOpenGlWidget->updateGL ();
-//#endif
-//#endif
 
-//}
+
+

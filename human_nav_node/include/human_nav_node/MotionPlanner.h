@@ -19,7 +19,7 @@ public:
   virtual ~MotionPlanner() {}
 
   int init(std::string filename, bool showInterface);
-  void updateInterfaceCycle();
+  void updateInterface();
 
   bool isInitialized;
   bool showInterface;

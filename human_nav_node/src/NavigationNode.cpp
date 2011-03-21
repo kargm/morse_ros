@@ -37,7 +37,11 @@ bool initWorld(InitWorld::Request &req,
       return false;
   }
 }
+
+void spinInterface() {
+	planner.updateInterface();
 }
+}// end namespace
 
 int main(int argc, char **argv)
 {
@@ -51,7 +55,14 @@ int main(int argc, char **argv)
 //  ros::ServiceServer initservice = n.advertiseService("StartInterfaceThread", human_nav_node::startUpdateLoop);
 //  ros::ServiceServer initservice = n.advertiseService("StopInterfaceThread", human_nav_node::stopUpdateLoop);
   ROS_INFO("Ready to plan.");
-  ros::spin();
+
+  ros::Rate loop_rate(10);
+
+  while(true) {
+	  ros::spinOnce();
+	  human_nav_node::spinInterface();
+	  loop_rate.sleep();
+  }
 
   return 0;
 }
