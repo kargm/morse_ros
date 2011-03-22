@@ -90,10 +90,6 @@ extern int mhp_fetch_and_update_env(int *report);
 
 #define ETHER OK
 
-//extern gik_task_joints * mhp_create_defaut_gik_tasks( void );
-//extern ACTIVITY_EVENT mhp_initialize_manipulation(int *report);
-//extern ACTIVITY_EVENT mhp_initialize_navigation(int *report);
-extern void mhp_initialize_interface( void ); 
 #if defined(JIDO)
 extern void mhp_Arm2ConfigPt(Gb_q7 *gbconfig, configPt m3dconfig);
 #endif
@@ -110,5 +106,6 @@ ACTIVITY_EVENT mhp_initialize_navigation(int *report);
 ACTIVITY_EVENT mhpUpdPosAndFindNavTrajExec(MHP_UPD_FINDPATH & findpath_params, MHP_NAV_TRAJECTORY &result, int *report);
 ACTIVITY_EVENT mhpFindNavTrajExec(MHP_NAV_POS &MotionCoord, MHP_NAV_TRAJECTORY & findpath_params, int *report);
 ACTIVITY_EVENT mhpPlaceAgentMain(MHP_AGENT_POSITION *addedAgent, int *report);
-
+ACTIVITY_EVENT mhpUpdateInterfaceMain(int *report);
+ACTIVITY_EVENT mhpChangeCameraPosMain(MHP_CAM_POS *cam_pos, int *report);
 #endif //MHPM3D_H

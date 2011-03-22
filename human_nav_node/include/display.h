@@ -21,4 +21,7 @@ extern GLWidget* mhpInterfaceOpenGlWidget;
 extern GlutWindowDisplay* glutWin;
 #endif
 
+void mhp_draw_allwin_active();
+void mhp_initialize_interface();
+
 #endif /* DISPLAY_H_ */

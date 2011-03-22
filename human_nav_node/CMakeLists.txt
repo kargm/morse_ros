@@ -65,6 +65,7 @@ rosbuild_add_executable(
 	src/codels/mhpMainTaskCodels.cc
 	src/codels/mhpNavigationCodels.cc
 	src/codels/mhpEnvironmentCodels.cc
+	src/codels/mhpInterfaceTaskCodels.cc
 	)
 
 target_link_libraries(hanp_node ${MOVE3D_LIBRARIES} ${GBM_LIBRARIES} ${SOFTMOTION_LIBRARIES})

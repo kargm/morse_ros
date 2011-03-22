@@ -69,28 +69,28 @@ ACTIVITY_EVENT mhpLoadP3dMain(MHP_P3D *P3d, int *report)
 //  SDI_F->NavParams.grid_sampling       = MHP_NAV_DEFAULT_GRID_SAMPLING;
 //  SDI_F->NavParams.follow_distance     = MHP_NAV_DEFAULT_FOLLOW_DIST;
 //
-//  SDI_F->InterfaceParams.width = 800;
-//  SDI_F->InterfaceParams.height = 600;
-//  SDI_F->InterfaceParams.saveInterface            = GEN_FALSE;
-//  SDI_F->InterfaceParams.show_nav_obstacles       = GEN_FALSE;
-//  SDI_F->InterfaceParams.show_nav_distance_grid   = GEN_FALSE;
-//  SDI_F->InterfaceParams.show_nav_visibility_grid = GEN_FALSE;
-//  SDI_F->InterfaceParams.show_nav_hidzones_grid   = GEN_FALSE;
-//  SDI_F->InterfaceParams.floor                    = GEN_TRUE;
-//  SDI_F->InterfaceParams.walls                    = GEN_TRUE;
-//  SDI_F->InterfaceParams.tiles                    = GEN_FALSE;
-//  SDI_F->InterfaceParams.shadows                  = GEN_FALSE;
-//
-//  SDI_F->InterfaceState.savingInterface             = GEN_FALSE;
-//  SDI_F->InterfaceState.updating                    = GEN_FALSE;
-//  SDI_F->InterfaceState.showing_nav_obstacles       = GEN_FALSE;
-//  SDI_F->InterfaceState.showing_nav_distance_grid   = GEN_FALSE;
-//  SDI_F->InterfaceState.showing_nav_visibility_grid = GEN_FALSE;
-//  SDI_F->InterfaceState.showing_nav_hidzones_grid   = GEN_FALSE;
-//  SDI_F->InterfaceState.showing_floor               = GEN_TRUE;
-//  SDI_F->InterfaceState.showing_walls               = GEN_TRUE;
-//  SDI_F->InterfaceState.showing_tiles               = GEN_FALSE;
-//  SDI_F->InterfaceState.showing_shadows             = GEN_FALSE;
+  InterfaceParams.width = 800;
+  InterfaceParams.height = 600;
+  InterfaceParams.saveInterface            = GEN_FALSE;
+  InterfaceParams.show_nav_obstacles       = GEN_FALSE;
+  InterfaceParams.show_nav_distance_grid   = GEN_FALSE;
+  InterfaceParams.show_nav_visibility_grid = GEN_FALSE;
+  InterfaceParams.show_nav_hidzones_grid   = GEN_FALSE;
+  InterfaceParams.floor                    = GEN_TRUE;
+  InterfaceParams.walls                    = GEN_TRUE;
+  InterfaceParams.tiles                    = GEN_FALSE;
+  InterfaceParams.shadows                  = GEN_FALSE;
+
+  InterfaceState.savingInterface             = GEN_FALSE;
+  InterfaceState.updating                    = GEN_FALSE;
+  InterfaceState.showing_nav_obstacles       = GEN_FALSE;
+  InterfaceState.showing_nav_distance_grid   = GEN_FALSE;
+  InterfaceState.showing_nav_visibility_grid = GEN_FALSE;
+  InterfaceState.showing_nav_hidzones_grid   = GEN_FALSE;
+  InterfaceState.showing_floor               = GEN_TRUE;
+  InterfaceState.showing_walls               = GEN_TRUE;
+  InterfaceState.showing_tiles               = GEN_FALSE;
+  InterfaceState.showing_shadows             = GEN_FALSE;
 //
 //  SDI_F->VisParams.FoA_h = DTOR(MHP_DEFAULT_HUMAN_FOA_H);
 //  SDI_F->VisParams.FoA_v = SDI_F->VisParams.FoA_h * 0.75;
@@ -189,38 +189,38 @@ ACTIVITY_EVENT mhpLoadSceMain(MHP_SCE *Sce, int *report)
 }
 
 
-///* Function assigning move3d robots to glocal variables */
-//static int assignGlobalVariables()
-//{
-//  p3d_env * env;
-//  int i;
-//
-//  env = (p3d_env *) p3d_get_desc_curid(P3D_ENV);
-//  for(i=0; i<env->nr; i++){
-//    if( strcasestr(env->robot[i]->name,"robot") ){
-//      MHP_ROBOT = env->robot[i];
-//      continue;
-//    }
-//    if( strcasestr(env->robot[i]->name,"visball") ){
-//      MHP_VISBALL = env->robot[i];
-//      continue;
-//    }
-//    if( !strcmp("track",env->robot[i]->name) ){
-//      trackDisc = env->robot[i];
-//      continue;
-//    }
-//    if( !strcmp("pspHuman",env->robot[i]->name) ){
-//      pspHuman = env->robot[i];
-//      continue;
-//    }
-//  }
-//
-//  MHP_ENV = env;
-//
-//  return TRUE;
-//}
-//
-//
+/* Function assigning move3d robots to global variables */
+int assignGlobalVariables()
+{
+  p3d_env * env;
+  int i;
+
+  env = (p3d_env *) p3d_get_desc_curid(P3D_ENV);
+  for(i=0; i<env->nr; i++){
+    if( strcasestr(env->robot[i]->name,"robot") ){
+      MHP_ROBOT = env->robot[i];
+      continue;
+    }
+    if( strcasestr(env->robot[i]->name,"visball") ){
+      MHP_VISBALL = env->robot[i];
+      continue;
+    }
+    if( !strcmp("track",env->robot[i]->name) ){
+      trackDisc = env->robot[i];
+      continue;
+    }
+    if( !strcmp("pspHuman",env->robot[i]->name) ){
+      pspHuman = env->robot[i];
+      continue;
+    }
+  }
+
+  MHP_ENV = env;
+
+  return TRUE;
+}
+
+
 ///* mhpSetEnvironmentPosterMain  -  codel EXEC of SetEnvironmentPoster
 //   Returns:  EXEC END ETHER FAIL ZOMBIE */
 //ACTIVITY_EVENT

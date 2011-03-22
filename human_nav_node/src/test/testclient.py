@@ -13,7 +13,7 @@ def initWorld():
     try:
         proxy = rospy.ServiceProxy('InitWorld', InitWorld)
         testpath = roslib.packages.get_pkg_dir("laas_assets") + "/laas-assets/MorseTutorial/empty.p3d"
-        resp1 = proxy(testpath, 0)
+        resp1 = proxy(testpath, 1)
 
         return resp1.resultcode
     except rospy.ServiceException, e:

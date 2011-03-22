@@ -212,11 +212,12 @@ mhpPlaceAgentMain(MHP_AGENT_POSITION *addedAgent, int *report)
 //
 ///* -------------------------------------------------------------- */
 //
-//static int
-//drawtraj(p3d_rob* robot, p3d_localpath* curLp){
-//  g3d_draw_allwin_active();
-//}
-//
+
+static int
+drawtraj(p3d_rob* robot, p3d_localpath* curLp){
+  g3d_draw_allwin_active();
+}
+
 ///* mhpShowCurTrajMain  -  codel EXEC of GetCurRobotConfig
 //   Returns:  EXEC END ETHER FAIL ZOMBIE */
 //
