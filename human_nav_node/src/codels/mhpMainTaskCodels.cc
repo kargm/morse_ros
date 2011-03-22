@@ -166,29 +166,29 @@ ACTIVITY_EVENT mhpLoadP3dMain(MHP_P3D *P3d, int *report)
   return ETHER;
 }
 
-//
-///* mhpLoadSceMain  -  codel EXEC of LoadSce
-//   Returns:  EXEC END ETHER FAIL ZOMBIE */
-//ACTIVITY_EVENT mhpLoadSceMain(MHP_SCE *Sce, int *report)
-//{
-//  int i;
-//
-//  if(MHP_ENV == NULL){
-//    printf("**MHP** MHP is not properly initialized.\n");
-//    *report = S_mhp_NOT_INITIALIZED;
-//    return ETHER;
-//  }
-//
-//  p3d_read_scenario((char *) Sce->SceFileName.name);
-//
-//  for(i=0; i<MHP_ENV->nr; i++){
-//    p3d_set_and_update_this_robot_conf(MHP_ENV->robot[i],MHP_ENV->robot[i]->ROBOT_POS);
-//  }
-//
-//  return ETHER;
-//}
-//
-//
+
+/* mhpLoadSceMain  -  codel EXEC of LoadSce
+   Returns:  EXEC END ETHER FAIL ZOMBIE */
+ACTIVITY_EVENT mhpLoadSceMain(MHP_SCE *Sce, int *report)
+{
+  int i;
+
+  if(MHP_ENV == NULL){
+    printf("**MHP** MHP is not properly initialized.\n");
+    *report = S_mhp_NOT_INITIALIZED;
+    return ETHER;
+  }
+
+  p3d_read_scenario((char *) Sce->SceFileName.name);
+
+  for(i=0; i<MHP_ENV->nr; i++){
+    p3d_set_and_update_this_robot_conf(MHP_ENV->robot[i],MHP_ENV->robot[i]->ROBOT_POS);
+  }
+
+  return ETHER;
+}
+
+
 ///* Function assigning move3d robots to glocal variables */
 //static int assignGlobalVariables()
 //{
