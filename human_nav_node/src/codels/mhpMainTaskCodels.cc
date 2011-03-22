@@ -69,20 +69,20 @@ ACTIVITY_EVENT mhpLoadP3dMain(MHP_P3D *P3d, int *report)
 //  SDI_F->NavParams.grid_sampling       = MHP_NAV_DEFAULT_GRID_SAMPLING;
 //  SDI_F->NavParams.follow_distance     = MHP_NAV_DEFAULT_FOLLOW_DIST;
 //
-  InterfaceParams.width = 800;
-  InterfaceParams.height = 600;
-  InterfaceParams.saveInterface            = GEN_FALSE;
-  InterfaceParams.show_nav_obstacles       = GEN_FALSE;
-  InterfaceParams.show_nav_distance_grid   = GEN_FALSE;
-  InterfaceParams.show_nav_visibility_grid = GEN_FALSE;
-  InterfaceParams.show_nav_hidzones_grid   = GEN_FALSE;
-  InterfaceParams.floor                    = GEN_TRUE;
-  InterfaceParams.walls                    = GEN_TRUE;
-  InterfaceParams.tiles                    = GEN_FALSE;
-  InterfaceParams.shadows                  = GEN_FALSE;
+//  InterfaceParams.width = 800;
+//  InterfaceParams.height = 600;
+//  InterfaceParams.saveInterface            = GEN_FALSE;
+//  InterfaceParams.show_nav_obstacles       = GEN_FALSE;
+//  InterfaceParams.show_nav_distance_grid   = GEN_FALSE;
+//  InterfaceParams.show_nav_visibility_grid = GEN_FALSE;
+//  InterfaceParams.show_nav_hidzones_grid   = GEN_FALSE;
+//  InterfaceParams.floor                    = GEN_TRUE;
+//  InterfaceParams.walls                    = GEN_TRUE;
+//  InterfaceParams.tiles                    = GEN_FALSE;
+//  InterfaceParams.shadows                  = GEN_FALSE;
 
   InterfaceState.savingInterface             = GEN_FALSE;
-  InterfaceState.updating                    = GEN_FALSE;
+  InterfaceState.updating                    = GEN_TRUE;
   InterfaceState.showing_nav_obstacles       = GEN_FALSE;
   InterfaceState.showing_nav_distance_grid   = GEN_FALSE;
   InterfaceState.showing_nav_visibility_grid = GEN_FALSE;
@@ -90,7 +90,7 @@ ACTIVITY_EVENT mhpLoadP3dMain(MHP_P3D *P3d, int *report)
   InterfaceState.showing_floor               = GEN_TRUE;
   InterfaceState.showing_walls               = GEN_TRUE;
   InterfaceState.showing_tiles               = GEN_FALSE;
-  InterfaceState.showing_shadows             = GEN_FALSE;
+  InterfaceState.showing_shadows             = GEN_TRUE;
 //
 //  SDI_F->VisParams.FoA_h = DTOR(MHP_DEFAULT_HUMAN_FOA_H);
 //  SDI_F->VisParams.FoA_v = SDI_F->VisParams.FoA_h * 0.75;

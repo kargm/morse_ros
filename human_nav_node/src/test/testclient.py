@@ -34,6 +34,26 @@ def planPath(x1, y1, x2, y2):
     except rospy.ServiceException, e:
         print "Service call failed: %s"%e
 
+def changeIFace(showObst, showDist, showVis, shadows):
+    rospy.wait_for_service('ChangeInterfaceParams')
+    try:
+        proxy = rospy.ServiceProxy('ChangeInterfaceParams', ChangeInterfaceParams)
+        request = Move3dInterfaceParams(0, 0, None, showObst, showDist, showVis, None, None, None, None, shadows)
+        proxy(request)
+
+    except rospy.ServiceException, e:
+        print "Service call failed: %s"%e
+
+def changeCamPos(xdest, ydest, zdest, dist, hrot, vrot):
+    rospy.wait_for_service('ChangeCamPos')
+    try:
+        proxy = rospy.ServiceProxy('ChangeCamPos', ChangeCamPos)
+
+        proxy(xdest, ydest, zdest, dist, hrot, vrot)
+
+    except rospy.ServiceException, e:
+        print "Service call failed: %s"%e
+
 # def usage():
 #     return "%s [x y]"%sys.argv[0]
 
@@ -48,3 +68,5 @@ if __name__ == "__main__":
     # print "%s + %s = %s"%(x, y, add_two_ints_client(x, y))
     initWorld()
     planPath(1, 2, 3, 4)
+    changeIFace(None, True, None, None)
+    changeCamPos(0, 0, 3, 11, -0.7, 0.8)

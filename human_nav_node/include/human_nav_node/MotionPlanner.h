@@ -24,6 +24,7 @@ public:
   int findNavTrajExec(MHP_NAV_POS &MotionCoord, MHP_NAV_TRAJECTORY &ABS_NAV_traj, int *report);
   int changeCameraPosMain(MHP_CAM_POS *cam_pos, int *report);
   int placeAgent(MHP_AGENT_POSITION *addedAgent, int *report);
+  int setInterfaceParams(MHP_INTERFACE_PARAMS *newParams, int *report);
   int initialize_navigation();
 
   double grid_sampling;

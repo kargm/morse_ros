@@ -21,6 +21,5 @@ extern hri_bitmapset * MHP_BTSET;
 extern double grid_sampling;
 extern int enableGraphic;
 extern MHP_INTERFACE_STATE InterfaceState;
-extern MHP_INTERFACE_PARAMS InterfaceParams;
 
 #endif /* GLOBALVARS_H_ */

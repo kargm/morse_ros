@@ -11,6 +11,9 @@
 
 #include "human_nav_node/InitWorld.h"
 #include "human_nav_node/HANaviPlan.h"
+#include "human_nav_node/ChangeInterfaceParams.h"
+#include "human_nav_node/Move3dInterfaceParams.h"
+#include "human_nav_node/ChangeCamPos.h"
 #include "human_nav_node/MotionPlanner.h"
 #include "human_nav_node/HumanState.h"
 
@@ -51,6 +54,7 @@ bool planPath(HANaviPlan::Request &req,
 	cout<<"Requesting path ...\n";
 	int result;
 	MHP_NAV_TRAJECTORY resultTraj;
+	resultTraj.no = 0;
 	planner.updPosAndFindNavTrajExec(requestStruct, resultTraj, &result);
 	cout<<"Result: "<<result<<"\n";
 
@@ -72,7 +76,8 @@ bool planPath(HANaviPlan::Request &req,
 }
 
 bool initWorld(InitWorld::Request &req,
-                            InitWorld::Response &res) {
+                            InitWorld::Response &res)
+{
   int result = planner.init(req.pdfilename.c_str(), req.showInterface == 1);
   res.resultcode = result;
   if (result == 0) {
@@ -82,10 +87,66 @@ bool initWorld(InitWorld::Request &req,
   }
 }
 
+bool changeInterfaceParams(ChangeInterfaceParams::Request &req,
+		ChangeInterfaceParams::Response &res)
+{
+	MHP_INTERFACE_PARAMS interfaceParam;
+	interfaceParam.height = req.params.height;
+	interfaceParam.width = req.params.width;
+	interfaceParam.walls = req.params.walls ? GEN_TRUE :GEN_FALSE;
+	interfaceParam.floor = req.params.floor ? GEN_TRUE :GEN_FALSE;
+	interfaceParam.tiles = req.params.tiles ? GEN_TRUE :GEN_FALSE;
+	interfaceParam.shadows = req.params.shadows ? GEN_TRUE :GEN_FALSE;
+	interfaceParam.saveInterface = req.params.saveInterface ? GEN_TRUE :GEN_FALSE;
+	interfaceParam.show_nav_obstacles = req.params.show_nav_obstacles ? GEN_TRUE :GEN_FALSE;
+	interfaceParam.show_nav_distance_grid = req.params.show_nav_distance_grid ? GEN_TRUE :GEN_FALSE;
+	interfaceParam.show_nav_visibility_grid = req.params.show_nav_visibility_grid ? GEN_TRUE :GEN_FALSE;
+	interfaceParam.show_nav_hidzones_grid = req.params.show_nav_hidzones_grid ? GEN_TRUE :GEN_FALSE;
+
+
+	int report;
+	int result = planner.setInterfaceParams(&interfaceParam, &report);
+
+	if (result == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool changeCamPos(ChangeCamPos::Request &req,
+		ChangeCamPos::Response &res)
+{
+	MHP_CAM_POS cam_pos;
+	cam_pos.dist = req.dist;
+	cam_pos.xdest = req.xdest;
+	cam_pos.ydest = req.ydest;
+	cam_pos.zdest = req.zdest;
+	cam_pos.hrot = req.hrot;
+	cam_pos.vrot = req.vrot;
+
+	int report;
+	planner.changeCameraPosMain(&cam_pos, &report);
+	if (report == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+
 void spinInterface() {
 	planner.updateInterface();
 }
+
+
+
 }// end namespace
+
+
+
+//************* MAIN *****************
 
 int main(int argc, char **argv)
 {
@@ -96,8 +157,8 @@ int main(int argc, char **argv)
 
   ros::ServiceServer planservice = n.advertiseService("HANaviPlan", human_nav_node::planPath);
   ros::ServiceServer initservice = n.advertiseService("InitWorld", human_nav_node::initWorld);
-//  ros::ServiceServer initservice = n.advertiseService("StartInterfaceThread", human_nav_node::startUpdateLoop);
-//  ros::ServiceServer initservice = n.advertiseService("StopInterfaceThread", human_nav_node::stopUpdateLoop);
+  ros::ServiceServer setParamsService = n.advertiseService("ChangeInterfaceParams", human_nav_node::changeInterfaceParams);
+  ros::ServiceServer setCamService = n.advertiseService("ChangeCamPos", human_nav_node::changeCamPos);
   ROS_INFO("Ready to plan.");
 
   ros::Rate loop_rate(5);

@@ -1,0 +1,7 @@
+float32 xdest
+float32 ydest
+float32 zdest
+float32 dist
+float32 hrot
+float32 vrot
+---

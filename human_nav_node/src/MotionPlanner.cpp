@@ -45,7 +45,7 @@ p3d_rob * pspHuman = NULL;
 hri_gik * MHP_GIK = NULL;
 hri_bitmapset * MHP_BTSET = NULL;
 MHP_INTERFACE_STATE InterfaceState;
-MHP_INTERFACE_PARAMS InterfaceParams;
+
 
 double grid_sampling = 0.15;
 int enableGraphic;
@@ -69,13 +69,17 @@ int MotionPlanner::init(string filename, bool initShowInterface) {
 //	char *filename_char = new char[filename.size()+1];
 //	strcpy(filename_char, filename.c_str());
 
+	if (isInitialized) {
+		return OK;
+	}
+
 	enableGraphic = initShowInterface;
 	MHP_P3D P3dspec;
 	strncpy(P3dspec.P3dModeleName.name, filename.c_str(), 128);
 
 	P3dspec.enableGraphic = enableGraphic;
 	P3dspec.enablePersp = 0;
-	int report;
+	int report = 0;
 	mhpLoadP3dMain(&P3dspec, &report);
 	if (report == OK) {
 		isInitialized=true;
@@ -112,6 +116,12 @@ int MotionPlanner::initialize_navigation()
 	int report;
 	mhp_initialize_navigation(&report);
 	return report;
+}
+
+int MotionPlanner::setInterfaceParams(MHP_INTERFACE_PARAMS *newParams, int *report)
+{
+	mhpSetInterfaceParamsMain(newParams, report);
+	return *report;
 }
 
 

@@ -139,7 +139,7 @@ mhpChangeCameraPosMain(MHP_CAM_POS *cam_pos, int *report)
 /* mhpSetInterfaceParamsMain  -  codel EXEC of SetInterfaceParams
    Returns:  EXEC END ETHER FAIL ZOMBIE */
 ACTIVITY_EVENT
-mhpSetInterfaceParamsMain(MHP_INTERFACE_PARAMS *InterfaceParams, MHP_INTERFACE_STATE *InterfaceState, int *report)
+mhpSetInterfaceParamsMain(MHP_INTERFACE_PARAMS *newParams, int *report)
 {
   G3D_Window *win = g3d_get_win_by_name((char*)"Move3D");
   
@@ -154,94 +154,94 @@ mhpSetInterfaceParamsMain(MHP_INTERFACE_PARAMS *InterfaceParams, MHP_INTERFACE_S
     *report = S_mhp_NOT_INITIALIZED;
     return ETHER;
   }
-  if( (InterfaceParams->width > 0) &&  (InterfaceParams->height > 0) )
+  if( (newParams->width > 0) &&  (newParams->height > 0) )
     {
 #ifdef QT_LIBRARY
-    mhpInterfaceOpenGlWidget->setWinSize(InterfaceParams->width, InterfaceParams->height);
+    mhpInterfaceOpenGlWidget->setWinSize(newParams->width, newParams->height);
 #endif
 #ifdef USE_GLUT
-    glutReshapeWindow(InterfaceParams->width,InterfaceParams->height);
+    glutReshapeWindow(newParams->width,newParams->height);
 #endif
     }
 
-  if(InterfaceParams->show_nav_obstacles) {
+  if(newParams->show_nav_obstacles) {
     hri_bt_activate(BT_OBSTACLES,MHP_BTSET);
-    InterfaceState->showing_nav_obstacles = GEN_TRUE;
+    InterfaceState.showing_nav_obstacles = GEN_TRUE;
   }
   else {
     hri_bt_desactivate(BT_OBSTACLES,MHP_BTSET);
-    InterfaceState->showing_nav_obstacles = GEN_FALSE;
+    InterfaceState.showing_nav_obstacles = GEN_FALSE;
   }
-  if(InterfaceParams->show_nav_path) {
+  if(newParams->show_nav_path) {
     hri_bt_activate(BT_PATH,MHP_BTSET);
-    InterfaceState->showing_nav_path = GEN_TRUE;
+    InterfaceState.showing_nav_path = GEN_TRUE;
   }
   else {
     hri_bt_desactivate(BT_PATH,MHP_BTSET);
-    InterfaceState->showing_nav_path = GEN_FALSE;
+    InterfaceState.showing_nav_path = GEN_FALSE;
   }
-  if(InterfaceParams->show_nav_distance_grid) {
+  if(newParams->show_nav_distance_grid) {
     hri_bt_activate(BT_DISTANCE,MHP_BTSET); 
-    InterfaceState->showing_nav_distance_grid = GEN_TRUE;
+    InterfaceState.showing_nav_distance_grid = GEN_TRUE;
   }
   else {
     hri_bt_desactivate(BT_DISTANCE,MHP_BTSET);
-    InterfaceState->showing_nav_distance_grid = GEN_FALSE;
+    InterfaceState.showing_nav_distance_grid = GEN_FALSE;
   }
-  if(InterfaceParams->show_nav_visibility_grid) {
+  if(newParams->show_nav_visibility_grid) {
     hri_bt_activate(BT_VISIBILITY,MHP_BTSET);
-    InterfaceState->showing_nav_visibility_grid = GEN_TRUE;
+    InterfaceState.showing_nav_visibility_grid = GEN_TRUE;
   }
   else {
     hri_bt_desactivate(BT_VISIBILITY,MHP_BTSET);
-    InterfaceState->showing_nav_visibility_grid = GEN_FALSE;
+    InterfaceState.showing_nav_visibility_grid = GEN_FALSE;
   }
-  if(InterfaceParams->show_nav_hidzones_grid) {
+  if(newParams->show_nav_hidzones_grid) {
     hri_bt_activate(BT_HIDZONES,MHP_BTSET);
-    InterfaceState->showing_nav_hidzones_grid = GEN_TRUE;
+    InterfaceState.showing_nav_hidzones_grid = GEN_TRUE;
   }
   else {
     hri_bt_desactivate(BT_HIDZONES,MHP_BTSET);
-    InterfaceState->showing_nav_hidzones_grid = GEN_FALSE;
+    InterfaceState.showing_nav_hidzones_grid = GEN_FALSE;
   }
-  if(!InterfaceParams->floor) {
+  if(!newParams->floor) {
     win->vs.displayFloor = FALSE;
-    InterfaceState->showing_floor = GEN_FALSE;
+    InterfaceState.showing_floor = GEN_FALSE;
   }
   else {
     win->vs.displayFloor = TRUE;
-    InterfaceState->showing_floor = GEN_TRUE;
+    InterfaceState.showing_floor = GEN_TRUE;
   }
-  if(!InterfaceParams->walls) {
+  if(!newParams->walls) {
     win->vs.displayWalls = FALSE;
-    InterfaceState->showing_walls = GEN_FALSE;
+    InterfaceState.showing_walls = GEN_FALSE;
   }
   else {
     win->vs.displayWalls = TRUE;
-    InterfaceState->showing_walls = GEN_TRUE;
+    InterfaceState.showing_walls = GEN_TRUE;
   }
   
-  if(!InterfaceParams->tiles) {
+  if(!newParams->tiles) {
     win->vs.displayTiles = FALSE;
-    InterfaceState->showing_tiles = GEN_FALSE;
+    InterfaceState.showing_tiles = GEN_FALSE;
   }
   else {
     win->vs.displayTiles = TRUE;
-    InterfaceState->showing_tiles = GEN_TRUE;
+    InterfaceState.showing_tiles = GEN_TRUE;
   }
   
-  if(!InterfaceParams->shadows) {
+  if(!newParams->shadows) {
     win->vs.displayShadows = FALSE;
-    InterfaceState->showing_shadows = GEN_FALSE;
+    InterfaceState.showing_shadows = GEN_FALSE;
   }
   else {
     win->vs.displayShadows = TRUE;
-    InterfaceState->showing_shadows = GEN_TRUE;
+    InterfaceState.showing_shadows = GEN_TRUE;
   }
  
-  if(InterfaceParams->draw_graph) {
+  if(newParams->draw_graph) {
     ENV.setBool(Env::drawGraph, TRUE);
-    p3d_set_user_drawnjnt(InterfaceParams->draw_graph_jnt_id);
+    p3d_set_user_drawnjnt(newParams->draw_graph_jnt_id);
   } else {
     ENV.setBool(Env::drawGraph, FALSE);
   }

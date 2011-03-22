@@ -108,4 +108,5 @@ ACTIVITY_EVENT mhpFindNavTrajExec(MHP_NAV_POS &MotionCoord, MHP_NAV_TRAJECTORY &
 ACTIVITY_EVENT mhpPlaceAgentMain(MHP_AGENT_POSITION *addedAgent, int *report);
 ACTIVITY_EVENT mhpUpdateInterfaceMain(int *report);
 ACTIVITY_EVENT mhpChangeCameraPosMain(MHP_CAM_POS *cam_pos, int *report);
+ACTIVITY_EVENT mhpSetInterfaceParamsMain(MHP_INTERFACE_PARAMS *InterfaceParams, int *report);
 #endif //MHPM3D_H
