@@ -48,7 +48,10 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
   ROS_INFO("[human_navigation] Getting start point (%g,%g) and goal point (%g,%g)",
                start.pose.position.x, start.pose.position.y,goal.pose.position.x, goal.pose.position.y);
   plan.clear();
+
+  // Initialise Subscriber to get human pose
   initSub();
+  // Initialise Publisher for gui_plan
   initPub();
   ROS_INFO("[human_navigation] Found human at: [%g, %g]", humanPose.pose.position.x, humanPose.pose.position.y);
   ROS_INFO("[human_navigation] Starting human-friendly planner...");
@@ -78,8 +81,9 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
                       &waypoints,
                       0);
 
-  std::cout << "Got path with costs " << waypoints.costs;
+  std::cout << "[human_navigation:move3d] Got path with costs " << waypoints.costs;
 
+  // init gui path
   nav_msgs::Path gui_path;
   gui_path.header.frame_id = "map";
   gui_path.header.stamp  = ros::Time::now();
@@ -94,7 +98,7 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
     ROS_INFO("[human_navigation] Added waypoint: (%g,%g)",
                    pose_tmp.pose.position.x, pose_tmp.pose.position.y);
     plan.push_back(pose_tmp);
-
+    // fill graph for visualization
     gui_path.poses.push_back(pose_tmp);
   }
   // post path message for visualization
