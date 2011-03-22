@@ -9,9 +9,13 @@
 /* M_id and err are encoded on 'signed short' (ie, < 2^15 = 32768) and 'short'
  *               S_lib_error = (M_lib << 16 | err)
  */
-#define H2_ENCODE_ERR(M_id,err)   (M_id << 16 | (err&0xffff))
+//#define H2_ENCODE_ERR(M_id,err)   (M_id << 16 | (err&0xffff))
+#define H2_ENCODE_ERR(M_id,err)   (err)
 
-#define M_mhp    (1453)
+//#define M_mhp    (1453)
+//
+//#define H2_NUMBER_ERR(numErr)      (numErr&0xffff)
+//#define H2_DECODE_ERR(numErr)      H2_NUMBER_ERR(numErr)
 
 /* -- MODULES ERRORS -------------------------------------------------- */
 

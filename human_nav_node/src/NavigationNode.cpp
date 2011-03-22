@@ -50,24 +50,25 @@ bool planPath(HANaviPlan::Request &req,
 
 	cout<<"Requesting path ...\n";
 	int result;
-	planner.updPosAndFindNavTrajExec(&requestStruct, &result);
+	MHP_NAV_TRAJECTORY resultTraj;
+	planner.updPosAndFindNavTrajExec(requestStruct, resultTraj, &result);
 	cout<<"Result: "<<result<<"\n";
 
 	nav_msgs::Path path;
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < resultTraj.no; ++i) {
 		geometry_msgs::PoseStamped pose;
-		pose.pose.position.x = i;
-		pose.pose.position.y = i;
+		pose.pose.position.x = resultTraj.xcoord[i];
+		pose.pose.position.y = resultTraj.ycoord[i];
 		pose.pose.position.z = 0;
 		pose.pose.orientation.x = 0;
 		pose.pose.orientation.y = 0;
 		pose.pose.orientation.z = 0;
-		pose.pose.orientation.w = 1;
+		pose.pose.orientation.w = resultTraj.theta[i];
 		path.poses.push_back(pose);
 	}
 	res.path = path;
 
-	return false;
+	return true;
 }
 
 bool initWorld(InitWorld::Request &req,

@@ -38,7 +38,7 @@ hri_gik * MHP_GIK = NULL;
 hri_bitmapset * MHP_BTSET = NULL;
 
 
-static int writePath2Poses(double costs);
+static int writePath2Struct(double costs, MHP_NAV_TRAJECTORY & ABS_NAV_traj);
 static int assignGlobalVariables();
 
 /* Function assigning move3d robots to global variables */
@@ -232,7 +232,7 @@ int MotionPlanner::init(string filename, bool initShowInterface) {
 int MotionPlanner::changeCameraPosMain(MHP_CAM_POS *cam_pos, int *report)
 {
   G3D_Window *window = g3d_get_win_by_name((char*)"Move3D");
-
+  *report = OK;
   if(!showInterface){
     printf("The Interface is disabled. Cannot change the camera position.\n");
     *report = S_mhp_NO_INTERFACE_LAUCHED;
@@ -287,9 +287,9 @@ int MotionPlanner::initialize_navigation()
 
 
 
-int MotionPlanner::updPosAndFindNavTrajExec(MHP_UPD_FINDPATH *findpath_params, int *report)
+int MotionPlanner::updPosAndFindNavTrajExec(MHP_UPD_FINDPATH &findpath_params, MHP_NAV_TRAJECTORY &result, int *report)
 {
-
+	*report = OK;
 	if (! isInitialized) {
 		return S_mhp_NAV_NOT_INITIALIZED;
 	}
@@ -320,14 +320,14 @@ int MotionPlanner::updPosAndFindNavTrajExec(MHP_UPD_FINDPATH *findpath_params, i
   addedObject.pan = 0;
   addedObject.tilt = 0;
 
-   if (findpath_params->humpos1.id>=0){
+   if (findpath_params.humpos1.id>=0){
      // ignore report result in these calls, as we don't care
-//     mhpSetHumanPositionMain(&findpath_params->humpos1, report);
+//     mhpSetHumanPositionMain(&findpath_params.humpos1, report);
      strcpy(addedObject.name.name, "HUMAN1");
-     addedObject.pos.x = findpath_params->humpos1.pos.x;
-     addedObject.pos.y = findpath_params->humpos1.pos.y;
-     addedObject.pos.th = RTOD(findpath_params->humpos1.pos.th);
-     addedObject.state = findpath_params->humpos1.state;
+     addedObject.pos.x = findpath_params.humpos1.pos.x;
+     addedObject.pos.y = findpath_params.humpos1.pos.y;
+     addedObject.pos.th = RTOD(findpath_params.humpos1.pos.th);
+     addedObject.state = findpath_params.humpos1.state;
      mhpPlaceAgentMain(&addedObject, report);
      if ((*report != OK ) && (*report != S_mhp_NAV_BAD_ID)) {
        printf("Warning: setHumanPosition 1 returned %d !\n", *report);
@@ -335,52 +335,52 @@ int MotionPlanner::updPosAndFindNavTrajExec(MHP_UPD_FINDPATH *findpath_params, i
      *report = OK;
    }
 
-   if (findpath_params->humpos2.id>=0){
-     //     mhpSetHumanPositionMain(&findpath_params->humpos2, report);
+   if (findpath_params.humpos2.id>=0){
+     //     mhpSetHumanPositionMain(&findpath_params.humpos2, report);
      strcpy(addedObject.name.name, "HUMAN2");
-     addedObject.pos.x = findpath_params->humpos2.pos.x;
-     addedObject.pos.y = findpath_params->humpos2.pos.y;
-     addedObject.pos.th = RTOD(findpath_params->humpos2.pos.th);
-     addedObject.state = findpath_params->humpos2.state;
+     addedObject.pos.x = findpath_params.humpos2.pos.x;
+     addedObject.pos.y = findpath_params.humpos2.pos.y;
+     addedObject.pos.th = RTOD(findpath_params.humpos2.pos.th);
+     addedObject.state = findpath_params.humpos2.state;
      mhpPlaceAgentMain(&addedObject, report);
      if ((*report != OK ) && (*report != S_mhp_NAV_BAD_ID)) {
        printf("Warning: setHumanPosition 2 returned %d !\n", *report);
      }
      *report = OK;
    }
-   if (findpath_params->humpos3.id>=0){
-     //     mhpSetHumanPositionMain(&findpath_params->humpos3, report);
+   if (findpath_params.humpos3.id>=0){
+     //     mhpSetHumanPositionMain(&findpath_params.humpos3, report);
      strcpy(addedObject.name.name, "HUMAN3");
-     addedObject.pos.x = findpath_params->humpos3.pos.x;
-     addedObject.pos.y = findpath_params->humpos3.pos.y;
-     addedObject.pos.th = RTOD(findpath_params->humpos3.pos.th);
-     addedObject.state = findpath_params->humpos3.state;
+     addedObject.pos.x = findpath_params.humpos3.pos.x;
+     addedObject.pos.y = findpath_params.humpos3.pos.y;
+     addedObject.pos.th = RTOD(findpath_params.humpos3.pos.th);
+     addedObject.state = findpath_params.humpos3.state;
      mhpPlaceAgentMain(&addedObject, report);
      if ((*report != OK ) && (*report != S_mhp_NAV_BAD_ID)) {
        printf("Warning: setHumanPosition 3 returned %d !\n", *report);
      }
      *report = OK;
    }
-   if (findpath_params->humpos4.id>=0){
-     //     mhpSetHumanPositionMain(&findpath_params->humpos4, report);
+   if (findpath_params.humpos4.id>=0){
+     //     mhpSetHumanPositionMain(&findpath_params.humpos4, report);
      strcpy(addedObject.name.name, "HUMAN4");
-     addedObject.pos.x = findpath_params->humpos4.pos.x;
-     addedObject.pos.y = findpath_params->humpos4.pos.y;
-     addedObject.pos.th = RTOD(findpath_params->humpos4.pos.th);
-     addedObject.state = findpath_params->humpos4.state;
+     addedObject.pos.x = findpath_params.humpos4.pos.x;
+     addedObject.pos.y = findpath_params.humpos4.pos.y;
+     addedObject.pos.th = RTOD(findpath_params.humpos4.pos.th);
+     addedObject.state = findpath_params.humpos4.state;
      mhpPlaceAgentMain(&addedObject, report);
      if ((*report != OK ) && (*report != S_mhp_NAV_BAD_ID)) {
        printf("Warning: setHumanPosition 4 returned %d !\n", *report);
      }
      *report = OK;
    }
-   if (findpath_params->humpos5.id>=0){
-     //     mhpSetHumanPositionMain(&findpath_params->humpos5, report);
+   if (findpath_params.humpos5.id>=0){
+     //     mhpSetHumanPositionMain(&findpath_params.humpos5, report);
      strcpy(addedObject.name.name, "HUMAN5");
-     addedObject.pos.x = findpath_params->humpos5.pos.x;
-     addedObject.pos.y = findpath_params->humpos5.pos.y;
-     addedObject.pos.th = RTOD(findpath_params->humpos5.pos.th);
-     addedObject.state = findpath_params->humpos5.state;
+     addedObject.pos.x = findpath_params.humpos5.pos.x;
+     addedObject.pos.y = findpath_params.humpos5.pos.y;
+     addedObject.pos.th = RTOD(findpath_params.humpos5.pos.th);
+     addedObject.state = findpath_params.humpos5.state;
      mhpPlaceAgentMain(&addedObject, report);
      if ((*report != OK ) && (*report != S_mhp_NAV_BAD_ID)) {
        printf("Warning: setHumanPosition 5 returned %d !\n", *report);
@@ -388,21 +388,19 @@ int MotionPlanner::updPosAndFindNavTrajExec(MHP_UPD_FINDPATH *findpath_params, i
      *report = OK;
    }
 
-   return findNavTrajExec(&findpath_params->search_definition, report);
+   return findNavTrajExec(findpath_params.search_definition, result, report);
 
 //   return ETHER;
 }
 
-/* mhpFindNavTrajExec  -  codel EXEC of FindNavTraj
-   Returns:  EXEC END ETHER FAIL ZOMBIE */
-int MotionPlanner::findNavTrajExec(MHP_NAV_POS *MotionCoord, int *report)
+int MotionPlanner::findNavTrajExec(MHP_NAV_POS &MotionCoord, MHP_NAV_TRAJECTORY &result, int *report)
 {
   double x1, y1, z1, x2, y2, z2;
   double moveaway_distance, approachpoint_distance;
   double path_costs;
   //  double rx,ry,rth;
   double searchstart[3], searchgoal[3]; //x, y, az
-
+  *report = OK;
   if (! isInitialized) {
 	  return S_mhp_NAV_NOT_INITIALIZED;
   }
@@ -410,16 +408,16 @@ int MotionPlanner::findNavTrajExec(MHP_NAV_POS *MotionCoord, int *report)
 //  if(!mhp_fetch_and_update_env(report))
 //    printf("Warning: Cannot fetch the current environment\n");
 
-  x1 = MotionCoord->startpos.x;
-  y1 = MotionCoord->startpos.y;
-  z1 = MotionCoord->startpos.th;
+  x1 = MotionCoord.startpos.x;
+  y1 = MotionCoord.startpos.y;
+  z1 = MotionCoord.startpos.th;
 
-  x2 = MotionCoord->goalpos.x;
-  y2 = MotionCoord->goalpos.y;
-  z2 = MotionCoord->goalpos.th;
+  x2 = MotionCoord.goalpos.x;
+  y2 = MotionCoord.goalpos.y;
+  z2 = MotionCoord.goalpos.th;
 
-  moveaway_distance = MotionCoord->configuration;
-  approachpoint_distance = MotionCoord->linelen;
+  moveaway_distance = MotionCoord.configuration;
+  approachpoint_distance = MotionCoord.linelen;
 
   if(MHP_BTSET == NULL){
     printf("Not initialized, initializing MHP_BTSET!\n");
@@ -495,20 +493,20 @@ int MotionPlanner::findNavTrajExec(MHP_NAV_POS *MotionCoord, int *report)
 //        MHP_BTSET->pathexist = TRUE;
 //
 //        /* AKIN TEST - VERY UGLY WAY OF TREATING THIS ORIENTATION THING */
-//        SDI_F->REL_NAV_traj.header.absOrRel = PILO_RELATIVE_TRAJ;
-//        SDI_F->REL_NAV_traj.header.maxInitAngleDev = 0.3;
-//        SDI_F->REL_NAV_traj.header.maxInitLengthDev = 0.3;
-//        SDI_F->REL_NAV_traj.header.segType = PILO_LINE_SEG; /*  PILO_LINE_SEG/PILO_ARC_SEG
+//        REL_NAV_traj.header.absOrRel = PILO_RELATIVE_TRAJ;
+//        REL_NAV_traj.header.maxInitAngleDev = 0.3;
+//        REL_NAV_traj.header.maxInitLengthDev = 0.3;
+//        REL_NAV_traj.header.segType = PILO_LINE_SEG; /*  PILO_LINE_SEG/PILO_ARC_SEG
 //                                             Pilo will use arcs */
-//        SDI_F->REL_NAV_traj.header.x0 = x1;
-//        SDI_F->REL_NAV_traj.header.y0 = y1;
-//        SDI_F->REL_NAV_traj.header.theta0 = z1;
+//        REL_NAV_traj.header.x0 = x1;
+//        REL_NAV_traj.header.y0 = y1;
+//        REL_NAV_traj.header.theta0 = z1;
 //
-//        SDI_F->REL_NAV_traj.seg[0].dL = 0;
-//        SDI_F->REL_NAV_traj.seg[0].e = 0.5;
-//        SDI_F->REL_NAV_traj.seg[0].dTheta = z2 - z1;
+//        REL_NAV_traj.seg[0].dL = 0;
+//        REL_NAV_traj.seg[0].e = 0.5;
+//        REL_NAV_traj.seg[0].dTheta = z2 - z1;
 //
-//        SDI_F->REL_NAV_traj.header.nbSegs = 1;
+//        REL_NAV_traj.header.nbSegs = 1;
 //        /* ------------  */
       }
       return *report;
@@ -526,7 +524,7 @@ int MotionPlanner::findNavTrajExec(MHP_NAV_POS *MotionCoord, int *report)
     return *report;
   }
 
-  if(writePath2Poses(path_costs)==FALSE) {
+  if(writePath2Struct(path_costs, result)==FALSE) {
     printf("Couldn't write to the poster\n");
     *report = S_mhp_NAV_INTERNAL_ERROR;
     return *report;
@@ -546,6 +544,7 @@ int MotionPlanner::mhpPlaceAgentMain(MHP_AGENT_POSITION *addedAgent, int *report
   p3d_rob * rob = NULL;
   int is_human = FALSE;
   int i;
+  *report = OK;
 
   if (! isInitialized) {
 	  return S_mhp_NAV_NOT_INITIALIZED;
@@ -640,160 +639,70 @@ int MotionPlanner::mhpPlaceAgentMain(MHP_AGENT_POSITION *addedAgent, int *report
  * writes the path in MHP_BTSET->bitmap[BT_PATH] to genom poster
  *
  */
-static int writePath2Poses(double costs)
+static int writePath2Struct(double costs, MHP_NAV_TRAJECTORY & ABS_NAV_traj)
 {
-  hri_bitmap * bitmap;
-  int i, abs_coord, skipno, pstcoord;
-  double x_c, y_c, x_p, y_p;
+	 hri_bitmap * bitmap;
+	  int i, abs_coord, skipno, pstcoord;
 
-  if(MHP_BTSET == NULL || MHP_BTSET->bitmap[BT_PATH] == NULL){
-    printf("null bitmap\n");
-    return FALSE;
-  }
+	  if(MHP_BTSET == NULL || MHP_BTSET->bitmap[BT_PATH] == NULL){
+	    printf("null bitmap\n");
+	    return FALSE;
+	  }
 
-  if(MHP_BTSET->path == NULL){
-    printf("Path structure not created\n");
-    return FALSE;
-  }
+	  if(MHP_BTSET->path == NULL){
+	    printf("Path structure not created\n");
+	    return FALSE;
+	  }
 
-  bitmap = MHP_BTSET->bitmap[BT_PATH];
-  skipno = 1;//(int)(SDI_F->Param.MHP_NAV_PATH_SEG_LENGTH/MHP_BTSET->pace);
-  if (skipno < 1) skipno = 1;
-  if (skipno > 1) {
-    printf("Skipping : %d waypoints\n", skipno-1 );
-  }
-//
-//  SDI_F->ABS_NAV_traj.cost = costs;
-//
-//  SDI_F->REL_NAV_traj.header.absOrRel = PILO_RELATIVE_TRAJ;
-//  SDI_F->REL_NAV_traj.header.maxInitAngleDev = 0.3;
-//  SDI_F->REL_NAV_traj.header.maxInitLengthDev = 0.3;
-//  SDI_F->REL_NAV_traj.header.segType = PILO_LINE_SEG; /*  PILO_LINE_SEG/PILO_ARC_SEG  */
-//  SDI_F->REL_NAV_traj.header.x0 = MHP_BTSET->path->xcoord[0];
-//  SDI_F->REL_NAV_traj.header.y0 = MHP_BTSET->path->ycoord[0];
-//  SDI_F->REL_NAV_traj.header.theta0 = MHP_BTSET->path->theta[0];
-//
-//
-//  if (MHP_BTSET->path->length > 1) {
-//    // copy last coordinates into previous node
-//    MHP_BTSET->path->xcoord[MHP_BTSET->path->length-2] =  MHP_BTSET->path->xcoord[MHP_BTSET->path->length-1];
-//    MHP_BTSET->path->ycoord[MHP_BTSET->path->length-2] =  MHP_BTSET->path->ycoord[MHP_BTSET->path->length-1];
-//    MHP_BTSET->path->theta[MHP_BTSET->path->length-2] =  MHP_BTSET->path->theta[MHP_BTSET->path->length-1];
-//    MHP_BTSET->path->length--;
-//  }
-//
-  pstcoord = 0;
-  abs_coord = 0;
-  for(i=0; i<MHP_BTSET->path->length; i+=skipno) {
-//    SDI_F->ABS_NAV_traj.xcoord[abs_coord] = MHP_BTSET->path->xcoord[i];   /* ABS trajectory Poster */
-//    SDI_F->ABS_NAV_traj.ycoord[abs_coord] = MHP_BTSET->path->ycoord[i];   /* ABS trajectory Poster */
-//    SDI_F->ABS_NAV_traj.theta[abs_coord]  = MHP_BTSET->path->theta[i];    /* ABS trajectory Poster */
-    //printf("Added waypoint: %i (%f,%f)\n", i, MHP_BTSET->path->xcoord[abs_coord], MHP_BTSET->path->ycoord[abs_coord]);
-    abs_coord++;                                                      /* ABS trajectory Poster */
-    if (abs_coord > MHP_NAV_MAX_TRAJ_LENTGH ) {
-      printf("Path length longer than allowed by MHP: %d\n", MHP_BTSET->path->length);
-//      return FALSE;
-      break;
-    }
+	  bitmap = MHP_BTSET->bitmap[BT_PATH];
+	  skipno = 1;//(int)(Param.MHP_NAV_PATH_SEG_LENGTH/MHP_BTSET->pace);
+	  if (skipno < 1) skipno = 1;
+	  if (skipno > 1) {
+	    printf("Skipping : %d waypoints\n", skipno-1 );
+	  }
 
-//    if(i!=0) { // between all nodes, add relative segments
-//      x_c = MHP_BTSET->path->xcoord[i];
-//      y_c = MHP_BTSET->path->ycoord[i];
-//
-//      if(i==skipno){ // first segment
-//        SDI_F->REL_NAV_traj.seg[pstcoord].dL = MHP_D2D(x_c,y_c,SDI_F->REL_NAV_traj.header.x0,SDI_F->REL_NAV_traj.header.y0);
-//        SDI_F->REL_NAV_traj.seg[pstcoord].dTheta = atan2(y_c-SDI_F->REL_NAV_traj.header.y0,
-//            x_c-SDI_F->REL_NAV_traj.header.x0)-SDI_F->REL_NAV_traj.header.theta0;
-//        SDI_F->REL_NAV_traj.seg[pstcoord].e = 0.5;
-//      }
-//      else{
-//        x_p = MHP_BTSET->path->xcoord[i-skipno];
-//        y_p = MHP_BTSET->path->ycoord[i-skipno];
-//        SDI_F->REL_NAV_traj.seg[pstcoord].dL = MHP_D2D(x_c,y_c,x_p,y_p);
-//        SDI_F->REL_NAV_traj.seg[pstcoord].dTheta = atan2(y_c-y_p, x_c-x_p)-atan2(y_p-MHP_BTSET->path->ycoord[i-2*skipno],
-//            x_p-MHP_BTSET->path->xcoord[i-2*skipno]);
-//        SDI_F->REL_NAV_traj.seg[pstcoord].e = 0.5;
-//      }
-//
-//      if(-M_PI > SDI_F->REL_NAV_traj.seg[pstcoord].dTheta)
-//        SDI_F->REL_NAV_traj.seg[pstcoord].dTheta += M_2PI;
-//      else if(SDI_F->REL_NAV_traj.seg[pstcoord].dTheta > M_PI)
-//        SDI_F->REL_NAV_traj.seg[pstcoord].dTheta -= M_2PI;
-//
-//      pstcoord++;
-//    }
+	  ABS_NAV_traj.cost = costs;
 
-  }
 
-//  SDI_F->ABS_NAV_traj.xcoord[abs_coord] = MHP_BTSET->path->xcoord[MHP_BTSET->path->length-1];   /* ABS trajectory Poster */
-//  SDI_F->ABS_NAV_traj.ycoord[abs_coord] = MHP_BTSET->path->ycoord[MHP_BTSET->path->length-1];   /* ABS trajectory Poster */
-//  SDI_F->ABS_NAV_traj.theta[abs_coord]  = MHP_BTSET->path->theta[MHP_BTSET->path->length-1];    /* ABS trajectory Poster */
-//
-//  SDI_F->ABS_NAV_traj.no = abs_coord + 1; /* ABS trajectory Poster */
-  //printf("Added waypoints no: %i\n", abs_coord + 1);
+	  pstcoord = 0;
+	  abs_coord = 0;
+	  for(i=0; i<MHP_BTSET->path->length; i+=skipno) {
+	    ABS_NAV_traj.xcoord[abs_coord] = MHP_BTSET->path->xcoord[i];   /* ABS trajectory Poster */
+	    ABS_NAV_traj.ycoord[abs_coord] = MHP_BTSET->path->ycoord[i];   /* ABS trajectory Poster */
+	    ABS_NAV_traj.theta[abs_coord]  = MHP_BTSET->path->theta[i];    /* ABS trajectory Poster */
+	    //printf("Added waypoint: %i (%f,%f)\n", i, MHP_BTSET->path->xcoord[abs_coord], MHP_BTSET->path->ycoord[abs_coord]);
+	    abs_coord++;                                                      /* ABS trajectory Poster */
+	    if (abs_coord > MHP_NAV_MAX_TRAJ_LENTGH || abs_coord > MHPPILO_MAX_TRAJ_SEGMENTS) {
+	        printf("Path length longer than allowed by MHP: %d > MAX (%d, %d)\n", MHP_BTSET->path->length, MHP_NAV_MAX_TRAJ_LENTGH, MHPPILO_MAX_TRAJ_SEGMENTS );
+	//      return FALSE;
+	      break;
+	    }
 
-//  /* the last node */
-//  x_c = MHP_BTSET->path->xcoord[MHP_BTSET->path->length-1];
-//  y_c = MHP_BTSET->path->ycoord[MHP_BTSET->path->length-1];
-//  x_p = MHP_BTSET->path->xcoord[i-skipno];
-//  y_p = MHP_BTSET->path->ycoord[i-skipno];
-//
-//
-//  SDI_F->REL_NAV_traj.seg[pstcoord].dL = MHP_D2D(x_c,y_c,x_p,y_p);
-//  if(i==skipno) // if we just added one segment
-//    SDI_F->REL_NAV_traj.seg[pstcoord].dTheta = atan2(y_c-y_p, x_c-x_p)-MHP_BTSET->path->theta[0];
-//  else
-//    SDI_F->REL_NAV_traj.seg[pstcoord].dTheta = atan2(y_c-y_p, x_c-x_p)-atan2(y_p-MHP_BTSET->path->ycoord[i-2*skipno], x_p-MHP_BTSET->path->xcoord[i-2*skipno]);
-//  SDI_F->REL_NAV_traj.seg[pstcoord].e = 0.5;
-//
-//  if(-M_PI > SDI_F->REL_NAV_traj.seg[pstcoord].dTheta)
-//    SDI_F->REL_NAV_traj.seg[pstcoord].dTheta += M_2PI;
-//  if(SDI_F->REL_NAV_traj.seg[pstcoord].dTheta > M_PI)
-//    SDI_F->REL_NAV_traj.seg[pstcoord].dTheta -= M_2PI;
-//  pstcoord++;
-//
-//
-//  /* if(MHP_D2D(x_c,y_c,x_p,y_p) == 0){ /* AKIN NEW */
-//  /*     SDI_F->REL_NAV_traj.seg[pstcoord-1].dL = 0;  */
-//  /*     SDI_F->REL_NAV_traj.seg[pstcoord-1].e = 0.5; */
-//  /*     SDI_F->REL_NAV_traj.seg[pstcoord-1].dTheta = MHP_BTSET->path->theta[MHP_BTSET->path->length-1]-MHP_BTSET->path->theta[MHP_BTSET->path->length-2]; */
-//  /*     printf("test values: %f %f\n",MHP_BTSET->path->theta[MHP_BTSET->path->length-1],MHP_BTSET->path->theta[MHP_BTSET->path->length-2]); */
-//
-//  /*   } */
-//  /*   else{ */
-//
-//  /* a final rotation  to turn the robot */
-//  SDI_F->REL_NAV_traj.seg[pstcoord].dL = 0;
-//  SDI_F->REL_NAV_traj.seg[pstcoord].dTheta = MHP_BTSET->path->theta[MHP_BTSET->path->length-1] - atan2(y_c-y_p, x_c-x_p);
-//  SDI_F->REL_NAV_traj.seg[pstcoord].e = 0.5;
-//
-//  if(-M_PI > SDI_F->REL_NAV_traj.seg[pstcoord].dTheta)
-//    SDI_F->REL_NAV_traj.seg[pstcoord].dTheta += M_2PI;
-//  if(SDI_F->REL_NAV_traj.seg[pstcoord].dTheta > M_PI)
-//    SDI_F->REL_NAV_traj.seg[pstcoord].dTheta -= M_2PI;
-//  pstcoord++;
-//  /* } */
-//
-//   /*  SDI_F->REL_NAV_traj.seg[pstcoord].dL = 0;   */
-//  /*     SDI_F->REL_NAV_traj.seg[pstcoord].dTheta = -1*MHP_BTSET->path->theta[MHP_BTSET->path->length-1] - atan2(y_p-MHP_BTSET->path->ycoord[i-2*skipno], */
-//  /*                        x_p-MHP_BTSET->path->xcoord[i-2*skipno]); */
-//  /*  SDI_F->REL_NAV_traj.seg[pstcoord].e = 1; */
-//
-//  /*  if(-M_PI > SDI_F->REL_NAV_traj.seg[pstcoord].dTheta) */
-//  /*     SDI_F->REL_NAV_traj.seg[pstcoord].dTheta += M_2PI; */
-//  /*   if(SDI_F->REL_NAV_traj.seg[pstcoord].dTheta > M_PI) */
-//  /*     SDI_F->REL_NAV_traj.seg[pstcoord].dTheta -= M_2PI; */
-//  /*  pstcoord++;  */
-//
-//  SDI_F->REL_NAV_traj.header.nbSegs = pstcoord;
-//
-//  SDI_F->REL_NAV_traj.header.numTraj++;
-//  SDI_F->ABS_NAV_traj.id++;            /* ABS trajectory Poster */
-//
-//
-//  /* printf("\n End poster write\n"); */
-//
-  return TRUE;
+	  }
+
+	  if (skipno > 1 && ((MHP_BTSET->path->length -1) % skipno) > 0) {
+	    // have skipped last node in path
+	    if (abs_coord > MHP_NAV_MAX_TRAJ_LENTGH || abs_coord > MHPPILO_MAX_TRAJ_SEGMENTS) {
+	      printf("Path length longer than allowed by MHP: %d > MAX (%d, %d)\n", MHP_BTSET->path->length, MHP_NAV_MAX_TRAJ_LENTGH, MHPPILO_MAX_TRAJ_SEGMENTS );
+	      ABS_NAV_traj.xcoord[abs_coord - 1] = MHP_BTSET->path->xcoord[MHP_BTSET->path->length-1];   /* ABS trajectory Poster */
+	      ABS_NAV_traj.ycoord[abs_coord -1 ] = MHP_BTSET->path->ycoord[MHP_BTSET->path->length-1];   /* ABS trajectory Poster */
+	      ABS_NAV_traj.theta[abs_coord - 1]  = MHP_BTSET->path->theta[MHP_BTSET->path->length-1];    /* ABS trajectory Poster */
+	      ABS_NAV_traj.no = abs_coord;
+	    } else {
+	      // add a last wp
+	      ABS_NAV_traj.xcoord[abs_coord] = MHP_BTSET->path->xcoord[MHP_BTSET->path->length-1];   /* ABS trajectory Poster */
+	      ABS_NAV_traj.ycoord[abs_coord] = MHP_BTSET->path->ycoord[MHP_BTSET->path->length-1];   /* ABS trajectory Poster */
+	      ABS_NAV_traj.theta[abs_coord]  = MHP_BTSET->path->theta[MHP_BTSET->path->length-1];    /* ABS trajectory Poster */
+
+	      ABS_NAV_traj.no = abs_coord + 1; /* ABS trajectory Poster */
+	    }
+	  } else {
+	    ABS_NAV_traj.no = abs_coord;
+	  }
+	  //printf("Added waypoints no: %i\n", abs_coord + 1);
+
+
+	  return TRUE;
 }
 
 
