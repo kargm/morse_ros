@@ -67,7 +67,7 @@ bool planPath(HANaviPlan::Request &req,
 		path.poses.push_back(pose);
 	}
 	res.path = path;
-
+	res.cost = resultTraj.cost;
 	return true;
 }
 

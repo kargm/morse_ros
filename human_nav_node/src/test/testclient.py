@@ -30,6 +30,7 @@ def planPath(x1, y1, x2, y2):
         resp = proxy(request)
         for pose in resp.path.poses:
             print pose
+        print "Path has costs " + str(resp.cost)
     except rospy.ServiceException, e:
         print "Service call failed: %s"%e
 

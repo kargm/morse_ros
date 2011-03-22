@@ -1,3 +1,4 @@
 human_nav_node/NavigationPlanRequest request
 ---
 nav_msgs/Path path
+float32 cost
