@@ -17,6 +17,7 @@ extern p3d_rob * trackDisc;
 extern p3d_rob * pspHuman;
 
 extern hri_gik * MHP_GIK;
+//extern gik_task_joints * GIK_TASKS ;
 extern hri_bitmapset * MHP_BTSET;
 extern double grid_sampling;
 extern int enableGraphic;

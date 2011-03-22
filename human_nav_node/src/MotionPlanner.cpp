@@ -43,6 +43,7 @@ p3d_rob * trackDisc = NULL;
 p3d_rob * pspHuman = NULL;
 
 hri_gik * MHP_GIK = NULL;
+//gik_task_joints * GIK_TASKS = NULL;
 hri_bitmapset * MHP_BTSET = NULL;
 MHP_INTERFACE_STATE InterfaceState;
 

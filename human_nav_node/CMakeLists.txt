@@ -64,6 +64,7 @@ rosbuild_add_executable(
 	src/MotionPlanner.cpp 
 	src/codels/mhpMainTaskCodels.cc
 	src/codels/mhpNavigationCodels.cc
+	src/codels/mhpManipulationCodels.cc
 	src/codels/mhpEnvironmentCodels.cc
 	src/codels/mhpInterfaceTaskCodels.cc
 	)

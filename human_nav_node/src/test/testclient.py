@@ -29,13 +29,19 @@ def initScene(filename):
     except rospy.ServiceException, e:
         print "Service call failed: %s"%e
 
-def planPath(x1, y1, x2, y2):
+def planPath(x1, y1, x2, y2, humanPosesArray):
     rospy.wait_for_service('HANaviPlan')
     try:
         proxy = rospy.ServiceProxy('HANaviPlan', HANaviPlan)
         start = geometry_msgs.msg.Pose(geometry_msgs.msg.Point(x1, y1, 0), None)
         goal = geometry_msgs.msg.Pose(geometry_msgs.msg.Point(x2, y2, 0), None)
-        humans = None
+        humans = []
+        for humanPose in humanPosesArray:
+            bodyPose = geometry_msgs.msg.Pose(
+                geometry_msgs.msg.Point(humanPose[0], humanPose[1], 0),
+                geometry_msgs.msg.Quaternion(0, 0, humanPose[2], 1))
+            state=human_nav_node.msg.HumanState(bodyPose, None, humanPose[3], humanPose[4], humanPose[5])
+            humans.append(state)
         request = NavigationPlanRequest(None, start, goal, humans)
         resp = proxy(request)
         for pose in resp.path.poses:
@@ -80,6 +86,7 @@ if __name__ == "__main__":
     initWorld(simpleWorld, 1)
     simpleScene = roslib.packages.get_pkg_dir("laas_assets") + "/laas-assets/MorseTutorial/SCENARIO/simple.sce"
     initScene(simpleScene)
-    planPath(-5, -6, 3, 2)
+    # humans have x, y, th, id, isLocked, isMoving
+    planPath(-5, -6, 3, 2, [[0, -2, 1.5, "0", 0, 1]])
     changeIFace(None, True, None, None)
     changeCamPos(0, 0, 3, 13, -0.4, 0.8)

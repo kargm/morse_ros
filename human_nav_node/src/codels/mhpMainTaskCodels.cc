@@ -9,7 +9,6 @@ ACTIVITY_EVENT mhpLoadP3dMain(MHP_P3D *P3d, int *report)
   int FILTER_TO_BE_SET_ACTIVE = FALSE ;
   char *argv[2];
   int argc;
-  p3d_env * env;
   int i;
 
   printf("%s ......loading\n", P3d->P3dModeleName.name);
@@ -116,9 +115,9 @@ ACTIVITY_EVENT mhpLoadP3dMain(MHP_P3D *P3d, int *report)
     return FAIL;
   }   
   
-//  if(FAIL == mhp_initialize_manipulation(report)){
-//    return FAIL;
-//  }
+  if(FAIL == mhp_initialize_manipulation(report)){
+    return FAIL;
+  }
 
 //#if defined(LIGHT_PLANNER)
 //  for(int i=0; i<XYZ_ENV->nr; i++) {

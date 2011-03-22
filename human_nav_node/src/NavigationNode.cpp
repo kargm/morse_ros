@@ -28,6 +28,28 @@ using namespace std;
 
 MotionPlanner planner;
 
+void fillHuman(MHP_HUMAN_POSITION &pos, std::vector<human_nav_node::HumanState> humans, int id) {
+	if (id < humans.size()) {
+		human_nav_node::HumanState state = humans[id];
+		pos.id = id;
+		pos.pos.x = state.simpleBodyPose.position.x;
+		pos.pos.y = state.simpleBodyPose.position.y;
+		pos.pos.th = state.simpleBodyPose.orientation.z;
+
+		if (state.locked) {
+			if (state.moving) {
+				pos.state = MHP_MOVING;
+			} else {
+				pos.state = MHP_STANDING_TRANSPARENT;
+			}
+		} else {
+			pos.state = MHP_STANDING;
+		}
+	} else {
+		pos.id = -1; // does not exist
+	}
+}
+
 bool planPath(HANaviPlan::Request &req,
 		HANaviPlan::Response &res) {
 	geometry_msgs::Pose start = req.request.start;
@@ -46,11 +68,12 @@ bool planPath(HANaviPlan::Request &req,
 	requestStruct.search_definition.linelen = 0;
 
 	// TODO: map id to numbers
-	requestStruct.humpos1.id = -1;
-	requestStruct.humpos2.id = -1;
-	requestStruct.humpos3.id = -1;
-	requestStruct.humpos4.id = -1;
-	requestStruct.humpos5.id = -1;
+	fillHuman(requestStruct.humpos1, humans, 0);
+	fillHuman(requestStruct.humpos2, humans, 1);
+	fillHuman(requestStruct.humpos3, humans, 2);
+	fillHuman(requestStruct.humpos4, humans, 3);
+	fillHuman(requestStruct.humpos5, humans, 4);
+	// further humans are ignored, limitation of MHP. TODO, use MHP parameter.
 
 	cout<<"Requesting path ...\n";
 	int result;
