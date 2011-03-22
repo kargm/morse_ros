@@ -100,6 +100,14 @@ int MotionPlanner::init(string filename, bool initShowInterface) {
 	return report;
 }
 
+int MotionPlanner::initScene(string filename)
+{
+	int report = OK;
+	MHP_SCE sce;
+	strncpy(sce.SceFileName.name, filename.c_str(), 128);
+	mhpLoadSceMain(&sce, &report);
+	return report;
+}
 
 int MotionPlanner::changeCameraPosMain(MHP_CAM_POS *cam_pos, int *report)
 {

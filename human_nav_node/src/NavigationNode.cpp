@@ -10,6 +10,7 @@
 
 
 #include "human_nav_node/InitWorld.h"
+#include "human_nav_node/InitScenario.h"
 #include "human_nav_node/HANaviPlan.h"
 #include "human_nav_node/ChangeInterfaceParams.h"
 #include "human_nav_node/Move3dInterfaceParams.h"
@@ -87,6 +88,19 @@ bool initWorld(InitWorld::Request &req,
   }
 }
 
+bool initScenario(InitScenario::Request &req,
+		InitScenario::Response &res)
+{
+  int result = planner.initScene(req.scfilename.c_str());
+  res.resultcode = result;
+  if (result == 0) {
+      return true;
+  } else {
+      return false;
+  }
+}
+
+
 bool changeInterfaceParams(ChangeInterfaceParams::Request &req,
 		ChangeInterfaceParams::Response &res)
 {
@@ -125,13 +139,9 @@ bool changeCamPos(ChangeCamPos::Request &req,
 	cam_pos.hrot = req.hrot;
 	cam_pos.vrot = req.vrot;
 
-	int report;
+	int report = 0;
 	planner.changeCameraPosMain(&cam_pos, &report);
-	if (report == 0) {
-		return true;
-	} else {
-		return false;
-	}
+	return true;
 }
 
 
@@ -155,8 +165,9 @@ int main(int argc, char **argv)
 
 //  NavigationNode *node = new NavigationNode();
 
-  ros::ServiceServer planservice = n.advertiseService("HANaviPlan", human_nav_node::planPath);
-  ros::ServiceServer initservice = n.advertiseService("InitWorld", human_nav_node::initWorld);
+  ros::ServiceServer planService = n.advertiseService("HANaviPlan", human_nav_node::planPath);
+  ros::ServiceServer initService = n.advertiseService("InitWorld", human_nav_node::initWorld);
+  ros::ServiceServer initSceneService = n.advertiseService("InitScenario", human_nav_node::initScenario);
   ros::ServiceServer setParamsService = n.advertiseService("ChangeInterfaceParams", human_nav_node::changeInterfaceParams);
   ros::ServiceServer setCamService = n.advertiseService("ChangeCamPos", human_nav_node::changeCamPos);
   ROS_INFO("Ready to plan.");

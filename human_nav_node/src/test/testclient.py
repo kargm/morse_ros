@@ -8,12 +8,22 @@ import rospy
 from human_nav_node.srv import *
 from human_nav_node.msg import *
 
-def initWorld():
+def initWorld(filename, graphics):
     rospy.wait_for_service('InitWorld')
     try:
         proxy = rospy.ServiceProxy('InitWorld', InitWorld)
-        testpath = roslib.packages.get_pkg_dir("laas_assets") + "/laas-assets/MorseTutorial/empty.p3d"
-        resp1 = proxy(testpath, 1)
+
+        resp1 = proxy(filename, graphics)
+
+        return resp1.resultcode
+    except rospy.ServiceException, e:
+        print "Service call failed: %s"%e
+
+def initScene(filename):
+    rospy.wait_for_service('InitScenario')
+    try:
+        proxy = rospy.ServiceProxy('InitScenario', InitScenario)
+        resp1 = proxy(filename)
 
         return resp1.resultcode
     except rospy.ServiceException, e:
@@ -66,7 +76,10 @@ if __name__ == "__main__":
     #     sys.exit(1)
 
     # print "%s + %s = %s"%(x, y, add_two_ints_client(x, y))
-    initWorld()
-    planPath(1, 2, 3, 4)
+    simpleWorld = roslib.packages.get_pkg_dir("laas_assets") + "/laas-assets/MorseTutorial/simple.p3d"
+    initWorld(simpleWorld, 1)
+    simpleScene = roslib.packages.get_pkg_dir("laas_assets") + "/laas-assets/MorseTutorial/SCENARIO/simple.sce"
+    initScene(simpleScene)
+    planPath(-5, -6, 3, 2)
     changeIFace(None, True, None, None)
-    changeCamPos(0, 0, 3, 11, -0.7, 0.8)
+    changeCamPos(0, 0, 3, 13, -0.4, 0.8)

@@ -102,6 +102,7 @@ extern void interface_MainLoopEvent();
 
 int assignGlobalVariables();
 ACTIVITY_EVENT mhpLoadP3dMain(MHP_P3D *P3d, int *report);
+ACTIVITY_EVENT mhpLoadSceMain(MHP_SCE *Sce, int *report);
 ACTIVITY_EVENT mhp_initialize_navigation(int *report);
 ACTIVITY_EVENT mhpUpdPosAndFindNavTrajExec(MHP_UPD_FINDPATH & findpath_params, MHP_NAV_TRAJECTORY &result, int *report);
 ACTIVITY_EVENT mhpFindNavTrajExec(MHP_NAV_POS &MotionCoord, MHP_NAV_TRAJECTORY & findpath_params, int *report);

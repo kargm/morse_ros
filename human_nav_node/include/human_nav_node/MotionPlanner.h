@@ -19,6 +19,7 @@ public:
   virtual ~MotionPlanner() {}
 
   int init(std::string filename, bool showInterface);
+  int initScene(std::string filename);
   void updateInterface();
   int updPosAndFindNavTrajExec(MHP_UPD_FINDPATH &findpath_params, MHP_NAV_TRAJECTORY &result, int *report);
   int findNavTrajExec(MHP_NAV_POS &MotionCoord, MHP_NAV_TRAJECTORY &ABS_NAV_traj, int *report);
