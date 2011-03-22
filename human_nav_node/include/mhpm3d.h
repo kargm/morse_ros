@@ -79,11 +79,16 @@ extern hri_bitmapset * MHP_BTSET;
 extern int mhp_fetch_and_update_env(int *report);
 
 #ifndef OK
-#define OK 0
+#define OK (0)
 #endif
 #ifndef ERROR
 #define ERROR (-1)
 #endif
+#ifndef FAIL
+#define FAIL (-1)
+#endif
+
+#define ETHER OK
 
 //extern gik_task_joints * mhp_create_defaut_gik_tasks( void );
 //extern ACTIVITY_EVENT mhp_initialize_manipulation(int *report);
@@ -95,4 +100,12 @@ extern void mhp_Arm2ConfigPt(Gb_q7 *gbconfig, configPt m3dconfig);
 #ifdef USE_GLUT
 extern void interface_MainLoopEvent();
 #endif
-#endif
+
+
+#define ACTIVITY_EVENT int
+
+int assignGlobalVariables();
+ACTIVITY_EVENT mhpLoadP3dMain(MHP_P3D *P3d, int *report);
+ACTIVITY_EVENT mhp_initialize_navigation(int *report);
+
+#endif //MHPM3D_H

@@ -16,7 +16,6 @@ public:
   MotionPlanner() {
 	  isInitialized = false;
 	  showInterface = false;
-	  grid_sampling = 0.15; // m
 	}
   virtual ~MotionPlanner() {}
 

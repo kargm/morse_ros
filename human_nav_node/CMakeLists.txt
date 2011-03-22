@@ -59,6 +59,10 @@ ELSE(UNIX)
  MESSAGE (FATAL_ERROR "Not supported Platform")
 ENDIF(UNIX)
 
-rosbuild_add_executable(hanp_node src/NavigationNode.cpp src/MotionPlanner.cpp)
+rosbuild_add_executable(
+	hanp_node src/NavigationNode.cpp 
+	src/MotionPlanner.cpp 
+	src/codels/mhpMainTaskCodels.cc
+	src/codels/mhpNavigationCodels.cc)
 
 target_link_libraries(hanp_node ${MOVE3D_LIBRARIES} ${GBM_LIBRARIES} ${SOFTMOTION_LIBRARIES})
