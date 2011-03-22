@@ -33,8 +33,8 @@ def planPath(x1, y1, x2, y2):
     rospy.wait_for_service('HANaviPlan')
     try:
         proxy = rospy.ServiceProxy('HANaviPlan', HANaviPlan)
-        start = geometry_msgs.msg.Pose(geometry_msgs.msg.Point(1,2, 0), None)
-        goal = geometry_msgs.msg.Pose(geometry_msgs.msg.Point(4,4, 0), None)
+        start = geometry_msgs.msg.Pose(geometry_msgs.msg.Point(x1, y1, 0), None)
+        goal = geometry_msgs.msg.Pose(geometry_msgs.msg.Point(x2, y2, 0), None)
         humans = None
         request = NavigationPlanRequest(None, start, goal, humans)
         resp = proxy(request)
