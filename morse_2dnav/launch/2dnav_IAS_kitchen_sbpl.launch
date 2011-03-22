@@ -1,0 +1,46 @@
+<launch>
+
+  <include file="$(find morse_2dnav)/morse_sbpl/launch/move_base/move_base_sbpl.xml"/>
+  
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/IAS_kitchen_small.yaml"/>
+
+  <node pkg="morse_tf" type="morse_tf_broadcaster_navstack.py" name="morse_tf_broadcaster_navstack"/>
+  
+  <param name="robot_description" command="cat $(find morse_tf)/urdfs/Jido.urdf"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /> 
+
+  <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
+    <!--remap from="/cmd_vel" to="/base_controller/command"/-->
+    <remap from="~laser_1" to="/base_scan"/>
+    <rosparam>
+      enable_jlo: false
+      
+      slowdown_far: 0.20
+      slowdown_near: 0.08
+      safety_dist: 0.06
+      repelling_dist: 0.10
+      repelling_gain: 0.5
+      repelling_gain_max: 0.015
+
+      vel_ang_max: 0.6
+      vel_lin_max: 0.5
+      acc_ang_max: 0.4
+      acc_lin_max: 0.4
+      loop_rate: 30
+      p: 1.2
+
+      n_lasers: 1
+      complete_blind_spots: false
+
+      speed_filter_name: /nav_pcontroller
+      footprint:
+        top: 0.33
+        bottom: -0.33
+        right: 0.33
+        left: -0.33
+        tolerance: 0.0
+    </rosparam>
+  </node>
+ 
+ 
+</launch>
