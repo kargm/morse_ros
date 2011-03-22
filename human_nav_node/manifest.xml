@@ -1,7 +1,8 @@
 <package>
   <description brief="human_nav_node">
-
-     human_nav_node
+     human_nav_node, the integration of the LAAS CNRS Move3d human aware global plannig library
+     
+     There is a python client in src/test, use it on the started node for a first impression.
 
   </description>
   <author>Thibault Kruse</author>
