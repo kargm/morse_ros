@@ -190,12 +190,13 @@ namespace po = boost::program_options;
 int main(int argc, char **argv)
 {
 	bool showViz = true;
+
 	po::options_description desc("Allowed options");
 	desc.add_options()
-	    		("help", "produce help message")
+	    		("help,h", "produce help message")
 	    		("p3dfile,f", po::value<string>(), "in P3D format (*.p3d)")
-	    		("scenario,sce", po::value<string>(), "in P3D scenario format (*.sce)")
-	    		("novisualization,nv", "do not show 3d visualization")
+	    		("scenario,s", po::value<string>(), "in P3D scenario format (*.sce)")
+	    		("novisualization,n", "do not show 3d visualization")
 	    		;
 
 	po::variables_map vm;
