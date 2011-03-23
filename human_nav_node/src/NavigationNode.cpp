@@ -208,17 +208,26 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
+
 	if (vm.count("p3dfile")) {
 		cout << "Using world file " << vm["p3dfile"].as<string>() << ".\n";
-		human_nav_node::planner.init( vm["p3dfile"].as<string>().c_str(), showViz);
+		if (0 != human_nav_node::planner.init( vm["p3dfile"].as<string>().c_str(), showViz)) {
+			return -1;
+		}
 	} else {
 		cout << "World file level was not set.\n";
 	}
 
 	if (vm.count("scenario")) {
-		cout << "Using scenario file " << vm["scenario"].as<string>() << ".\n";
-		human_nav_node::planner.initScene(vm["scenario"].as<string>().c_str());
-
+		if (vm.count("p3dfile")) {
+			cout << "Using scenario file " << vm["scenario"].as<string>() << ".\n";
+			if (0 != human_nav_node::planner.initScene(vm["scenario"].as<string>().c_str())) {
+				return -1;
+			}
+		} else {
+			cout << "Cannot use scenario without world file.\n";
+			return -1;
+		}
 	} else {
 		cout << "Scenario file level was not set.\n";
 	}
@@ -228,9 +237,11 @@ int main(int argc, char **argv)
 		showViz = false;
 	}
 
+	ROS_INFO("init node");
 	ros::init(argc, argv, "hanp_plan_server");
 	ros::NodeHandle n;
 
+	ROS_INFO("starting services");
 	ros::ServiceServer planService = n.advertiseService("HANaviPlan", human_nav_node::planPath);
 	ros::ServiceServer initService = n.advertiseService("InitWorld", human_nav_node::initWorld);
 	ros::ServiceServer initSceneService = n.advertiseService("InitScenario", human_nav_node::initScenario);
