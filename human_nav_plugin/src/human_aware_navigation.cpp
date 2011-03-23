@@ -147,7 +147,7 @@ void initSub(){
 void initPub(){
   // Gui_path publisher
   ros::NodeHandle n2;
-  plan_pub = n2.advertise<nav_msgs::Path>("global_plan", 1);
+  plan_pub = n2.advertise<nav_msgs::Path>("human_aware_plan", 1);
 }
 
 // make plan for 1 human
@@ -183,11 +183,22 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
   changeIFace(false, true, true, false);
   changeCamPos(0, 0, 3, 13, -0.4, 0.8);
 
-  for (uint j=0; j < plan.size(); j++) {
+  nav_msgs::Path gui_path;
+  for (uint j=0; j < waypoints.poses.size(); j++) {
+     // fill plan for navigation
      plan.push_back(waypoints.poses.at(j));
-  }
 
-  plan_pub.publish(waypoints);
+     // create visualisation plan
+     geometry_msgs::PoseStamped waypoint_tmp = waypoints.poses.at(j);
+     waypoint_tmp.header.frame_id = "map";
+     waypoint_tmp.header.stamp = ros::Time::now();
+     waypoint_tmp.pose.position.x = waypoint_tmp.pose.position.x;
+     waypoint_tmp.pose.position.y = waypoint_tmp.pose.position.y;
+     gui_path.poses.push_back(waypoint_tmp);
+  }
+  plan_pub.publish(gui_path);
+  ros::spinOnce();
+
   return true;
 }
 };

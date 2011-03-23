@@ -89,6 +89,7 @@ bool planPath(HANaviPlan::Request &req,
 	nav_msgs::Path path;
 	for (int i = 0; i < resultTraj.no; ++i) {
 		geometry_msgs::PoseStamped pose;
+		pose.header.frame_id = "map";
 		pose.pose.position.x = resultTraj.xcoord[i];
 		pose.pose.position.y = resultTraj.ycoord[i];
 		pose.pose.position.z = 0;
