@@ -10,12 +10,23 @@
 #include <unistd.h>
 #include <math.h>
 
+#include "human_nav_node/InitWorld.h"
+#include "human_nav_node/InitScenario.h"
+#include "human_nav_node/HANaviPlan.h"
+#include "human_nav_node/ChangeInterfaceParams.h"
+#include "human_nav_node/Move3dInterfaceParams.h"
+#include "human_nav_node/ChangeCamPos.h"
+//#include "human_nav_node/MotionPlanner.h"
+#include "human_nav_node/HumanState.h"
+
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "nav_msgs/Path.h"
 #include "nav_msgs/Odometry.h"
 #include <sstream>
 #include <pluginlib/class_list_macros.h>
+#include "geometry_msgs/Pose.h"
+#include "geometry_msgs/PoseStamped.h"
 
 #include <human_aware_navigation/Move3dXmlRpcClient.hpp>
 
@@ -39,7 +50,6 @@ public:
    * @brief  Default constructor for the NavFnROS object
    */
   HumanAwareNavigation(){};
-
 
   /**
    * @brief  Constructor for the SBPLLatticePlanner object
@@ -75,7 +85,15 @@ private:
 }; // end namespace
 
 void humanPoseCallback(const geometry_msgs::PoseStamped& pose);
+
 void initSub();
 void initPub();
+
+// Interface to planner services
+bool initWorld(std::string& filename, bool graphics);
+bool initScene(std::string& filename);
+nav_msgs::Path planPath(const double& x1, const double& y1, const double& x2, const double& y2, const human_nav_node::HumanState* humanPosesArray, const int& numberOfHumenPoses);
+void changeIFace(bool showObst, bool showDist, bool showVis, bool showShadows);
+void changeCamPos(float xdest, float ydest, float zdest, float dist, float hrot, float vrot);
 
 #endif

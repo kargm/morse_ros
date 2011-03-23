@@ -19,6 +19,7 @@
   <depend package="pluginlib"/>
   <depend package="geometry_msgs"/>
   <depend package="nav_msgs"/>
+  <depend package="human_nav_node"/>
 
   <export>
     <nav_core plugin="${prefix}/human_nav_plugin.xml" />
