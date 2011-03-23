@@ -8,6 +8,10 @@
 #include "ros/ros.h"
 
 
+#include <iostream>
+#include <boost/program_options.hpp>
+#include <string>
+
 
 #include "human_nav_node/InitWorld.h"
 #include "human_nav_node/InitScenario.h"
@@ -22,13 +26,13 @@
 #include "nav_msgs/Path.h"
 #include "geometry_msgs/PoseStamped.h"
 
+using namespace std;
 namespace human_nav_node {
 
-using namespace std;
 
 MotionPlanner planner;
 
-void fillHuman(MHP_HUMAN_POSITION &pos, std::vector<human_nav_node::HumanState> humans, int id) {
+void fillHuman(MHP_HUMAN_POSITION &pos, std::vector<human_nav_node::HumanState> humans, unsigned int id) {
 	if (id < humans.size()) {
 		human_nav_node::HumanState state = humans[id];
 		pos.id = id;
@@ -181,29 +185,68 @@ void spinInterface() {
 
 //************* MAIN *****************
 
+namespace po = boost::program_options;
+
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "hanp_plan_server");
-  ros::NodeHandle n;
+	bool showViz = true;
+	po::options_description desc("Allowed options");
+	desc.add_options()
+	    		("help", "produce help message")
+	    		("p3dfile,f", po::value<string>(), "in P3D format (*.p3d)")
+	    		("scenario,sce", po::value<string>(), "in P3D scenario format (*.sce)")
+	    		("novisualization,nv", "do not show 3d visualization")
+	    		;
 
-//  NavigationNode *node = new NavigationNode();
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::notify(vm);
 
-  ros::ServiceServer planService = n.advertiseService("HANaviPlan", human_nav_node::planPath);
-  ros::ServiceServer initService = n.advertiseService("InitWorld", human_nav_node::initWorld);
-  ros::ServiceServer initSceneService = n.advertiseService("InitScenario", human_nav_node::initScenario);
-  ros::ServiceServer setParamsService = n.advertiseService("ChangeInterfaceParams", human_nav_node::changeInterfaceParams);
-  ros::ServiceServer setCamService = n.advertiseService("ChangeCamPos", human_nav_node::changeCamPos);
-  ROS_INFO("Ready to plan.");
+	if (vm.count("help")) {
+		cout << desc << "\n";
+		return 0;
+	}
 
-  ros::Rate loop_rate(5);
+	if (vm.count("p3dfile")) {
+		cout << "Using world file " << vm["p3dfile"].as<string>() << ".\n";
+		human_nav_node::planner.init( vm["p3dfile"].as<string>().c_str(), showViz);
+	} else {
+		cout << "World file level was not set.\n";
+	}
 
-  while(ros::ok()) {
-	  ros::spinOnce();
-	  human_nav_node::spinInterface();
-	  loop_rate.sleep();
-  }
+	if (vm.count("scenario")) {
+		cout << "Using scenario file " << vm["scenario"].as<string>() << ".\n";
+		human_nav_node::planner.initScene(vm["scenario"].as<string>().c_str());
 
-  return 0;
+	} else {
+		cout << "Scenario file level was not set.\n";
+	}
+
+	if (vm.count("novisualization")) {
+		cout << "Not showing visualization.\n";
+		showViz = false;
+	}
+
+	ros::init(argc, argv, "hanp_plan_server");
+	ros::NodeHandle n;
+
+	ros::ServiceServer planService = n.advertiseService("HANaviPlan", human_nav_node::planPath);
+	ros::ServiceServer initService = n.advertiseService("InitWorld", human_nav_node::initWorld);
+	ros::ServiceServer initSceneService = n.advertiseService("InitScenario", human_nav_node::initScenario);
+	ros::ServiceServer setParamsService = n.advertiseService("ChangeInterfaceParams", human_nav_node::changeInterfaceParams);
+	ros::ServiceServer setCamService = n.advertiseService("ChangeCamPos", human_nav_node::changeCamPos);
+
+	ROS_INFO("services started.");
+
+	ros::Rate loop_rate(5);
+
+	while(ros::ok()) {
+		ros::spinOnce();
+		human_nav_node::spinInterface();
+		loop_rate.sleep();
+	}
+
+	return 0;
 }
 
 
