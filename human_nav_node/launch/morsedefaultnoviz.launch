@@ -1,0 +1,8 @@
+<launch>
+  <node name="hanp_plan_server"
+        pkg="human_nav_node"
+        type="hanp_node"
+        output="screen"
+        args="-f $(find laas_assets)/laas-assets/MorseTutorial/simple.p3d -s $(find laas_assets)/laas-assets/MorseTutorial/SCENARIO/simple.sce -n"
+        />
+</launch>
