@@ -168,8 +168,9 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
 
   human_nav_node::HumanState humanPosesArray[1];
   human_nav_node::HumanState humanPose1;
-  humanPose1.simpleBodyPose.position.x = humanPose.pose.position.x;
-  humanPose1.simpleBodyPose.position.y = humanPose.pose.position.y;
+  //humanPose1.simpleBodyPose.position.x = humanPose.pose.position.x;
+  //humanPose1.simpleBodyPose.position.y = humanPose.pose.position.y;
+  humanPose1.simpleBodyPose.position = humanPose.pose.position;
   humanPose1.simpleBodyPose.orientation = humanPose.pose.orientation;
   humanPose1.id = "0";
   humanPose1.locked = false;
@@ -190,7 +191,7 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
 
      // create visualisation plan
      geometry_msgs::PoseStamped waypoint_tmp = waypoints.poses.at(j);
-     waypoint_tmp.header.frame_id = "map";
+     waypoint_tmp.header.frame_id = "/map";
      waypoint_tmp.header.stamp = ros::Time::now();
      waypoint_tmp.pose.position.x = waypoint_tmp.pose.position.x;
      waypoint_tmp.pose.position.y = waypoint_tmp.pose.position.y;

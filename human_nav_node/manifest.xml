@@ -15,6 +15,7 @@
   <depend package="geometry_msgs"/>
   <depend package="std_msgs"/>
   <depend package="laas_assets"/>
+  <depend package="tf"/>
   <!--<depend package="libmove3d"/>-->
 
 </package>

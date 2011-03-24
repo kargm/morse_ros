@@ -6,6 +6,8 @@
 
   <node pkg="morse_tf" type="morse_tf_broadcaster_navstack.py" name="morse_tf_broadcaster_navstack"/>
   
+  <node pkg="kuka_arm" type="Jido_park_arm.py" name="Jido_park_arm"/>
+
   <param name="robot_description" command="cat $(find morse_tf)/urdfs/Jido.urdf"/>
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /> 
 

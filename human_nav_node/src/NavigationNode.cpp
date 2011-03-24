@@ -25,6 +25,7 @@
 #include "geometry_msgs/Pose.h"
 #include "nav_msgs/Path.h"
 #include "geometry_msgs/PoseStamped.h"
+#include "tf/tf.h"
 
 using namespace std;
 namespace human_nav_node {
@@ -86,6 +87,7 @@ bool planPath(HANaviPlan::Request &req,
 	planner.updPosAndFindNavTrajExec(requestStruct, resultTraj, &result);
 	cout<<"Result: "<<result<<"\n";
 
+
 	nav_msgs::Path path;
 	for (int i = 0; i < resultTraj.no; ++i) {
 		geometry_msgs::PoseStamped pose;
@@ -93,10 +95,11 @@ bool planPath(HANaviPlan::Request &req,
 		pose.pose.position.x = resultTraj.xcoord[i];
 		pose.pose.position.y = resultTraj.ycoord[i];
 		pose.pose.position.z = 0;
-		pose.pose.orientation.x = 0;
-		pose.pose.orientation.y = 0;
-		pose.pose.orientation.z = 0;
-		pose.pose.orientation.w = resultTraj.theta[i];
+		tf::Quaternion orientation = tf::createQuaternionFromRPY(0, 0, resultTraj.theta[i]);
+		pose.pose.orientation.x = orientation.x();
+		pose.pose.orientation.y = orientation.y();
+		pose.pose.orientation.z = orientation.z();
+		pose.pose.orientation.w = orientation.w();
 		path.poses.push_back(pose);
 	}
 	res.path = path;
