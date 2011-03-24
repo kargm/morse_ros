@@ -12,41 +12,6 @@ namespace human_nav_plugin{
   geometry_msgs::PoseStamped humanPose = geometry_msgs::PoseStamped();
   bool pose_init = false;
 
-// call initworld-service of human-nav-node
-bool initWorld(std::string& filename, bool graphics) {
-  ros::NodeHandle n;
-  ros::ServiceClient client = n.serviceClient<human_nav_node::InitWorld>("InitWorld");
-  human_nav_node::InitWorld srv;
-  srv.request.pdfilename = filename;
-  srv.request.showInterface = graphics;
-  if (client.call(srv))
-    {
-      ROS_INFO("initWorld Service call successful");
-    }
-    else
-    {
-      ROS_ERROR("Failed to call service initWorld");
-    }
-    return srv.response.resultcode;
-}
-
-// call initScene Service of human-nav-node
-bool initScene(std::string& filename) {
-  ros::NodeHandle n;
-  ros::ServiceClient client = n.serviceClient<human_nav_node::InitScenario>("InitScenario");
-  human_nav_node::InitScenario srv;
-  srv.request.scfilename = filename;
-  if (client.call(srv))
-  {
-    ROS_INFO("initScene service call successful");
-  }
-  else
-  {
-    ROS_ERROR("Failed to call initScene service");
-  }
-  return srv.response.resultcode;
-}
-
 // call planPath service of human_nav_node
 nav_msgs::Path planPath(const double& x1, const double& y1, const double& x2, const double& y2, const human_nav_node::HumanState* humanPosesArray, const int& numberOfHumanPoses) {
   ros::NodeHandle n;
@@ -121,6 +86,7 @@ void changeCamPos(float xdest, float ydest, float zdest, float dist, float hrot,
     }
 }
 
+// callback function for human pose
 void humanPoseCallback(const nav_msgs::Odometry& pose)
 {
     //ROS_INFO("Found human at: [%g, %g]", pose.pose.pose.position.x, pose.pose.pose.position.y);
@@ -168,8 +134,6 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
 
   human_nav_node::HumanState humanPosesArray[1];
   human_nav_node::HumanState humanPose1;
-  //humanPose1.simpleBodyPose.position.x = humanPose.pose.position.x;
-  //humanPose1.simpleBodyPose.position.y = humanPose.pose.position.y;
   humanPose1.simpleBodyPose.position = humanPose.pose.position;
   humanPose1.simpleBodyPose.orientation = humanPose.pose.orientation;
   humanPose1.id = "0";
@@ -185,18 +149,19 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
   changeCamPos(0, 0, 3, 13, -0.4, 0.8);
 
   nav_msgs::Path gui_path;
+  gui_path.header.frame_id = "map";
   for (uint j=0; j < waypoints.poses.size(); j++) {
-     // fill plan for navigation
+     // fill plan for global planner
      plan.push_back(waypoints.poses.at(j));
-
-     // create visualisation plan
+     // create visualisation plan for GUI
      geometry_msgs::PoseStamped waypoint_tmp = waypoints.poses.at(j);
-     waypoint_tmp.header.frame_id = "/map";
+     waypoint_tmp.header.frame_id = "map";
      waypoint_tmp.header.stamp = ros::Time::now();
      waypoint_tmp.pose.position.x = waypoint_tmp.pose.position.x;
      waypoint_tmp.pose.position.y = waypoint_tmp.pose.position.y;
      gui_path.poses.push_back(waypoint_tmp);
   }
+  // publish visualization plan
   plan_pub.publish(gui_path);
   ros::spinOnce();
 

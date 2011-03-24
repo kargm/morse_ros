@@ -2,7 +2,7 @@
 
   <include file="$(find morse_2dnav)/morse_humanAware/launch/move_base/move_base_humanAware.xml"/>
   
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/tut1_map_025_empty.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/tut1_map.yaml"/> 
 
   <node pkg="morse_tf" type="morse_tf_broadcaster_navstack.py" name="morse_tf_broadcaster_navstack"/>
   
