@@ -3,7 +3,7 @@
 PLUGINLIB_DECLARE_CLASS(human_nav_plugin, HumanAwareNavigation, human_nav_plugin::HumanAwareNavigation, nav_core::BaseGlobalPlanner)
 
 /**
- * A human-aware-navigation-plugin to replace the global planner of nav_core
+ * A human-aware-navigation-plugin to replace the global planner of nav_core with a human-friendly navigation
  */
 
 namespace human_nav_plugin{
