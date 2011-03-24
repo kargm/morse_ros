@@ -1,0 +1,17 @@
+<package>
+  <description brief="kuka_arm">
+
+     kuka_arm
+
+  </description>
+  <author>Michael Karg</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/kuka_arm</url>
+  <depend package="rospy"/>
+  <depend package="sensor_msgs"/>
+  <depend package="std_msgs"/>
+
+</package>
+
+
