@@ -143,7 +143,7 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
   nav_msgs::Path waypoints= planPath(start, goal, humanPosesArray, 1);
   ROS_INFO("Got path with %Zu waypoints", waypoints.poses.size());
 
-  changeIFace(false, true, true, false);
+  changeIFace(false, true, false, false);
   changeCamPos(0, 0, 3, 13, -0.4, 0.8);
 
   nav_msgs::Path gui_path;
