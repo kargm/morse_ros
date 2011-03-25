@@ -92,7 +92,7 @@ void initPub();
 // Interface to planner services
 bool initWorld(std::string& filename, bool graphics);
 bool initScene(std::string& filename);
-nav_msgs::Path planPath(const double& x1, const double& y1, const double& x2, const double& y2, const human_nav_node::HumanState* humanPosesArray, const int& numberOfHumenPoses);
+nav_msgs::Path planPath(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal, const human_nav_node::HumanState* humanPosesArray, const int& numberOfHumanPoses);
 void changeIFace(bool showObst, bool showDist, bool showVis, bool showShadows);
 void changeCamPos(float xdest, float ydest, float zdest, float dist, float hrot, float vrot);
 

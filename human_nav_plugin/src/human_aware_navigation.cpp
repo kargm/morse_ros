@@ -13,16 +13,14 @@ namespace human_nav_plugin{
   bool pose_init = false;
 
 // call planPath service of human_nav_node
-nav_msgs::Path planPath(const double& x1, const double& y1, const double& x2, const double& y2, const human_nav_node::HumanState* humanPosesArray, const int& numberOfHumanPoses) {
+nav_msgs::Path planPath(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal, const human_nav_node::HumanState* humanPosesArray, const int& numberOfHumanPoses) {
   ros::NodeHandle n;
   ros::ServiceClient client = n.serviceClient<human_nav_node::HANaviPlan>("HANaviPlan");
   human_nav_node::HANaviPlan srv;
   // Starting point
-  geometry_msgs::Pose startPose = geometry_msgs::Pose();
-  startPose.position.x = x1; startPose.position.y = y1;
+  geometry_msgs::Pose startPose = start.pose;
   // Goal point
-  geometry_msgs::Pose goalPose = geometry_msgs::Pose();
-  goalPose.position.x = x2; goalPose.position.y = y2;
+  geometry_msgs::Pose goalPose = goal.pose;
 
   std::vector<human_nav_node::HumanState> humanPosesVector;
   for(int i=0; i<numberOfHumanPoses; i++) {
@@ -142,7 +140,7 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
   humanPosesArray[0] = humanPose1;
 
   // plan the path using human_nav_node service
-  nav_msgs::Path waypoints= planPath(start.pose.position.x, start.pose.position.y, goal.pose.position.x, goal.pose.position.y, humanPosesArray, 1);
+  nav_msgs::Path waypoints= planPath(start, goal, humanPosesArray, 1);
   std::cout << "[human_navigation:move3d] Got path with " << waypoints.poses.size() << "waypoints";
 
   changeIFace(false, true, true, false);
@@ -157,8 +155,8 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
      geometry_msgs::PoseStamped waypoint_tmp = waypoints.poses.at(j);
      waypoint_tmp.header.frame_id = "map";
      waypoint_tmp.header.stamp = ros::Time::now();
-     waypoint_tmp.pose.position.x = waypoint_tmp.pose.position.x;
-     waypoint_tmp.pose.position.y = waypoint_tmp.pose.position.y;
+     //waypoint_tmp.pose.position.x = waypoint_tmp.pose.position.x;
+     //waypoint_tmp.pose.position.y = waypoint_tmp.pose.position.y;
      gui_path.poses.push_back(waypoint_tmp);
   }
   // publish visualization plan

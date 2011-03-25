@@ -64,10 +64,10 @@ bool planPath(HANaviPlan::Request &req,
 	MHP_UPD_FINDPATH requestStruct;
 	requestStruct.search_definition.startpos.x = start.position.x;
 	requestStruct.search_definition.startpos.y = start.position.y;
-	requestStruct.search_definition.startpos.th = start.orientation.z;
+	requestStruct.search_definition.startpos.th = tf::getYaw(start.orientation);
 	requestStruct.search_definition.goalpos.x = goal.position.x;
 	requestStruct.search_definition.goalpos.y = goal.position.y;
-	requestStruct.search_definition.goalpos.th = goal.orientation.z;
+	requestStruct.search_definition.goalpos.th = tf::getYaw(goal.orientation);;
 
 	requestStruct.search_definition.configuration = 0;
 	requestStruct.search_definition.linelen = 0;
