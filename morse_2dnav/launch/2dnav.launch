@@ -1,5 +1,6 @@
 <launch>
    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <remap from="/base_scan" to="/Jido/Sick"/>
     <rosparam file="$(find morse_2dnav)/morse_move_base/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find morse_2dnav)/morse_move_base/costmap_common_params.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find morse_2dnav)/morse_move_base/local_costmap_params.yaml" command="load" />
@@ -13,7 +14,7 @@
 
   <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
     <!--remap from="/cmd_vel" to="/base_controller/command"/-->
-    <remap from="~laser_1" to="/base_scan"/>
+    <remap from="~laser_1" to="/Jido/Sick"/>
     <rosparam>
       enable_jlo: false
       

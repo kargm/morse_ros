@@ -11,7 +11,7 @@
 
   <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
     <!--remap from="/cmd_vel" to="/base_controller/command"/-->
-    <remap from="~laser_1" to="/base_scan"/>
+    <remap from="~laser_1" to="/Jido/Sick"/>
     <rosparam>
       enable_jlo: false
       

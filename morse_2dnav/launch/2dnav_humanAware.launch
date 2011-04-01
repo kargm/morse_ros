@@ -1,6 +1,9 @@
 <launch>
 
-  <include file="$(find morse_2dnav)/morse_humanAware/launch/move_base/move_base_humanAware.xml"/>
+  <param name="robot_description" command="cat $(find morse_tf)/urdfs/Jido.urdf"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /> 
+  
+  <include file="$(find morse_2dnav)/morse_humanAemacware/launch/move_base/move_base_humanAware.xml"/>
   
   <include file="$(find human_nav_node)/launch/morsedefault.launch"/>
 
@@ -10,12 +13,9 @@
   
   <node pkg="kuka_arm" type="Jido_park_arm.py" name="Jido_park_arm"/>
   
-  <param name="robot_description" command="cat $(find morse_tf)/urdfs/Jido.urdf"/>
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /> 
-
   <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
-    <!--remap from="/cmd_vel" to="/base_controller/command"/-->
-    <remap from="~laser_1" to="/base_scan"/>
+    
+    <remap from="~laser_1" to="/Jido/Sick"/>
     <rosparam>
       enable_jlo: false
       
