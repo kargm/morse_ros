@@ -7,6 +7,8 @@
     <rosparam file="$(find morse_2dnav)/morse_move_base/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find morse_2dnav)/morse_move_base/base_local_planner_params.yaml" command="load" />
   </node>
+
+ <node pkg="kuka_arm" type="Jido_park_arm.py" name="Jido_park_arm"/>
   
   <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/tut1_map.yaml"/> 
 
