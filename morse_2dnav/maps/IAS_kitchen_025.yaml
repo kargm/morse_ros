@@ -1,0 +1,7 @@
+image: IAS_kitchen_025.pgm
+resolution: 0.0250000
+origin: [-43.500000, -51.48000, 0.0273]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+
