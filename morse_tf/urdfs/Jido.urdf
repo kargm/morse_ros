@@ -2,16 +2,32 @@
   <link name="base_footprint" />
   <link name="base_link" />
   <link name="base_laser_link" />
+  <link name="head_pan_link" />
+  <link name="head_tilt_link" />
   
   <joint name="base_joint" type="fixed">
     <parent link="base_footprint"/>
     <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0" />
   </joint>
 
   <joint name="laser_joint" type="fixed">
     <parent link="base_link"/>
     <child link="base_laser_link"/>
-    <origin xyz="0.38 0 0.3" rpy="0 0 0" />
+    <origin xyz="0.37 0 0.3" rpy="0 0 0" />
   </joint>
 
+  <joint name="head_pan_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="head_pan_link"/>
+    <origin xyz="0.239 0 1.185" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="head_tilt_joint" type="fixed">
+    <parent link="head_pan_link"/>
+    <child link="head_tilt_link"/>
+    <origin xyz="0 0 0.02" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
 </robot>
