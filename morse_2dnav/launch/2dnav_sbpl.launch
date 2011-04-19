@@ -7,7 +7,9 @@
   <node pkg="morse_tf" type="morse_tf_broadcaster_navstack.py" name="morse_tf_broadcaster_navstack"/>
   
   <param name="robot_description" command="cat $(find morse_tf)/urdfs/Jido.urdf"/>
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /> 
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"> 
+  <remap from="joint_states" to="/Jido/ptu_posture" />
+  </node>
 
   <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
     <!--remap from="/cmd_vel" to="/base_controller/command"/-->
