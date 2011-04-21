@@ -19,23 +19,28 @@ int main (int argc, char **argv)
   ROS_INFO("Action server started, sending goal.");
   // send a goal to the action
   jido_move_head::move_headGoal goal;
-  goal.targetPose.header.frame_id = "map";
-  goal.targetPose.point.x = 8;
-  goal.targetPose.point.y = 2;
-  goal.targetPose.point.z = 1;
-  ac.sendGoal(goal);
 
-  //wait for the action to return
-  bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
-
-  if (finished_before_timeout)
-  {
-    actionlib::SimpleClientGoalState state = ac.getState();
-    ROS_INFO("Action finished: %s",state.toString().c_str());
+  if (argc < 4) {
+    ROS_ERROR("Please provide x,y and z coordinates to look at as command line arguments!");
   }
-  else
-    ROS_INFO("Action did not finish before the time out.");
+  else {
+    goal.targetPose.header.frame_id = "map";
+    goal.targetPose.point.x = atof(argv[1]);
+    goal.targetPose.point.y = atof(argv[2]);
+    goal.targetPose.point.z = atof(argv[3]);
+    ac.sendGoal(goal);
 
+    //wait for the action to return
+    bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
+
+    if (finished_before_timeout)
+    {
+      actionlib::SimpleClientGoalState state = ac.getState();
+      ROS_INFO("Action finished: %s",state.toString().c_str());
+    }
+    else
+      ROS_INFO("Action did not finish before the time out.");
+    }
   //exit
   return 0;
 }
