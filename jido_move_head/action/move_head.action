@@ -1,0 +1,8 @@
+#goal definition
+geometry_msgs/PointStamped targetPose
+---
+#result definition
+geometry_msgs/Vector3 resultPanTilt
+---
+#feedback
+geometry_msgs/Vector3 feedbackPanTilt
