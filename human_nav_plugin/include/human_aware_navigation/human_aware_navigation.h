@@ -28,7 +28,6 @@
 #include "geometry_msgs/Pose.h"
 #include "geometry_msgs/PoseStamped.h"
 
-#include <human_aware_navigation/Move3dXmlRpcClient.hpp>
 
 using namespace std;
 

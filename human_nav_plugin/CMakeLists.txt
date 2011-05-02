@@ -29,8 +29,7 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #rosbuild_add_executable(example examples/example.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
 
-rosbuild_add_library(human_nav_plugin src/human_aware_navigation.cpp  src/Move3dXmlRpcClient.cpp)
-#rosbuild_add_executable(testclient src/test/testxmlrpc-client.cpp src/Move3dXmlRpcClient.cpp )
+rosbuild_add_library(human_nav_plugin src/human_aware_navigation.cpp)
 #rosbuild_add_executable(foo src/foo.cpp)
 #target_link_libraries(foo human_nav_plugin)
 
