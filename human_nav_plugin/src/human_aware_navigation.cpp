@@ -9,8 +9,10 @@ PLUGINLIB_DECLARE_CLASS(human_nav_plugin, HumanAwareNavigation, human_nav_plugin
 namespace human_nav_plugin{
 
   ros::Publisher plan_pub;
+  ros::Subscriber sub;
   geometry_msgs::PoseStamped humanPose = geometry_msgs::PoseStamped();
   bool pose_init = false;
+  bool initialized = false;
 
 // call planPath service of human_nav_node
 nav_msgs::Path planPath(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal, const human_nav_node::HumanState* humanPosesArray, const int& numberOfHumanPoses) {
@@ -93,13 +95,9 @@ void humanPoseCallback(const nav_msgs::Odometry& pose)
     pose_init = true;
 }
 
-
-//Initialise subscriber and spin until first position is received
-void initSub(){
-  // Subscriber for human pose
+// waits for one update of poses
+void readPoses() {
   pose_init = false;
-  ros::NodeHandle n1;
-  ros::Subscriber sub = n1.subscribe("/Human/GPS", 10, humanPoseCallback);
   ros::Rate r(1); // 10 hz
   while (!pose_init) {
     ros::spinOnce();
@@ -107,12 +105,26 @@ void initSub(){
   }
 }
 
-//Initialise publisher for gui_path
-void initPub(){
-  // Gui_path publisher
-  ros::NodeHandle n2;
-  plan_pub = n2.advertise<nav_msgs::Path>("human_aware_plan", 1);
+
+//Initialise publisher for gui_path and subscriber to poses, unless already done
+void initPubAndSub(){
+  if (initialized == false) {
+    // Gui_path publisher
+    ros::NodeHandle n1;
+    plan_pub = n1.advertise<nav_msgs::Path>("human_aware_plan", 1);
+    // Subscriber for human pose
+    // ros::NodeHandle n1;
+    sub = n1.subscribe("/Human/GPS", 10, humanPoseCallback);
+    readPoses();
+    initialized = true;
+
+
+    changeIFace(false, true, false, false);
+    changeCamPos(0, 0, 3, 13, -0.4, 0.8);
+  }
 }
+
+
 
 // make plan for 1 human
 bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
@@ -124,9 +136,12 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
   plan.clear();
 
   // Initialise Subscriber to get human pose
-  initSub();
   // Initialise Publisher for gui_plan
-  initPub();
+  initPubAndSub();
+
+  // make sure we have read poses
+  readPoses();
+
   ROS_INFO("Found human at: [%g, %g]", humanPose.pose.position.x, humanPose.pose.position.y);
   ROS_INFO("Starting human-friendly planner...");
 
@@ -143,8 +158,6 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
   nav_msgs::Path waypoints= planPath(start, goal, humanPosesArray, 1);
   ROS_INFO("Got path with %Zu waypoints", waypoints.poses.size());
 
-  changeIFace(false, true, false, false);
-  changeCamPos(0, 0, 3, 13, -0.4, 0.8);
 
   nav_msgs::Path gui_path;
   gui_path.header.frame_id = "map";
