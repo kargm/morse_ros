@@ -25,7 +25,7 @@ nav_msgs::Path planPath(const geometry_msgs::PoseStamped& start, const geometry_
   std::vector<human_nav_node::HumanState> humanPosesVector;
   for(int i=0; i<numberOfHumanPoses; i++) {
     humanPosesVector.push_back(humanPosesArray[i]);
-    std::cout << "[human_navigation:move3d] Found human at: " << humanPosesArray[i].simpleBodyPose.position.x << ", " << humanPosesArray[i].simpleBodyPose.position.y << "\n";
+    // ROS_INFO("Found human at: %f, %f", humanPosesArray[i].simpleBodyPose.position.x, humanPosesArray[i].simpleBodyPose.position.y;
   }
   srv.request.request.start = startPose;
   srv.request.request.goal = goalPose;
@@ -127,8 +127,8 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
   initSub();
   // Initialise Publisher for gui_plan
   initPub();
-  ROS_INFO("[human_navigation] Found human at: [%g, %g]", humanPose.pose.position.x, humanPose.pose.position.y);
-  ROS_INFO("[human_navigation] Starting human-friendly planner...");
+  ROS_INFO("Found human at: [%g, %g]", humanPose.pose.position.x, humanPose.pose.position.y);
+  ROS_INFO("Starting human-friendly planner...");
 
   human_nav_node::HumanState humanPosesArray[1];
   human_nav_node::HumanState humanPose1;
@@ -141,7 +141,7 @@ bool HumanAwareNavigation::makePlan(const geometry_msgs::PoseStamped& start,
 
   // plan the path using human_nav_node service
   nav_msgs::Path waypoints= planPath(start, goal, humanPosesArray, 1);
-  std::cout << "[human_navigation:move3d] Got path with " << waypoints.poses.size() << "waypoints";
+  ROS_INFO("Got path with %Zu waypoints", waypoints.poses.size());
 
   changeIFace(false, true, true, false);
   changeCamPos(0, 0, 3, 13, -0.4, 0.8);
