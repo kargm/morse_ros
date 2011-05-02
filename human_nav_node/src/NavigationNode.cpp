@@ -39,7 +39,7 @@ void fillHuman(MHP_HUMAN_POSITION &pos, std::vector<human_nav_node::HumanState> 
 		pos.id = id;
 		pos.pos.x = state.simpleBodyPose.position.x;
 		pos.pos.y = state.simpleBodyPose.position.y;
-		pos.pos.th = state.simpleBodyPose.orientation.z;
+		pos.pos.th = tf::getYaw(state.simpleBodyPose.orientation);
 
 		if (state.locked) {
 			if (state.moving) {

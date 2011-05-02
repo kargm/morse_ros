@@ -88,8 +88,8 @@ void changeCamPos(float xdest, float ydest, float zdest, float dist, float hrot,
 void humanPoseCallback(const nav_msgs::Odometry& pose)
 {
     //ROS_INFO("Found human at: [%g, %g]", pose.pose.pose.position.x, pose.pose.pose.position.y);
-    humanPose.pose.position.x = pose.pose.pose.position.x;
-    humanPose.pose.position.y = pose.pose.pose.position.y;
+    humanPose.pose.position = pose.pose.pose.position;
+    humanPose.pose.orientation = pose.pose.pose.orientation;
     pose_init = true;
 }
 
