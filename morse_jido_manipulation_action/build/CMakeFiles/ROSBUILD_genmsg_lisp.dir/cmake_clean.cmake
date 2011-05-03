@@ -1,0 +1,39 @@
+FILE(REMOVE_RECURSE
+  "../src/morse_jido_manipulation_action/msg"
+  "../msg_gen"
+  "../msg_gen"
+  "CMakeFiles/ROSBUILD_genmsg_lisp"
+  "../msg_gen/lisp/arm_manipulationAction.lisp"
+  "../msg_gen/lisp/_package.lisp"
+  "../msg_gen/lisp/_package_arm_manipulationAction.lisp"
+  "../msg_gen/lisp/arm_manipulationGoal.lisp"
+  "../msg_gen/lisp/_package.lisp"
+  "../msg_gen/lisp/_package_arm_manipulationGoal.lisp"
+  "../msg_gen/lisp/arm_manipulationActionGoal.lisp"
+  "../msg_gen/lisp/_package.lisp"
+  "../msg_gen/lisp/_package_arm_manipulationActionGoal.lisp"
+  "../msg_gen/lisp/arm_manipulationResult.lisp"
+  "../msg_gen/lisp/_package.lisp"
+  "../msg_gen/lisp/_package_arm_manipulationResult.lisp"
+  "../msg_gen/lisp/arm_manipulationActionResult.lisp"
+  "../msg_gen/lisp/_package.lisp"
+  "../msg_gen/lisp/_package_arm_manipulationActionResult.lisp"
+  "../msg_gen/lisp/arm_manipulationFeedback.lisp"
+  "../msg_gen/lisp/_package.lisp"
+  "../msg_gen/lisp/_package_arm_manipulationFeedback.lisp"
+  "../msg_gen/lisp/arm_manipulationActionFeedback.lisp"
+  "../msg_gen/lisp/_package.lisp"
+  "../msg_gen/lisp/_package_arm_manipulationActionFeedback.lisp"
+  "../msg/arm_manipulationAction.msg"
+  "../msg/arm_manipulationGoal.msg"
+  "../msg/arm_manipulationActionGoal.msg"
+  "../msg/arm_manipulationResult.msg"
+  "../msg/arm_manipulationActionResult.msg"
+  "../msg/arm_manipulationFeedback.msg"
+  "../msg/arm_manipulationActionFeedback.msg"
+)
+
+# Per-language clean rules from dependency scanning.
+FOREACH(lang)
+  INCLUDE(CMakeFiles/ROSBUILD_genmsg_lisp.dir/cmake_clean_${lang}.cmake OPTIONAL)
+ENDFOREACH(lang)
