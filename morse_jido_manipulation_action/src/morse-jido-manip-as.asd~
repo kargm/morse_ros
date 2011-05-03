@@ -1,7 +1,0 @@
-(asdf:defsystem morse-jido-manip-as
-  :components
-  ((:module "mjido-manip-as"
-            :components
-            ((:file "package")
-             (:file "morse-jido-manip-action-server" :depends-on ("package")))))
-  :depends-on ("roslisp" "actionlib" ))
