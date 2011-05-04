@@ -1,23 +1,7 @@
 <launch>
-<!-- NOTE: Move base and kuka_arm should be removed for this tutorial-launch-file. But first we have to think of a way to only bring up the ptu-process module in CRAM -->
 
- <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-    <remap from="/base_scan" to="/Jido/Sick"/>
-    <rosparam file="$(find morse_2dnav)/morse_move_base/costmap_common_params.yaml" command="load" ns="global_costmap" />
-    <rosparam file="$(find morse_2dnav)/morse_move_base/costmap_common_params.yaml" command="load" ns="local_costmap" />
-    <rosparam file="$(find morse_2dnav)/morse_move_base/local_costmap_params.yaml" command="load" />
-    <rosparam file="$(find morse_2dnav)/morse_move_base/global_costmap_params.yaml" command="load" />
-    <rosparam file="$(find morse_2dnav)/morse_move_base/base_local_planner_params.yaml" command="load" />
-  </node>
-
-  <node pkg="kuka_arm" type="Jido_park_arm.py" name="Jido_park_arm"/>
-
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/tut1_map.yaml"/> 
-
-  <node pkg="morse_tf" type="morse_tf_broadcaster_navstack.py" name="morse_tf_broadcaster_navstack"/>
-  
   <param name="robot_description" command="cat $(find morse_tf)/urdfs/Jido.urdf"/>
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"> 
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
   <remap from="joint_states" to="/Jido/ptu_posture" />
   </node>
 
