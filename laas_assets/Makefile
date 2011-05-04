@@ -4,10 +4,13 @@ DISTNAME=               gbM-${PKGVERSION}
 PREFIX=`pwd`/..
 #`rospack find gbM`
 
-all: laas-assets
+all: laas-assets pull
+
+pull:
+	cd laas-assets; git pull --rebase
 
 clean:
 #	rm -rf laas-assets
 
 laas-assets: Makefile
-	git clone http://trac.laas.fr/git/robots/move3d-assets.git laas-assets
+	test -d laas-assets || git clone http://trac.laas.fr/git/robots/move3d-assets.git laas-assets
