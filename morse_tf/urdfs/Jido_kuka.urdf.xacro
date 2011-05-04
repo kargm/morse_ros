@@ -1,0 +1,52 @@
+<robot name="Jido_kuka">
+  <link name="base_footprint" />
+  <link name="base_link" />
+  <link name="base_laser_link" />
+  <link name="head_pan_link" />
+  <link name="head_tilt_link" />
+  
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_laser_link"/>
+    <origin xyz="0.37 0 0.3" rpy="0 0 0" />
+  </joint>
+
+  <joint name="head_pan_joint" type="continuous">
+    <axis xyz="0 0 1" />
+    <origin xyz="0.239 0 1.185" rpy="0 0 0" />
+    <parent link="base_link"/>
+    <child link="head_pan_link"/>
+  </joint>
+
+  <joint name="head_tilt_joint" type="continuous">
+    <axis xyz="0 1 0" />
+    <origin xyz="0 0 0.02" rpy="0 0 0" />
+    <parent link="head_pan_link"/>
+    <child link="head_tilt_link"/>
+  </joint>
+
+  <!-- START KUKA ARM -->
+
+  <!-- Robot Base -> Left arm base -->
+  <property name="cal_base_to_arm_x"     value="0.176" />
+  <property name="cal_base_to_arm_y"     value="0.178" />
+  <property name="cal_base_to_arm_z"     value="0.9" />
+  <property name="cal_base_to_arm_roll"  value="1.571" />
+  <property name="cal_base_to_arm_pitch" value="0" />
+  <property name="cal_base_to_arm_yaw"   value="0" />
+
+  <include filename="$(find morse_tf)/urdfs/kuka_lwr_arm.urdf.xacro"/>
+  <include filename="$(find morse_tf)/urdfs/materials.xml"/>
+
+  <kuka_lwr_arm parent="base" name="kuka" right="1" tool_name="_angle">
+    <origin xyz="${cal_base_to_arm_x} ${cal_base_to_arm_y} ${cal_base_to_arm_z}"
+            rpy="${cal_base_to_arm_roll} ${cal_base_to_arm_pitch} ${cal_base_to_arm_yaw}"/>
+  </kuka_lwr_arm>
+
+</robot>

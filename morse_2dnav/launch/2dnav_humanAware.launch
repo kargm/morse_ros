@@ -1,6 +1,10 @@
 <launch>
 
-  <param name="robot_description" command="cat $(find morse_tf)/urdfs/Jido.urdf"/>
+  <param name="robot_description"  command="$(find xacro)/xacro.py '$(find morse_tf)/urdfs/Jido_kuka.urdf.xacro'" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"> 
+  <remap from="joint_states" to="/Jido/jido_posture" />
+  </node>
+ 
   <include file="$(find morse_2dnav)/morse_humanAware/launch/move_base/move_base_humanAware.xml"/>
 
   <include file="$(find human_nav_node)/launch/morsedefault.launch"/>
