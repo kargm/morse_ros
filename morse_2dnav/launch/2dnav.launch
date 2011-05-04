@@ -51,6 +51,6 @@
   <remap from="joint_states" to="/Jido/ptu_posture" />
   </node>
 
- 
+  <node name="test_morse_nodes" pkg="morse_2dnav" type="test_morse_nodes.py"/> 
  
 </launch>
