@@ -15,7 +15,7 @@
 
   <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
     <remap from="~laser_1" to="/Jido/Sick"/>
-    <rosparam file="$(find morse_2dnav)/launch/nav_pcontroller_params.yaml" command="load" ns="nav_pcontroller" />
+    <rosparam file="$(find morse_2dnav)/launch/nav_pcontroller_params.yaml" command="load" />
   </node>
 
   <node name="test_morse_nodes" pkg="morse_2dnav" type="test_morse_nodes.py"/> 
