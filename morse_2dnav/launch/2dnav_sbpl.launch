@@ -1,19 +1,14 @@
 <launch>
 
   <include file="$(find morse_2dnav)/morse_sbpl/launch/move_base/move_base_sbpl.xml"/>
-  
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/tut1_map_025.yaml"/>
+  <include file="$(find morse_tf)/launch/morse_tf.launch"/>
 
-  <node pkg="morse_tf" type="morse_tf_broadcaster_navstack.py" name="morse_tf_broadcaster_navstack"/>
+ 
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/tut1_map_025.yaml"/>
   
   <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/tut1_map.yaml"/> 
-  <param name="robot_description"  command="$(find xacro)/xacro.py '$(find morse_tf)/urdfs/Jido_kuka.urdf.xacro'" />
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"> 
-  <remap from="joint_states" to="/Jido/jido_posture" />
-  </node>
-
+ 
   <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
-    <!--remap from="/cmd_vel" to="/base_controller/command"/-->
     <remap from="~laser_1" to="/Jido/Sick"/>
     <rosparam>
       enable_jlo: false

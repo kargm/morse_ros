@@ -1,5 +1,8 @@
 <launch>
-   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+  
+  <include file="$(find morse_tf)/launch/morse_tf.launch"/>
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <remap from="/base_scan" to="/Jido/Sick"/>
     <rosparam file="$(find morse_2dnav)/morse_move_base/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find morse_2dnav)/morse_move_base/costmap_common_params.yaml" command="load" ns="local_costmap" />
@@ -11,7 +14,7 @@
   <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/IAS_kitchen_small.yaml"/> 
 
   <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
-    <!--remap from="/cmd_vel" to="/base_controller/command"/-->
+
     <remap from="~laser_1" to="/Jido/Sick"/>
     <rosparam>
       enable_jlo: false
@@ -43,13 +46,6 @@
     </rosparam>
   </node>
 
-  <node pkg="morse_tf" type="morse_tf_broadcaster_navstack.py" name="morse_tf_broadcaster_navstack"/>
-  
-  <param name="robot_description"  command="$(find xacro)/xacro.py '$(find morse_tf)/urdfs/Jido_kuka.urdf.xacro'" />
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"> 
-  <remap from="joint_states" to="/Jido/jido_posture" />
-  </node>
-  
   <node name="test_morse_nodes" pkg="morse_2dnav" type="test_morse_nodes.py"/> 
  
  
