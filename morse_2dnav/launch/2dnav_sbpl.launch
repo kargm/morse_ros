@@ -10,6 +10,7 @@
  
   <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
     <remap from="~laser_1" to="/Jido/Sick"/>
+    <remap from="/goal" to="/nav_pcontroller/goal"/>
     <rosparam file="$(find morse_2dnav)/launch/nav_pcontroller_params.yaml" command="load" />
   </node>
  
