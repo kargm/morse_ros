@@ -1,8 +1,0 @@
-#goal
-sensor_msgs/JointState joints
----
-#result
-bool success
----
-#feedback -1:failure, 1: proceed the action, 2:success
-int32 statuss
