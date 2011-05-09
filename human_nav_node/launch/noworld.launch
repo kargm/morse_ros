@@ -1,8 +1,0 @@
-<launch>
-  <node name="hanp_plan_server"
-        pkg="human_nav_node"
-        type="hanp_node"
-        output="screen"
-        args="-n"
-        />
-</launch>
