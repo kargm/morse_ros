@@ -1,0 +1,3 @@
+<launch>
+  <node name="jido_manip_server" pkg="morse_jido_manipulation_action" type="manip_action" />
+</launch>
