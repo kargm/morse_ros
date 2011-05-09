@@ -23,5 +23,5 @@
       ;; action namespace
       "mjido-manip"
       ;; Action Name: packagename/actionfile
-      "morse_jido_manipulation_action/morse_jido_manipulation" 
+      "morse_jido_manipulation_action/ReachObjectAction" 
       #'manip-callback)))
