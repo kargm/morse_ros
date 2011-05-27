@@ -28,6 +28,14 @@ odom_quat_y = 0
 odom_quat_z = 0
 odom_quat_w = 0
 
+# Global variables for odometry_msg
+odom_msg_x = 0
+odom_msg_y = 0
+odom_msg_yaw = 0
+last_time = 0
+pub = rospy.Publisher('/odom', Odometry)
+odom_msg_init = 0
+
 def handle_human_pose(msg, robotname):
     now = rospy.Time.now()
     br2 = tf.TransformBroadcaster()
@@ -37,9 +45,9 @@ def handle_human_pose(msg, robotname):
                      robotname,
                      "/map")
                      
-def handle_map_odom_init(msg, robotname):
+def handle_odom_tf(msg, robotname):
     br3 = tf.TransformBroadcaster()
-
+  
     global odom_init
     global odom_pose_x
     global odom_pose_y
@@ -72,34 +80,78 @@ def handle_map_odom_init(msg, robotname):
                      rospy.Time.now(),
                      "/base_footprint",
                      "/map")
-                                    
-    
-    
-def handle_odometry(msg, robotname):
-    br = tf.TransformBroadcaster()
-    now = rospy.Time.now()
-    
-    global robot_pose_x
-    global robot_pose_y
-    global robot_pose_z
-    global robot_quat_x
-    global robot_quat_y
-    global robot_quat_z
-    global robot_quat_w
 
-    robot_pose_x += robot_pose_x + msg.position.x/100
-    robot_pose_y += robot_pose_y + msg.position.y/100
-    robot_pose_z += robot_pose_z + msg.position.z/100
-    robot_quat_x += msg.orientation.x
-    robot_quat_y += msg.orientation.y
-    robot_quat_z += msg.orientation.z
-    robot_quat_w += msg.orientation.w
+def handle_odom_msg(msg, robotname):
 
-    br.sendTransform((robot_pose_x, robot_pose_y, robot_pose_z),
-                      (robot_quat_x, robot_quat_y, robot_quat_z, robot_quat_w),
-                      rospy.Time.now(),
-                      "/base_footprint",
-                      "/odom")
+    global pub
+    global last_time
+    global odom_msg_init
+    global odom_msg_x
+    global odom_msg_y
+    global odom_msg_yaw
+
+    # If not yet initialized, set last_time to timestamp of current message
+    if odom_msg_init == 0:
+        last_time = msg.header.stamp.to_sec()
+        odom_msg_init = 1
+        
+    odometry = Odometry()
+
+    # Odometry positions are calculated by adding the deltas to the last pose
+    odom_msg_x = odom_msg_x + msg.pose.position.x
+    odom_msg_y = odom_msg_y + msg.pose.position.y
+
+    # Posestamped gets orientation as Quaternion, so transformation is necessary
+    odom_msg_orientation_euler = tf.transformations.euler_from_quaternion([msg.pose.orientation.x, msg.pose.orientation.y, msg.pose.orientation.z, msg.pose.orientation.w])
+    odom_msg_yaw = odom_msg_yaw + odom_msg_orientation_euler[2]
+    odom_quat =  tf.transformations.quaternion_from_euler(0, 0, odom_msg_yaw)
+
+    # Calculate velocities
+    current_time = msg.header.stamp.to_sec()
+    dt = current_time - last_time
+    last_time = current_time
+    
+    
+    dyaw = odom_msg_orientation_euler[2]
+    
+    dx = msg.pose.position.x
+    dy = msg.pose.position.y
+    distance = math.sqrt(dx**2 + dy**2)
+    
+    # ROS wants angle velocities in rad/s, so convertion necessary
+    dyaw = dyaw * (math.pi / 180)
+    
+    # in first iteration division by 0 occurs
+    if dt != 0:
+        # calculate velocities
+        vx = distance / dt
+        vyaw = dyaw / dt
+    else:
+        vx = 0
+        
+        vyaw = 0
+
+    # Build odometry message
+    odometry.pose.pose.position.x = odom_msg_x
+    odometry.pose.pose.position.y = odom_msg_y
+    odometry.pose.pose.position.z = 0 # only 2D navigation here
+    odometry.pose.pose.orientation.x = odom_quat[0]
+    odometry.pose.pose.orientation.y = odom_quat[1]
+    odometry.pose.pose.orientation.z = odom_quat[2]
+    odometry.pose.pose.orientation.w = odom_quat[3]
+
+    odometry.child_frame_id = "base_link"
+    odometry.twist.twist.linear.x = vx
+    odometry.twist.twist.linear.y = 0
+    odometry.twist.twist.linear.z = 0
+    odometry.twist.twist.angular.x = 0
+    odometry.twist.twist.angular.y = 0
+    odometry.twist.twist.angular.z = vyaw
+
+    odometry.header.stamp = msg.header.stamp
+    odometry.header.frame_id = "odom"
+
+    pub.publish(odometry) 
 
 if __name__ == '__main__':
     rospy.init_node('morse_tf_broadcaster')
@@ -107,14 +159,14 @@ if __name__ == '__main__':
     # Initialize odom-frame with robot starting-position
     rospy.Subscriber('/Jido/Pose_sensor',
                      nav_msgs.msg.Odometry,
-                     handle_map_odom_init,
+                     handle_odom_tf,
                      '/Jido/Pose_sensor')
 
-    # Odometry information frame                      
-    #rospy.Subscriber('/Jido/Odometry',
-    #                 geometry_msgs.msg.Pose,
-    #                 handle_odometry, 
-    #                 '/Jido/Odometry')
+    # Handle odometry information using Odometry sensor of Jido
+    rospy.Subscriber('/Jido/Odometry',
+                     geometry_msgs.msg.PoseStamped,
+                     handle_odom_msg,
+                     '/Jido/Pose_sensor')
 
     # Ground-truth frame for Human Position
     rospy.Subscriber('/Human/GPS',
