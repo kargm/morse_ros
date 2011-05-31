@@ -31,15 +31,6 @@ odom_quat_w = 0
 
 # Global variables for odometry message
 pub = rospy.Publisher('/odom', Odometry)
-
-def handle_human_pose(msg, robotname):
-    now = rospy.Time.now()
-    br2 = tf.TransformBroadcaster()
-    br2.sendTransform((msg.pose.pose.position.x, msg.pose.pose.position.y, 0),
-                     (0, 0, 0, 0),
-                     rospy.Time.now(),
-                     robotname,
-                     "/map")
                      
 def handle_odom_tf(msg, robotname):
     
@@ -65,9 +56,6 @@ def handle_odom_tf(msg, robotname):
         odom_quat_y = msg.pose.pose.orientation.y
         odom_quat_z = msg.pose.pose.orientation.z
         odom_quat_w = msg.pose.pose.orientation.w
-        
-        odom_last_pose_x = msg.pose.pose.position.x
-        last_time = rospy.Time.now().to_sec()
         odom_init = 1
 
     # publish the odom init
@@ -82,15 +70,6 @@ def handle_odom_tf(msg, robotname):
                      rospy.Time.now(),
                      "/base_footprint",
                      "/map")
-
-    dx = msg.pose.pose.position.x - odom_last_pose_x
-    # Store "new" last pose
-    odom_last_pose_x = msg.pose.pose.position.x 
-
-    current_time = rospy.Time.now().to_sec()
-    dt = current_time - last_time
-    # Store last timestamp
-    last_time = current_time
 
 def handle_odom_msg(msg, robotname):
 
@@ -125,11 +104,5 @@ if __name__ == '__main__':
                      geometry_msgs.msg.Twist,
                      handle_odom_msg,
                      '/Jido/Pose_sensor')
-
-    # Ground-truth frame for Human Position
-    #rospy.Subscriber('/Human/GPS',
-    #                 nav_msgs.msg.Odometry,
-    #                 handle_human_pose, 
-    #                 '/Human/GPS')
 
     rospy.spin()
