@@ -1,0 +1,12 @@
+<launch>
+  
+   <param name="robot_description"  command="$(find xacro)/xacro.py '$(find morse_tf)/urdfs/Jido_kuka.urdf.xacro'" />
+     <node name="arm_ik" pkg="kdl_arm_kinematics" type="arm_kinematics">
+    <rosparam>
+      root_name: calib_kuka_arm_base_link
+      tip_name: kuka_arm_7_link
+    </rosparam>
+  </node>
+  
+   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /> 
+</launch>
