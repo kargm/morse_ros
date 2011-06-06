@@ -1,3 +1,5 @@
 <launch>
   <node name="jido_manip_server" pkg="morse_jido_manipulation_action" type="manip_action" />
+
+ <include file="$(find morse_jido_manipulation_action)/launch/kdl_arm_ik_rosie.launch"/>
 </launch>

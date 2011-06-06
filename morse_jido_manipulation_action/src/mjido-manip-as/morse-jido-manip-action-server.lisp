@@ -16,7 +16,7 @@
 
       
 (defun start-manip-as ()
-  (with-ros-node ("manip-as")
+  (with-ros-node ("manip_as")
     ;;subscribe the publisher to the topic
     (setf publisher (advertise "Jido/kuka_base" "sensor_msgs/JointState"))
     (start-action-server 
