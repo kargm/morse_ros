@@ -99,8 +99,8 @@ if __name__ == '__main__':
                      handle_odom_tf,
                      '/Jido/Pose_sensor')
 
-    # Handle speed-information using Accelerometer sensor of Jido
-    rospy.Subscriber('/Jido/Accelerometer',
+    # Handle speed-information using IMU sensor of Jido
+    rospy.Subscriber('/Jido/IMU',
                      geometry_msgs.msg.Twist,
                      handle_odom_msg,
                      '/Jido/Pose_sensor')
