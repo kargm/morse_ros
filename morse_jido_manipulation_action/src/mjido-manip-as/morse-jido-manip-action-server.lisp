@@ -21,7 +21,7 @@
     (setf publisher (advertise "Jido/kuka_base" "sensor_msgs/JointState"))
     (start-action-server 
       ;; action namespace
-      "mjido-manip"
+      "mjido_manip"
       ;; Action Name: packagename/actionfile
       "morse_jido_manipulation_action/ReachObjectAction" 
       #'manip-callback)))
