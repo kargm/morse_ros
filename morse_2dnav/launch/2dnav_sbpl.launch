@@ -6,8 +6,6 @@
  
   <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/tut1_map_025.yaml"/>
   
-  <!--node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/tut1_map.yaml"/--> 
- 
   <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
     <remap from="~laser_1" to="/Jido/Sick"/>
     <remap from="/goal" to="/nav_pcontroller/goal"/>
