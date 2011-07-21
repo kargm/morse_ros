@@ -7,12 +7,15 @@
     <param name="controller_frequency" value="10.0" />
     <param name="controller_patience" value="100.0" /> 
     <param name="base_global_planner" value="SBPLLatticePlanner" />
+    <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+    <rosparam file="$(find morse_2dnav)/launch/morse_sbpl/dwa_planner_ros.yaml" command="load" />
+    <!-- <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" /> -->
+    <!-- <rosparam file="$(find morse_2dnav)/launch/morse_sbpl/trajectory_planner_ros.yaml" command="load" /> -->
     <param name="SBPLLatticePlanner/primitive_filename" value="$(find morse_2dnav)/matlab/mprim/pr2.mprim" />
     <rosparam file="$(find morse_2dnav)/launch/morse_sbpl/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find morse_2dnav)/launch/morse_sbpl/costmap_common_params.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find morse_2dnav)/launch/morse_sbpl/local_costmap_params_close.yaml" command="load" />
     <rosparam file="$(find morse_2dnav)/launch/morse_sbpl/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find morse_2dnav)/launch/morse_sbpl/sbpl_global_params.yaml" command="load" />
-    <rosparam file="$(find morse_2dnav)/launch/morse_sbpl/base_local_planner_params_close.yaml" command="load" />
   </node>
 </launch>
