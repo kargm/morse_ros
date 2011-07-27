@@ -1,5 +1,0 @@
-<launch>
-
-  <node pkg="jido_move_head" type="jido_move_head" name="jido_move_head"/>
-
-</launch>
