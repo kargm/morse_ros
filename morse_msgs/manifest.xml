@@ -1,0 +1,16 @@
+<package>
+  <description brief="morse_msgs">
+
+     morse_msgs
+
+  </description>
+  <author>Michael Karg</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/morse_msgs</url>
+  <depend package="std_msgs"/>
+  <depend package="geometry_msgs"/>
+
+</package>
+
+
