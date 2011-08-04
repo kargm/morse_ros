@@ -88,7 +88,7 @@ def handle_odom_msg(msg, robotname):
     odometry.header.frame_id = "/odom"
     odometry.child_frame_id = "/base_link"
 
-    pub.publish(odometry) 
+    pub.publish(odometry)
 
 if __name__ == '__main__':
     rospy.init_node('morse_tf_broadcaster')
