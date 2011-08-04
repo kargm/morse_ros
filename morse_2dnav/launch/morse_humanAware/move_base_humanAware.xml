@@ -8,10 +8,10 @@
     <param name="controller_patience" value="100.0" /> 
     <param name="planner_frequency" value="2.0" /> 
     <param name="base_global_planner" value="human_nav_plugin/HumanAwareNavigation" />
-    <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
-    <rosparam file="$(find morse_2dnav)/launch/morse_humanAware/dwa_planner_ros.yaml" command="load" />
-    <!-- <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" /> -->
-    <!-- <rosparam file="$(find morse_2dnav)/launch/morse_humanAware/trajectory_planner_ros.yaml" command="load" /> -->
+    <!--param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" /-->
+    <!--rosparam file="$(find morse_2dnav)/launch/morse_humanAware/dwa_planner_ros.yaml" command="load" /-->
+    <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" /> 
+    <rosparam file="$(find morse_2dnav)/launch/morse_humanAware/trajectory_planner_ros.yaml" command="load" /> 
 
     <rosparam file="$(find morse_2dnav)/launch/morse_humanAware/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find morse_2dnav)/launch/morse_humanAware/costmap_common_params.yaml" command="load" ns="local_costmap" />
