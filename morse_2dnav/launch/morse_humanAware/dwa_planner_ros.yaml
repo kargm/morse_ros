@@ -12,8 +12,8 @@ DWAPlannerROS:
   #How far the robot must travel in meters before oscillation flags are reset (0.05)
   oscillation_reset_dist: 0.03
   #32
-  goal_distance_bias: 9.0
+  goal_distance_bias: 1.0
   #24
-  path_distance_bias: 5.0
+  path_distance_bias: 15.0
   #The amount of time to forward-simulate trajectories in seconds (1.7)
   sim_time: 1.3
