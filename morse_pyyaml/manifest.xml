@@ -1,0 +1,14 @@
+<package>
+  <description brief="morse_pyaml">
+
+     morse_pyaml
+
+  </description>
+  <author></author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/morse_pyaml</url>
+
+</package>
+
+

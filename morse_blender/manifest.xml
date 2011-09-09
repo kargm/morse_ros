@@ -1,0 +1,14 @@
+<package>
+  <description brief="morse_blender">
+
+     morse_blender
+
+  </description>
+  <author></author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/morse_blender</url>
+
+</package>
+
+
