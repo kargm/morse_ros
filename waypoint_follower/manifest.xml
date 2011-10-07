@@ -1,0 +1,26 @@
+<package>
+  <description brief="waypoint_follower">
+    A human aware local planner following waypoints and avoiding collisions with humans.
+
+  </description>
+  <author></author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/waypoint_follower</url>
+  <depend package="roscpp"/>
+  <depend package="roslib"/>
+  <depend package="nav_msgs"/>
+  <depend package="pluginlib"/>
+  <depend package="nav_core"/>
+  <depend package="geometry_msgs"/>
+  <depend package="base_local_planner"/> <!-- for util -->
+  <depend package="costmap_2d"/>
+  <depend package="tf"/> <!-- for transform -->
+
+  <export>
+    <nav_core plugin="${prefix}/wp_follow_plugin.xml" />
+  </export>
+
+</package>
+
+

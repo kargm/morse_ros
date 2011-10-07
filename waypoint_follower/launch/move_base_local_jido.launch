@@ -1,0 +1,13 @@
+<launch>
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen" >
+    
+    <remap from="/base_scan" to="/Jido/Sick"/>
+    <remap from="/cmd_vel" to="/Jido/Motion_Controller"/>
+    <param name="footprint_padding" value="0.01" />
+    <param name="controller_frequency" value="10.0" />
+    <param name="controller_patience" value="100.0" /> 
+    <param name="planner_frequency" value="2.0" /> 
+    <param name="base_local_planner" value="waypoint_follower/WaypointFollowerPlugin" /> 
+  </node>
+</launch>
