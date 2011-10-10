@@ -4,7 +4,7 @@
 
   <include file="$(find morse_2dnav)/launch/morse_move_base/move_base.launch"/>
   
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/IAS_kitchen_small.yaml"/> 
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/IAS_kitchen_big.yaml"/> 
 
   <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
     <remap from="~laser_1" to="/Jido/Sick"/>
