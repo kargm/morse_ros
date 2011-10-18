@@ -92,7 +92,7 @@ namespace NHPPlayerDriver {
 
 
     // check for every certain space interval
-    for (relativeTimeSecs = 0.0; relativeTimeSecs < timeSpan; relativeTimeSecs += proj_params.projectionSteps / (params.max_trans_vel / 10)) {
+    for (relativeTimeSecs = 0.0; relativeTimeSecs < timeSpan; relativeTimeSecs += proj_params.projectionSteps / (params.reduced_trans_vel / 10)) {
         XYTH_COORD predRobotPose = pathProjection(currentRobotPose, robotVelocity, pathWaypoints, relativeTimeSecs, params);
         //        MSG6(ERR_ERR,"position %f, %f, Time %d Prediction %f %f %d\n", currentRobotPose.x, currentRobotPose.y, realtime, predRobotPose.x, predRobotPose.y, realtime + ((long) round(relativeTimeSecs * 1000)));
         for (int i = 0; i < num_humans; ++i) {
@@ -148,7 +148,7 @@ namespace NHPPlayerDriver {
         }
     }
 
-     double expectedVelocity = std::min(velocity.speedms, params.max_trans_vel * 10); // TODO: change velocity over time
+     double expectedVelocity = std::min(velocity.speedms, params.reduced_trans_vel * 10); // TODO: change velocity over time
 
     // loop while projection time is left:
     while (time > 0 && it != pathWaypoints->end()) {
@@ -176,7 +176,7 @@ namespace NHPPlayerDriver {
         // if we need to turn, substract the time needed for turning, position the robot in correct angle (reduce if time runs out)
         if (diff_angle > params.trans_angle_range) {
             rotate_angle = fabs(NORMALIZE(params.trans_angle_range - resultPose.th));
-            time = time - rotate_angle / DTOR(params.max_rot_vel);
+            time = time - rotate_angle / DTOR(params.reduced_trans_vel);
             resultPose.th = next_angle; // assume robot has turned to next angle in the meantime
         }
 

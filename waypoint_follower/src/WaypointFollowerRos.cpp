@@ -57,6 +57,7 @@ void WaypointFollowerRos::reconfigure_callback(waypoint_follower::WaypointFollow
   params.az_success_distance = config.az_success_distance;
   params.initial_trans_angle_range = config.initial_trans_angle_range;
   params.max_trans_vel= config.max_trans_vel;
+  params.reduced_trans_vel = config.max_trans_vel; // not to be set by gui
   params.max_rot_vel= config.max_rot_vel;
   params.pid_rot_kp= config.pid_rot_kp;
   params.pid_trans_kp= config.pid_trans_kp;
@@ -70,32 +71,38 @@ void WaypointFollowerRos::reconfigure_callback(waypoint_follower::WaypointFollow
 }
 
 void WaypointFollowerRos::initialize(std::string name, tf::TransformListener* tf,
-      costmap_2d::Costmap2DROS* costmap_ros){
-	if(!initialized_){
-	  costmap_ros_ = costmap_ros;
-      tf_ = tf;
+    costmap_2d::Costmap2DROS* costmap_ros){
+  if(!initialized_){
+    costmap_ros_ = costmap_ros;
+    tf_ = tf;
 
-      robTrack = new PoseHistory();
-      human_tracker = new HumanTracker();
-      this->waypoint_follower = new WaypointFollower();
+    robTrack = new PoseHistory();
+    human_tracker = new HumanTracker();
+    this->waypoint_follower = new WaypointFollower();
 
-      ros::NodeHandle node("waypoint_follower");
-      reconfigure_server = new dynamic_reconfigure::Server<waypoint_follower::WaypointFollowerConfig>(node);
-      dynamic_reconfigure::Server<waypoint_follower::WaypointFollowerConfig>::CallbackType reconfigure_f;
-      reconfigure_f = boost::bind(&human_wp_follow_plugin::WaypointFollowerRos::reconfigure_callback, this, _1, _2);
-//      reconfigure_callback = boost::bind(&human_wp_follow_plugin::reconfigure_callback, _1, _2);
-      reconfigure_server->setCallback(reconfigure_f);
+    ros::NodeHandle node("waypoint_follower");
+    reconfigure_server = new dynamic_reconfigure::Server<waypoint_follower::WaypointFollowerConfig>(node);
+    dynamic_reconfigure::Server<waypoint_follower::WaypointFollowerConfig>::CallbackType reconfigure_f;
+    reconfigure_f = boost::bind(&human_wp_follow_plugin::WaypointFollowerRos::reconfigure_callback, this, _1, _2);
+    //      reconfigure_callback = boost::bind(&human_wp_follow_plugin::reconfigure_callback, _1, _2);
+    reconfigure_server->setCallback(reconfigure_f);
 
-	  last_player_command_was_stop = false;
-	  initialized_ = true;
+    last_player_command_was_stop = false;
 
-	  // subscribe to Odom topic for velocity
-//	  ros::NodeHandle gn;
-//	  odom_sub_ = gn.subscribe<nav_msgs::Odometry>("odom",
-//			  1,
-//			  boost::bind(&WaypointFollowerRos::odomCallback, this, _1));
-	  ROS_DEBUG("Waypoint Follower initialized");
-	}
+    // Subscriber for human pose
+    sub = node.subscribe("/Human/Pose", 10, &human_wp_follow_plugin::WaypointFollowerRos::humanPoseCallback, this);
+
+    // subscribe to Odom topic for velocity
+    //    ros::NodeHandle gn;
+    //    odom_sub_ = gn.subscribe<nav_msgs::Odometry>("odom",
+    //            1,
+    //            boost::bind(&WaypointFollowerRos::odomCallback, this, _1));
+
+
+    initialized_ = true;
+
+    ROS_DEBUG("Waypoint Follower initialized");
+  }
 }
 
 
@@ -107,6 +114,32 @@ WaypointFollowerRos::~WaypointFollowerRos()
   delete this->robTrack;
 }
 
+
+bool pose_update; // to communicate with callback
+bool pose_init = false;
+
+// callback function for human pose
+void WaypointFollowerRos::humanPoseCallback(const geometry_msgs::PoseStamped& pose)
+{
+  NHPPlayerDriver::XYTH_COORD dat_pos;
+  dat_pos.x = pose.pose.position.x;
+  dat_pos.y = pose.pose.position.y;
+  btScalar roll,pitch,yaw;
+  tf::Stamped<tf::Pose> tfpose;
+  tf::poseStampedMsgToTF(pose, tfpose);
+  btMatrix3x3(tfpose.getRotation()).getRPY(roll, pitch, yaw, 1);
+  dat_pos.th = yaw;
+  ROS_DEBUG_NAMED("human", "Observed human at %f, %f, %f", dat_pos.x, dat_pos.y, dat_pos.th );
+  int id = 0; // TODO: Listen to topic which recognizes human identity, or pick most likely
+
+  int result;
+  if (id < 0 && id > 5) { // should never happen
+    ROS_ERROR("Error,bad ID %d", id);
+    result = 0;
+  }
+
+  human_tracker->handlePositionUpdate(dat_pos.x, dat_pos.y, dat_pos.th, id);
+}
 
 bool WaypointFollowerRos::isGoalReached() {
 	return ! waypoint_follower->hasActiveGoal();
@@ -200,21 +233,6 @@ bool WaypointFollowerRos::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
 	return true;
 }
 
-
-void WaypointFollowerRos::perceptHuman(NHPPlayerDriver::XYTH_COORD &dat_pos, int id)
-{
-	int result;
-	if (id < 0 && id > 5) { // should never happen
-	      ROS_ERROR("Error,bad ID %d", id);
-	      result = 0;
-	  }
-
-	  if (human_tracker->handlePositionUpdate(dat_pos.x, dat_pos.y, dat_pos.th, id)) {
-		  result = 1;
-	  }
-	  result = 0;
-}
-
 //void WaypointFollowerRos::odomCallback(const nav_msgs::Odometry::ConstPtr& msg){
 //   //we assume that the odometry is published in the frame of the base
 //   boost::mutex::scoped_lock(odom_mutex_);
@@ -235,21 +253,21 @@ void WaypointFollowerRos::perceptHuman(NHPPlayerDriver::XYTH_COORD &dat_pos, int
     for (int i = 0; i < this->human_tracker->getHumanMaxNo(); ++i) {
         Human* human = this->human_tracker->getHuman(i);
         if (human->exists) {
-            humanPoses[i].x = human->x;
-            humanPoses[i].y = human->y;
-            humanPoses[i].th = human->az;
+            humanPoses[num_humans].x = human->x;
+            humanPoses[num_humans].y = human->y;
+            humanPoses[num_humans].th = human->az;
+            humanVelocities[num_humans] = this->human_tracker->getHumanVelocity(i);
             num_humans++;
-            humanVelocities[i] = this->human_tracker->getHumanVelocity(i);
         }
     }
 
     WP_FOLLOW_PARAMS params = this->waypoint_follower->getMotionParams();
-    double original_max_trans_vel = params.max_trans_vel;
+
     bool safeMotionPossible = false;
     // test several different motion param variants until we find one that does not conflict (hopefully the first)
     for (reduceAmount = 0; reduceAmount < 1; reduceAmount += SPEED_ADAPTION_STEPS) {
         //      printf("%f\n", reduceAmount);
-        params.max_trans_vel = (1 - reduceAmount) * original_max_trans_vel;
+        params.reduced_trans_vel = (1 - reduceAmount) * params.max_trans_vel;
         XYTH_COORD currentpos;
         this->robTrack->valid2DPose(&currentpos);
         if (! checkPosesInConflict(humanPoses,
@@ -261,15 +279,16 @@ void WaypointFollowerRos::perceptHuman(NHPPlayerDriver::XYTH_COORD &dat_pos, int
             PROJECTION_TIMESPAN,
             COLLISION_DISTANCE,
             params)) {
-            safeMotionPossible = true;
-            break;
+          safeMotionPossible = true;
+          break;
         } else {
-            //          ROS_DEBUG( "Reducing max speed proportionally to %f\n", (1 - reduceAmount) * original_max_trans_vel);
+//          ROS_DEBUG_NAMED("human", "Reducing max speed proportionally to %f", (1 - reduceAmount) * params.max_trans_vel);
         }
     }
     if (!safeMotionPossible) {
-        params.max_trans_vel = 0;
+        params.reduced_trans_vel = 0;
     }
+    ROS_DEBUG_NAMED("plan", "Reducing max speed to %f", params.reduced_trans_vel);
     // even if loop found no solution, max velocity is a low setting
     waypoint_follower->changeMotionParams(params);
 

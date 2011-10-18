@@ -82,7 +82,7 @@ private:
    * safe flag specifies robot will not plan path that collides with human, unsafe means we try to make human move
    */
   void adaptMotionParams();
-
+  void humanPoseCallback(const geometry_msgs::PoseStamped& pose);
 
   std::ofstream logfile;
 
@@ -92,6 +92,7 @@ private:
 
   dynamic_reconfigure::Server<waypoint_follower::WaypointFollowerConfig> *reconfigure_server;
 
+  ros::Subscriber sub;
 
   std::string mboxname;
   std::string p3d_filepath;

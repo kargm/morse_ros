@@ -19,6 +19,8 @@ namespace NHPPlayerDriver {
     double initial_trans_angle_range;
     // in decimeter/s ?
     double max_trans_vel;
+
+    double reduced_trans_vel;
     // how much speed allowed relative to distance to target
     //(e.g. kp=0.9: if 1 meter left: 0.9m/s, if 0.5 meter left, 0.45m/s)
     double pid_trans_kp;
