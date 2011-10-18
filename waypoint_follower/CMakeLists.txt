@@ -32,6 +32,11 @@ rosbuild_add_library(wp_follower
 	src/M3DW_Utils.cpp)
 
 
+#add dynamic reconfigure api
+rosbuild_find_ros_package(dynamic_reconfigure)
+include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
+gencfg()
+
 rosbuild_add_executable(hhtest src/test/HumanHistoryTest.cpp
 	src/HumanHistory.cpp
 	src/PositionProjection.cpp

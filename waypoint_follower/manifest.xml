@@ -16,6 +16,7 @@
   <depend package="base_local_planner"/> <!-- for util -->
   <depend package="costmap_2d"/>
   <depend package="tf"/> <!-- for transform -->
+  <depend package="dynamic_reconfigure"/>
 
   <export>
     <nav_core plugin="${prefix}/wp_follow_plugin.xml" />

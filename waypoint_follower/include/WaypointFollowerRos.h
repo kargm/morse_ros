@@ -14,6 +14,9 @@
 #include <nav_msgs/Odometry.h>
 #include <nav_msgs/Path.h>
 
+#include <dynamic_reconfigure/server.h>
+#include <waypoint_follower/WaypointFollowerConfig.h>
+
 #include <M3DW_Utils.h>
 #include "WPFollowerParams.h"
 #include "WaypointFollower.h"
@@ -64,7 +67,6 @@ public:
 
   void perceptRobotPose(float px, float py, float pitch);
 
-
 private:
 
   /**
@@ -73,6 +75,7 @@ private:
    */
   void odomCallback(const nav_msgs::Odometry::ConstPtr& msg);
 
+  void reconfigure_callback(waypoint_follower::WaypointFollowerConfig &config, uint32_t level);
 
   /**
    * Called whenever there is a goto command, or when the environment (the position of humans) changed.
@@ -83,9 +86,11 @@ private:
 
   std::ofstream logfile;
 
-    NHPPlayerDriver::WaypointFollower *waypoint_follower;
-    NHPPlayerDriver::HumanTracker *human_tracker;
-    NHPPlayerDriver::PoseHistory *robTrack;
+  NHPPlayerDriver::WaypointFollower *waypoint_follower;
+  NHPPlayerDriver::HumanTracker *human_tracker;
+  NHPPlayerDriver::PoseHistory *robTrack;
+
+  dynamic_reconfigure::Server<waypoint_follower::WaypointFollowerConfig> *reconfigure_server;
 
 
   std::string mboxname;

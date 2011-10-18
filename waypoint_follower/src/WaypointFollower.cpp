@@ -28,15 +28,12 @@ namespace NHPPlayerDriver {
   /**
    * pathSafetyDistance = how close another agent may be to path before the WP-follower stops to avoid collision
    */
-  WaypointFollower::WaypointFollower(WP_FOLLOW_PARAMS params) {
-
-
-    this->motionParams = params;
+  WaypointFollower::WaypointFollower() {
 
     position_initialized =  false; // whether robot is localized
     goal_ready = false; // whether waypoints have been sent
     robot_movement_allowed = false;
-
+    motionParamsSet = false;
     humanOnPath = false;
     pathBlockedTimestamp = -1;
 
@@ -48,7 +45,12 @@ namespace NHPPlayerDriver {
 
   void WaypointFollower::changeMotionParams(WP_FOLLOW_PARAMS params) {
     this->motionParams = params;
+    this->motionParamsSet = true;
   }
+
+  WP_FOLLOW_PARAMS WaypointFollower::getMotionParams() {
+     return this->motionParams;
+   }
 
 
   void WaypointFollower::updatePosition(float x, float y, float az)
@@ -254,8 +256,11 @@ namespace NHPPlayerDriver {
 
     if (this->goal_ready == false ||
         this->position_initialized == false ||
-        this->robot_movement_allowed == false) {
-      	ROS_ERROR("Robot blocked %d, %d, %d.", this->goal_ready, this->position_initialized, this->robot_movement_allowed);
+        this->motionParamsSet == false) {
+      return;
+    }
+    if (this->robot_movement_allowed == false) {
+        ROS_ERROR("Robot blocked %d, %d, %d.", this->goal_ready, this->position_initialized, this->robot_movement_allowed);
       return;
     }
 
@@ -470,27 +475,28 @@ namespace NHPPlayerDriver {
         cmd.vel.pa = ABSMAX( ( turning_angle * this->motionParams.pid_rot_kp), this->motionParams.max_rot_vel );
         ROS_DEBUG_NAMED("velo", "Turning because angle %f > %f : %f", fabs(turning_angle), local_trans_angle_range, cmd.vel.pa);
       } else { // rotating and driving simultaneously, because turning_angle is not large in comparison to current_distance to goal
-          // set translation speed proportional to current_distance to the goal
-          // TODO (maybe): if goal angle is similar to current angle (no hard edge ahead) and next waypoint is not the last, then don't break down as much.
-          if (humanOnPath) {
-            cmd.vel.px = 0;
-          } else if (this->waypoint_queue.empty()) {
-            // last waypoint, slow down. px is in dm/s, not m/s!!
-            cmd.vel.px = this->driving_direction *
-                fmin(this->motionParams.max_trans_vel / 10 /*dm/s*/, ( current_distance_to_goal * this->motionParams.pid_trans_kp ));
-          } else if (this->waypoint_queue.size() < 3) {
-            // last few waypoints, slow down. px is in dm/s, not m/s!!
-            cmd.vel.px = this->driving_direction *
-                fmin(this->motionParams.max_trans_vel / 10 /*dm/s*/, ( current_distance_to_goal *2 * this->motionParams.pid_trans_kp ));
-          } else if (pathchanges) {
-            cmd.vel.px = this->driving_direction *
-                                fmin(this->motionParams.max_trans_vel / 10 /*dm/s*/, ( fmax(1, (this->waypoint_queue.size() * 0.1)) * this->motionParams.pid_trans_kp  ));
-          } else { // more speed in middle waypoints
-              cmd.vel.px = this->driving_direction *
-                  fmin(this->motionParams.max_trans_vel / 10 /*dm/s*/, ( fmax(1, (this->waypoint_queue.size() * 0.2)) * this->motionParams.pid_trans_kp  ));
-          }
-          // set rotation speed to a value that is proportional, but below a certain cut-off value (max_rot_vel)
-          cmd.vel.pa = ABSMAX( ( turning_angle * this->motionParams.pid_rot_kp ), this->motionParams.wp_max_rot_vel  );
+        // set translation speed proportional to current_distance to the goal
+        // TODO (maybe): if goal angle is similar to current angle (no hard edge ahead) and next waypoint is not the last, then don't break down as much.
+        ROS_DEBUG_NAMED("velo", "max-velo : %f", this->motionParams.max_trans_vel / 10);
+        if (humanOnPath) {
+          cmd.vel.px = 0;
+        } else if (this->waypoint_queue.empty()) {
+          // last waypoint, slow down. px is in dm/s, not m/s!!
+          cmd.vel.px = this->driving_direction *
+              fmin(this->motionParams.max_trans_vel / 10 /*dm/s*/, ( current_distance_to_goal * this->motionParams.pid_trans_kp ));
+        } else if (this->waypoint_queue.size() < 3) {
+          // last few waypoints, slow down. px is in dm/s, not m/s!!
+          cmd.vel.px = this->driving_direction *
+              fmin(this->motionParams.max_trans_vel / 10 /*dm/s*/, ( current_distance_to_goal *2 * this->motionParams.pid_trans_kp ));
+        } else if (pathchanges) {
+          cmd.vel.px = this->driving_direction *
+              fmin(this->motionParams.max_trans_vel / 10 /*dm/s*/, ( fmax(1, (this->waypoint_queue.size() * 0.1)) * this->motionParams.pid_trans_kp  ));
+        } else { // more speed in middle waypoints
+          cmd.vel.px = this->driving_direction *
+              fmin(this->motionParams.max_trans_vel / 10 /*dm/s*/, ( fmax(1, (this->waypoint_queue.size() * 0.2)) * this->motionParams.pid_trans_kp  ));
+        }
+        // set rotation speed to a value that is proportional, but below a certain cut-off value (max_rot_vel)
+        cmd.vel.pa = ABSMAX( ( turning_angle * this->motionParams.pid_rot_kp ), this->motionParams.wp_max_rot_vel  );
       }
 
 

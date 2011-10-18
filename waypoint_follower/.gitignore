@@ -1,0 +1,4 @@
+src/waypoint_follower/cfg/*
+cfg/cpp
+cfg/*.cfgc
+docs/WaypointFollowerConfig*

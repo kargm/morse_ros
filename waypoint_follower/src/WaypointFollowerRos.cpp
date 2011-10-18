@@ -48,6 +48,27 @@ int flushCountdown= 20;
 XYTH_COORD logPos;
 
 
+
+
+
+void WaypointFollowerRos::reconfigure_callback(waypoint_follower::WaypointFollowerConfig &config, uint32_t level) {
+
+  WP_FOLLOW_PARAMS params;
+  params.az_success_distance = config.az_success_distance;
+  params.initial_trans_angle_range = config.initial_trans_angle_range;
+  params.max_trans_vel= config.max_trans_vel;
+  params.max_rot_vel= config.max_rot_vel;
+  params.pid_rot_kp= config.pid_rot_kp;
+  params.pid_trans_kp= config.pid_trans_kp;
+  params.success_distance= config.success_distance;
+  params.trans_angle_range= config.trans_angle_range;
+  params.wp_max_rot_vel= config.wp_max_rot_vel;
+  params.wp_success_distance= config.wp_success_distance;
+  this->waypoint_follower->changeMotionParams(params);
+  PROJECTION_TIMESPAN = config.projection_timespan;
+  COLLISION_DISTANCE = config.collision_distance;
+}
+
 void WaypointFollowerRos::initialize(std::string name, tf::TransformListener* tf,
       costmap_2d::Costmap2DROS* costmap_ros){
 	if(!initialized_){
@@ -56,10 +77,14 @@ void WaypointFollowerRos::initialize(std::string name, tf::TransformListener* tf
 
       robTrack = new PoseHistory();
       human_tracker = new HumanTracker();
-      WP_FOLLOW_PARAMS params = getRobotMotionParams();
-      this->waypoint_follower = new WaypointFollower(params);
+      this->waypoint_follower = new WaypointFollower();
 
-
+      ros::NodeHandle node("waypoint_follower");
+      reconfigure_server = new dynamic_reconfigure::Server<waypoint_follower::WaypointFollowerConfig>(node);
+      dynamic_reconfigure::Server<waypoint_follower::WaypointFollowerConfig>::CallbackType reconfigure_f;
+      reconfigure_f = boost::bind(&human_wp_follow_plugin::WaypointFollowerRos::reconfigure_callback, this, _1, _2);
+//      reconfigure_callback = boost::bind(&human_wp_follow_plugin::reconfigure_callback, _1, _2);
+      reconfigure_server->setCallback(reconfigure_f);
 
 	  last_player_command_was_stop = false;
 	  initialized_ = true;
@@ -76,6 +101,7 @@ void WaypointFollowerRos::initialize(std::string name, tf::TransformListener* tf
 
 WaypointFollowerRos::~WaypointFollowerRos()
 {
+  delete this->reconfigure_server;
   delete this->waypoint_follower;
   delete this->human_tracker;
   delete this->robTrack;
@@ -217,7 +243,7 @@ void WaypointFollowerRos::perceptHuman(NHPPlayerDriver::XYTH_COORD &dat_pos, int
         }
     }
 
-    WP_FOLLOW_PARAMS params = getRobotMotionParams();
+    WP_FOLLOW_PARAMS params = this->waypoint_follower->getMotionParams();
     double original_max_trans_vel = params.max_trans_vel;
     bool safeMotionPossible = false;
     // test several different motion param variants until we find one that does not conflict (hopefully the first)
