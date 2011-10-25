@@ -4,7 +4,7 @@
  
   <include file="$(find morse_2dnav)/launch/morse_humanAware/move_base_humanAware.xml"/>
 
-  <include file="$(find human_nav_node)/launch/noworld.launch"/>
+  <include file="$(find human_nav_node)/launch/empty_world.launch"/>
 
   <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/tut1_map_empty.yaml"/>
 
