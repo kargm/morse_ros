@@ -483,17 +483,17 @@ namespace NHPPlayerDriver {
         } else if (this->waypoint_queue.empty()) {
           // last waypoint, slow down. px is in dm/s, not m/s!!
           cmd.vel.px = this->driving_direction *
-              fmin(this->motionParams.reduced_trans_vel / 10 /*dm/s*/, ( current_distance_to_goal * this->motionParams.pid_trans_kp ));
-        } else if (this->waypoint_queue.size() < 3) {
-          // last few waypoints, slow down. px is in dm/s, not m/s!!
-          cmd.vel.px = this->driving_direction *
-              fmin(this->motionParams.reduced_trans_vel / 10 /*dm/s*/, ( current_distance_to_goal *2 * this->motionParams.pid_trans_kp ));
-        } else if (pathchanges) {
-          cmd.vel.px = this->driving_direction *
-              fmin(this->motionParams.reduced_trans_vel / 10 /*dm/s*/, ( fmax(1, (this->waypoint_queue.size() * 0.1)) * this->motionParams.pid_trans_kp  ));
+            fmin(this->motionParams.reduced_trans_vel / 10 /*dm/s*/, ( fmin(1, current_distance_to_goal * 2) * this->motionParams.pid_trans_kp ));
+        // } else if (this->waypoint_queue.size() < 3) {
+        //   // last few waypoints, slow down. px is in dm/s, not m/s!!
+        //   cmd.vel.px = this->driving_direction *
+        //       fmin(this->motionParams.reduced_trans_vel / 10 /*dm/s*/, ( current_distance_to_goal *2 * this->motionParams.pid_trans_kp ));
+        // } else if (this->waypoint_queue.size() > 6 && pathchanges) {
+        //   cmd.vel.px = this->driving_direction *
+        //       fmin(this->motionParams.reduced_trans_vel / 10 /*dm/s*/, 0.7 * this->motionParams.pid_trans_kp);
         } else { // more speed in middle waypoints
           cmd.vel.px = this->driving_direction *
-              fmin(this->motionParams.reduced_trans_vel / 10 /*dm/s*/, ( fmax(1, (this->waypoint_queue.size() * 0.2)) * this->motionParams.pid_trans_kp  ));
+              fmin(this->motionParams.reduced_trans_vel / 10 /*dm/s*/, this->motionParams.pid_trans_kp);
         }
         // set rotation speed to a value that is proportional, but below a certain cut-off value (max_rot_vel)
         cmd.vel.pa = ABSMAX( ( turning_angle * this->motionParams.pid_rot_kp ), this->motionParams.wp_max_rot_vel  );
