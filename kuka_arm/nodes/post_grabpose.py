@@ -9,14 +9,18 @@ from sensor_msgs.msg import JointState
 
 
 def talker():
-    pub = rospy.Publisher('/Jido/kuka_base', JointState)
+    pub = rospy.Publisher('/Jido/kuka_armature', JointState)
+    rospy.init_node('JointState_Publisher')
     rospy.init_node('JointState_Publisher')
     i = 0
     while not rospy.is_shutdown():
         header = std_msgs.msg.Header()
         header.stamp = rospy.Time.now()
         names = ["seq0", "seq1", "seq2", "seq3", "seq4", "seq5", "seq6"]
-        position = [0.15, -1, 0, 1, 0, -1.4, 1.6]
+        #position = [0.15, -1, 0, 1, 0, -1.4, 1.6]
+        # Park arm position:
+        #position = [1, -1.5, 1, 1, -1, 1, 0.2]
+        position = [1, 1.5, 1, 1, -1, -1, 0.2]
         js = JointState(header, names, position, [], [])
         pub.publish(js)
         rospy.sleep(0.5)

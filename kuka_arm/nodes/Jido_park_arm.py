@@ -9,7 +9,7 @@ from sensor_msgs.msg import JointState
 
 
 def talker():
-    pub = rospy.Publisher('/Jido/kuka_base', JointState)
+    pub = rospy.Publisher('/Jido/kuka_armature', JointState)
     rospy.init_node('JointState_Publisher')
     i = 0
     while not rospy.is_shutdown():
