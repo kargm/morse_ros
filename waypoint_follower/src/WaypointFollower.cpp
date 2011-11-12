@@ -146,6 +146,7 @@ namespace NHPPlayerDriver {
 	  } else {
 		  skipdistance = this->motionParams.wp_success_distance;
 	  }
+    ROS_DEBUG_NAMED("prune", "skipdistance %f", skipdistance);
 
 	  // assume first local minimum is the first point we care about (plausible global minimum)
 	  std::list<XYTH_COORD>::iterator it = newWaypoints.begin();
@@ -154,22 +155,25 @@ namespace NHPPlayerDriver {
 	  cur_wp.y = it->y;
 	  cur_wp.th = it->th;
 	  double min_distance = DISTANCE2D(this->x, this->y, it->x, it->y);
+    ROS_DEBUG_NAMED("prune", "Loop distance min: (%f, %f)-(%f,%f) =  %f",this->x, this->y, it->x, it->y, loop_distance);
 	  it++;
 	  for (; it != newWaypoints.end();
 			  it++) {
-		  loop_distance = DISTANCE2D(this->x, this->y, it->x, it->y);
-		  ROS_DEBUG_NAMED("prune", "Loop distance: (%f, %f)-(%f,%f) =  %f",this->x, this->y, it->x, it->y, loop_distance);
+    	  loop_distance = DISTANCE2D(this->x, this->y, it->x, it->y);
+    	  ROS_DEBUG_NAMED("prune", "Loop distance min: (%f, %f)-(%f,%f) =  %f",this->x, this->y, it->x, it->y, loop_distance);
 			  if (loop_distance < min_distance) {
 				  startIndex ++;
 				  min_distance = loop_distance;
 			  } else {
-//				  ROS_DEBUG_NAMED("prune", "minimum found");
+				  ROS_DEBUG_NAMED("prune", "minimum found");
 				  break;
 			  }
 	  }
+    ROS_DEBUG_NAMED("prune", "startIndex at %d", startIndex);
 
 	  int count = 0;
 	  int skip = 0;
+    // now find how many points can be skipped
 	  for (it = newWaypoints.begin(); it != newWaypoints.end();
 			  it++) {
 		  if (count < startIndex) {
@@ -216,6 +220,7 @@ namespace NHPPlayerDriver {
 
     humanOnPath = false; // to be updated with new path later
 
+    ROS_DEBUG_NAMED("plan","Replacing queue of length %zu ", this->waypoint_queue.size());
     this->waypoint_queue.clear();
     for (std::list<XYTH_COORD>::iterator it = newWaypoints.begin();it != newWaypoints.end(); it++) {
             XYTH_COORD newPoint;
@@ -225,9 +230,10 @@ namespace NHPPlayerDriver {
             this->waypoint_queue.push_back(newPoint);
     }
     int skip = this->prunePlan();
+    ROS_DEBUG_NAMED("plan","New queue of length %zu ", this->waypoint_queue.size());
     for (int var = 0; var < skip +1; ++var) {
         this->updateGoalForNextWaypoint();
-	}
+    }
     this->final_gaz = final_heading;
     goal_ready = true;
     robot_movement_allowed = true;
@@ -388,7 +394,7 @@ namespace NHPPlayerDriver {
 
     if (fabs(final_turning_angle) < this->motionParams.az_success_distance) {
       cmd.vel.pa = 0;
-      ROS_DEBUG("Goal reached");
+      ROS_INFO("Goal reached at angle %f < %f", fabs(final_turning_angle) , this->motionParams.az_success_distance);
       this->goal_ready = false;
       this->robot_movement_allowed = false; // wait for new goal
     } else {
@@ -486,7 +492,7 @@ namespace NHPPlayerDriver {
       } else { // rotating and driving simultaneously, because turning_angle is not large in comparison to current_distance to goal
         // set translation speed proportional to current_distance to the goal
         // TODO (maybe): if goal angle is similar to current angle (no hard edge ahead) and next waypoint is not the last, then don't break down as much.
-        ROS_DEBUG_NAMED("velo", "max-velo : %f", this->motionParams.reduced_trans_vel / 10);
+        //ROS_DEBUG_NAMED("velo", "max-velo : %f", this->motionParams.reduced_trans_vel / 10);
         if (humanOnPath) {
           cmd.vel.px = 0;
         } else if (this->waypoint_queue.empty()) {
@@ -507,7 +513,7 @@ namespace NHPPlayerDriver {
         // set rotation speed to a value that is proportional, but below a certain cut-off value (max_rot_vel)
         cmd.vel.pa = ABSMAX( ( turning_angle * this->motionParams.pid_rot_kp ), this->motionParams.wp_max_rot_vel  );
       }
-
+    ROS_DEBUG_NAMED("velo", "Command %f, %f ", cmd.vel.px, cmd.vel.pa);
 
   } // end updateVelocityBetweenWaypoints
 
