@@ -188,12 +188,17 @@ namespace NHPPlayerDriver {
 		  cur_wp.th = it->th;
 	  }
 	  // skip is index of first wp after minimum outside skipdistance
-      // Variable it points one wp ahead of startDistance
+      // Variable it points at first wp we cannot skip
 	  // loopdistance is -1 or distance to wp at it
+    // cur_wp is the first wp in the list or last waypoint we can skip
 
 	  ROS_DEBUG_NAMED("prune", "Close point index: %d", skip);
 
-	  // also if the distance robot - nextwaypoint is smaller than the distance both waypoints
+	  // also if the distance robot - nextwaypoint is smaller than the distance between both waypoints
+    if (skip == 0 && it != newWaypoints.end()) {
+        it++;
+      // it is next wp
+    }
 	  if (loop_distance >= 0) {
 		  double current_pace = DISTANCE2D(cur_wp.x, cur_wp.y, it->x, it->y);
 		  ROS_DEBUG_NAMED("prune", "next %f, both: %f", loop_distance, current_pace);
@@ -282,7 +287,7 @@ namespace NHPPlayerDriver {
 
     // TODO: if we think we stand still and position has not changed (by pushing), don't recalculate
     double current_distance_to_goal = DISTANCE2D(this->x,this->y,this->gx, this->gy);
-    ROS_DEBUG_NAMED("velo", "Distance to goal: %f, waypoints: %d", current_distance_to_goal, this->waypoint_queue.size());
+    ROS_DEBUG_NAMED("velo", "Distance to goal: %f, waypoints: %zu", current_distance_to_goal, this->waypoint_queue.size());
 
     if (this->humanOnPath == true) { // stop if human is in the way, but allow rotating on spot
 
@@ -316,13 +321,17 @@ namespace NHPPlayerDriver {
     } else {
     	// either more waypoints are left or we are not quite in final location
 
-    	if (!this->waypoint_queue.empty() ) {
-    		int skip = this->prunePlan();
+    	if (!this->waypoint_queue.empty()) {
+        int skip = 0;
+        if (current_distance_to_goal < this->motionParams.wp_success_distance) {
+            skip++;
+        }
+        skip += this->prunePlan();
     		for (int var = 0; var < skip; ++var) {
     			this->updateGoalForNextWaypoint();
     		}
-            current_distance_to_goal = DISTANCE2D(this->x,this->y,this->gx, this->gy);
-            this->last_known_distance_to_goal = current_distance_to_goal;
+        current_distance_to_goal = DISTANCE2D(this->x,this->y,this->gx, this->gy);
+        this->last_known_distance_to_goal = current_distance_to_goal;
     	}
 
     	// for direction calculations
