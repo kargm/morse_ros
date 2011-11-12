@@ -80,7 +80,7 @@ void WaypointFollowerRos::initialize(std::string name, tf::TransformListener* tf
     human_tracker = new HumanTracker();
     this->waypoint_follower = new WaypointFollower();
 
-    ros::NodeHandle node("waypoint_follower");
+    ros::NodeHandle node("~/waypoint_follower");
     reconfigure_server = new dynamic_reconfigure::Server<waypoint_follower::WaypointFollowerConfig>(node);
     dynamic_reconfigure::Server<waypoint_follower::WaypointFollowerConfig>::CallbackType reconfigure_f;
     reconfigure_f = boost::bind(&human_wp_follow_plugin::WaypointFollowerRos::reconfigure_callback, this, _1, _2);
