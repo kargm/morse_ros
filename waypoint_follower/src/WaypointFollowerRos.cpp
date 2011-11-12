@@ -201,35 +201,52 @@ bool WaypointFollowerRos::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
 	}
 	VELOCITY_COMMAND drive_cmds;
 
-	tf::Stamped<tf::Pose> global_pose;
-	if(!costmap_ros_->getRobotPose(global_pose)) {
+	tf::Stamped<tf::Pose> costmap_pose;
+	if(!costmap_ros_->getRobotPose(costmap_pose)) {
 		ROS_ERROR("Failed to get robot position");
 		return false;
 	}
+  try {
+      tf::Stamped<tf::Pose> global_pose_robot;
+      tf_->transformPose("/map", ros::Time(0), costmap_pose, "/map", global_pose_robot);
 
+      btScalar roll,pitch,yaw;
+      btMatrix3x3(global_pose_robot.getRotation()).getRPY(roll, pitch, yaw, 1);
+      // ROS_DEBUG_NAMED("cyclic","Robot position: %f, %f, %s ",
+      //     global_pose_robot.getOrigin().getX(),
+      //     global_pose_robot.getOrigin().getY(),
+      //     global_pose_robot.frame_id_.c_str());
 
-	btScalar roll,pitch,yaw;
-	btMatrix3x3(global_pose.getRotation()).getRPY(roll, pitch, yaw, 1);
-	ROS_DEBUG_NAMED("cyclic","Robot position: %f, %f, %s ", global_pose.getOrigin().getX(), global_pose.getOrigin().getY(), global_pose.frame_id_.c_str());
+      this->robTrack->addPoseIsValid(global_pose_robot.getOrigin().getX(), global_pose_robot.getOrigin().getY(), roll,pitch,yaw);
 
-	this->robTrack->addPoseIsValid(global_pose.getOrigin().getX(), global_pose.getOrigin().getY(), roll,pitch,yaw);
+      // ROS_DEBUG_NAMED("cyclic","Robot pose: %f, %f, %s ",
+      //     global_pose_robot.getOrigin().getX(),
+      //     global_pose_robot.getOrigin().getY(),
+      //     global_pose_robot.frame_id_.c_str());
 
-	ROS_DEBUG_NAMED("cyclic","Robot pose: %f, %f, %s ", global_pose.getOrigin().getX(), global_pose.getOrigin().getY(), global_pose.frame_id_.c_str());
+      this->waypoint_follower->updatePosition(global_pose_robot.getOrigin().getX(), global_pose_robot.getOrigin().getY(), yaw);
 
-	this->waypoint_follower->updatePosition(global_pose.getOrigin().getX(), global_pose.getOrigin().getY(), yaw);
+      adaptMotionParams();
 
-	adaptMotionParams();
+      waypoint_follower->updateVelocities(drive_cmds);
 
-	waypoint_follower->updateVelocities(drive_cmds);
+      ROS_DEBUG_NAMED("cyclic", "Waypoint Follower created velocities x = %f, th=%f", drive_cmds.vel.px, drive_cmds.vel.pa);
 
-	ROS_DEBUG_NAMED("cyclic", "Waypoint Follower created velocities x = %f, th=%f", drive_cmds.vel.px, drive_cmds.vel.pa);
+      //pass along drive commands
+      cmd_vel.linear.x = drive_cmds.vel.px;
+      cmd_vel.linear.y = drive_cmds.vel.py;
 
-	//pass along drive commands
-	cmd_vel.linear.x = drive_cmds.vel.px;
-	cmd_vel.linear.y = drive_cmds.vel.py;
-
-	cmd_vel.angular.z = drive_cmds.vel.pa;
-
+      cmd_vel.angular.z = drive_cmds.vel.pa;
+  } catch (tf::ExtrapolationException &e) {
+      ROS_ERROR("Tf exception: %s", e.what());
+      return false;
+  } catch(tf::LookupException &e) {
+	    ROS_ERROR("Tf exception: %s", e.what());
+	    return false;
+  } catch(tf::TransformException &e) {
+	    ROS_ERROR("Tf exception: %s", e.what());
+	    return false;
+  }
 	return true;
 }
 
@@ -288,7 +305,7 @@ bool WaypointFollowerRos::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
     if (!safeMotionPossible) {
         params.reduced_trans_vel = 0;
     }
-    ROS_DEBUG_NAMED("plan", "Reducing max speed to %f", params.reduced_trans_vel);
+    ROS_DEBUG_NAMED("cyclic", "Reducing max speed to %f", params.reduced_trans_vel);
     // even if loop found no solution, max velocity is a low setting
     waypoint_follower->changeMotionParams(params);
 
