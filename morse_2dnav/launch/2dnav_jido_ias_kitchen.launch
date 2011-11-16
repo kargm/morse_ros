@@ -1,6 +1,6 @@
 <launch>
   
-  <include file="$(find morse_tf)/launch/morse_tf.launch"/>
+  <include file="$(find morse_tf)/launch/morse_jido_tf.launch"/>
 
   <include file="$(find morse_2dnav)/launch/morse_move_base/move_base_jido.launch"/>
   
