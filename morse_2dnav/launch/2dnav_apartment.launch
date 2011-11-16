@@ -1,0 +1,20 @@
+<launch>
+
+  <include file="$(find morse_tf)/launch/morse_tf.launch"/>
+
+  <include file="$(find morse_2dnav)/launch/morse_move_base/move_base.launch"/>
+
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/apartment.yaml"/> 
+
+  <node pkg="kuka_arm" type="Jido_park_arm.py" name="Jido_park_arm"/>
+
+  <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
+    <remap from="~laser_1" to="/Jido/Sick"/>
+    <remap from="/goal" to="/nav_pcontroller/goal"/>
+    <remap from="/cmd_vel" to="/Jido/Motion_Controller"/>
+    <rosparam file="$(find morse_2dnav)/launch/nav_pcontroller_params.yaml" command="load"/>
+  </node>
+
+  <node name="test_morse_nodes" pkg="morse_2dnav" type="test_morse_nodes.py"/> 
+ 
+</launch>
