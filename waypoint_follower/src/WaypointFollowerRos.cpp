@@ -23,7 +23,7 @@
 PLUGINLIB_DECLARE_CLASS(waypoint_follower, WaypointFollowerPlugin, human_wp_follow_plugin::WaypointFollowerRos, nav_core::BaseLocalPlanner)
 
 
-namespace human_wp_follow_plugin{
+namespace human_wp_follow_plugin {
 
 
 //by how much of the original max speed we reduce the max speed in each cycle to find a non-colliding suitable speed
@@ -125,8 +125,10 @@ void WaypointFollowerRos::humanPoseCallback(const geometry_msgs::PoseStamped& po
   dat_pos.x = pose.pose.position.x;
   dat_pos.y = pose.pose.position.y;
   btScalar roll,pitch,yaw;
+  geometry_msgs::PoseStamped poseMap;
+  tf_->transformPose("/map", pose, poseMap);
   tf::Stamped<tf::Pose> tfpose;
-  tf::poseStampedMsgToTF(pose, tfpose);
+  tf::poseStampedMsgToTF(poseMap, tfpose);
   btMatrix3x3(tfpose.getRotation()).getRPY(roll, pitch, yaw, 1);
   dat_pos.th = yaw;
   ROS_DEBUG_NAMED("human", "Observed human at %f, %f, %f", dat_pos.x, dat_pos.y, dat_pos.th );
