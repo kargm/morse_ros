@@ -67,6 +67,7 @@ private:
   float agentOnPathSafetyDistance;
   bool motionParamsSet;
   bool direction_already_computed_p;
+  bool turning_in_goal;
   enum driving_direction_t driving_direction;
   double last_known_distance_to_goal;
 

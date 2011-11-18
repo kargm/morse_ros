@@ -33,6 +33,7 @@ namespace NHPPlayerDriver {
     position_initialized =  false; // whether robot is localized
     goal_ready = false; // whether waypoints have been sent
     robot_movement_allowed = false;
+    turning_in_goal = false;
     motionParamsSet = false;
     humanOnPath = false;
     pathBlockedTimestamp = -1;
@@ -317,12 +318,19 @@ namespace NHPPlayerDriver {
       this->last_known_distance_to_goal = current_distance_to_goal;
     }
 
+    if (this->waypoint_queue.size()>2) {
+        // if turning made us leave goal point very far, return to goal
+        turning_in_goal = false;
+    }
+
     /* either we are at the end (within single success distance)
      * or we are on a waypoint (within 3x success distance)
      * or we need to continue and correct PID velocities
      */
-    if (this->waypoint_queue.empty() && (current_distance_to_goal < this->motionParams.success_distance)) {
+    if (turning_in_goal == true || (this->waypoint_queue.empty() && (current_distance_to_goal < this->motionParams.success_distance))) {
       ROS_DEBUG_NAMED("velo", "Success: (%f, %f) in delta %f of  (%f, %f)", this->gx, this->gy, current_distance_to_goal, this->x,  this->y);
+      turning_in_goal = true;
+      // just turn from now on, even if it makes us go away from goal a bit
       turnVelocityInGoal(cmd);
     } else {
     	// either more waypoints are left or we are not quite in final location
