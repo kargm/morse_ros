@@ -27,7 +27,7 @@ namespace human_wp_follow_plugin {
 
 
 //by how much of the original max speed we reduce the max speed in each cycle to find a non-colliding suitable speed
-#define SPEED_ADAPTION_STEPS 0.28
+#define SPEED_ADAPTION_STEPS 0.09
 
 
 #define LOGGING FALSE
