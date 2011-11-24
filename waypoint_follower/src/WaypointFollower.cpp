@@ -467,7 +467,7 @@ namespace NHPPlayerDriver {
 
     // if we got a new waypoint, compute the new driving direction (forward or backward) to reach it
     if (!this->direction_already_computed_p || moved_away_from_target) {
-      updateDrivingDirection(angle_towards_goal_absolute, current_distance_to_goal, start_driving_forward_turning_angle, start_driving_backward_turning_angle);
+      updateDrivingDirection(angle_towards_goal_absolute, current_distance_to_goal, start_driving_forward_turning_angle);
       this->direction_already_computed_p = true;
     } // endif ! direction_already_computed
 
@@ -530,13 +530,10 @@ namespace NHPPlayerDriver {
    * returns forward or backward
    */
   inline void WaypointFollower::updateDrivingDirection(
-      double angle_towards_goal_absolute,
+      double & angle_towards_goal_absolute,
       double & current_distance_to_goal,
-      double & start_driving_forward_turning_angle,
-      double & start_driving_backward_turning_angle)
+      double & angle_to_goal_forward)
   {
-    double goal_driving_forward_turning_angle  = NORMALIZE(this->gaz - angle_towards_goal_absolute);
-    double goal_driving_backward_turning_angle = NORMALIZE(this->gaz - (angle_towards_goal_absolute - M_PI));
 
     //				PLAYER_MSG4( 2, "sdfta: %f / gdfta: %f / sdbta: %f / gdbta: %f",
     //						start_driving_forward_turning_angle, goal_driving_forward_turning_angle,
@@ -546,10 +543,9 @@ namespace NHPPlayerDriver {
     //						(fabs(start_driving_backward_turning_angle) + fabs(goal_driving_backward_turning_angle)) );
 
     // if we are > 1m away from the goal or we have to rotate less than 90deg. to face the goal -> drive forward
-    // -0.1 is a magic number that prefers driving forward even if the forward angles are bigger
-    if ( current_distance_to_goal > 1.0 ||
-        ((fabs(start_driving_forward_turning_angle) + fabs(goal_driving_forward_turning_angle) - 0.1) <=
-            (fabs(start_driving_backward_turning_angle) + fabs(goal_driving_backward_turning_angle))) ) {
+    // -0.6 is a magic number that prefers driving forward even if the forward angles are bigger
+    if ( current_distance_to_goal > 1.0 || this->waypoint_queue.size() > 4 ||
+        ((fabs( angle_to_goal_forward) - 0.6) <= M_PI / 2)) {
       this->driving_direction = DRIVING_DIRECTION_FORWARD;
     }
     else {
