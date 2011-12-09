@@ -82,7 +82,14 @@ for row in posesReader:
         if (lefthand == 'TakingSomeThing' or lefthand == 'ReleasingGraspOfSomething'): # Object interation with left hand
             obj_pose.position.x = float(row['HALX'])/1000
             obj_pose.position.y = float(row['HALY'])/1000
-            obj_quat = quaternion_from_euler(0,0,theta + 3.1415)
+
+            # calculate object orientation using object position and human position (without orientation)
+            # obj_quat = quaternion_from_euler(0,0,theta + 3.1415)
+            deltax = pose.pose.position.x - obj_pose.position.x
+            deltay = pose.pose.position.y - obj_pose.position.y
+            obj_theta = math.atan2(deltay, deltax)
+            obj_quat = quaternion_from_euler(0,0,obj_theta)
+            
             obj_pose.orientation.x = float(obj_quat[0])
             obj_pose.orientation.y = float(obj_quat[1])
             obj_pose.orientation.z = float(obj_quat[2])
@@ -91,11 +98,19 @@ for row in posesReader:
         if (righthand == 'TakingSomething' or righthand == 'ReleasingGraspOfSomething'): # Object interaction with right hand
             obj_pose.position.x = float(row['HARX'])/1000
             obj_pose.position.y = float(row['HARY'])/1000
-            obj_quat = quaternion_from_euler(0,0,theta + 3.1415)
+
+            # calculate object orientation using object position and human position (without orientation)
+            # obj_quat = quaternion_from_euler(0,0,theta + 3.1415)
+            deltax = pose.pose.position.x - obj_pose.position.x
+            deltay = pose.pose.position.y - obj_pose.position.y
+            obj_theta = math.atan2(deltay,deltax)
+            obj_quat = quaternion_from_euler(0,0,obj_theta)
+
             obj_pose.orientation.x = float(obj_quat[0])
             obj_pose.orientation.y = float(obj_quat[1])
             obj_pose.orientation.z = float(obj_quat[2])
             obj_pose.orientation.w = float(obj_quat[3])
+
 
         obj_positions.poses.append(obj_pose)
         obj_pub.publish(obj_positions)
