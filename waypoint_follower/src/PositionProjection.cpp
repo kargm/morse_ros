@@ -27,9 +27,14 @@ namespace NHPPlayerDriver {
    */
   XYTH_COORD linearProjection(XYTH_COORD currentPose, VELOCITY velocity, double timeSecs) {
     XYTH_COORD result;
+    double scale = 1;
+    if (velocity.speedms > 0.2 && velocity.speedms < 1) {
+        // if human moves slow, assume he will move at walking speed
+        scale =  1 / velocity.speedms;
+    }
     // simply add velocity onto current pose w.r.t. given time
-    result.x = currentPose.x + velocity.speedxms * (timeSecs );
-    result.y = currentPose.y + velocity.speedyms * (timeSecs );
+    result.x = currentPose.x + (velocity.speedxms * scale) * (timeSecs );
+    result.y = currentPose.y + (velocity.speedyms * scale) * (timeSecs );
     result.th = currentPose.th;
     return result;
   }
@@ -69,7 +74,7 @@ namespace NHPPlayerDriver {
    * certain motion parameters (e.g. max robot speed) in time, and returns true if the projection
    * results in a conflict within the given time span.
    */
-  bool checkPosesInConflict( // TODO pass pose histories instead, or agents
+  double checkPosesInConflict( // TODO pass pose histories instead, or agents
       XYTH_COORD* humanPoses,
       VELOCITY* humanVelocities,
       int num_humans,
@@ -89,8 +94,8 @@ namespace NHPPlayerDriver {
 
     // TODO: detect earlier that speed reduction helps!
     // adapt robot speed to upcoming turn
-
-
+    double dist;
+    double mindistance = -1;
     // check for every certain space interval
     for (relativeTimeSecs = 0.0; relativeTimeSecs < timeSpan; relativeTimeSecs += proj_params.projectionSteps / (params.reduced_trans_vel / 10)) {
         XYTH_COORD predRobotPose = pathProjection(currentRobotPose, robotVelocity, pathWaypoints, relativeTimeSecs, params);
@@ -100,14 +105,17 @@ namespace NHPPlayerDriver {
             //  {TODO discard humans if outside possible range
             humanPredPose = linearProjection(humanPoses[i], humanVelocities[i], relativeTimeSecs);
             // TODO: include uncertainty in collision distance
-            if (DISTANCE2D(humanPredPose.x, humanPredPose.y, predRobotPose.x, predRobotPose.y) < collision_distance) {
-              return true;
+            dist = DISTANCE2D(humanPredPose.x, humanPredPose.y, predRobotPose.x, predRobotPose.y);
+            if (dist < collision_distance) {
+              if (mindistance < 0 || mindistance > dist) {
+                  mindistance = dist;
+              }
             } else {
             }
           }
         }
     }
-    return false;
+    return mindistance;
   }
 
   /**

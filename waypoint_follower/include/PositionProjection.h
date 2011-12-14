@@ -33,7 +33,7 @@ namespace NHPPlayerDriver {
    MOTION_PROJECTION_PARAMS getDefaultMotionProjectionParams();
 
 
-  bool checkPosesInConflict(
+  double checkPosesInConflict(
         XYTH_COORD* humanPoses,
         VELOCITY* humanVelocities,
         int no_humans,

@@ -281,15 +281,16 @@ bool WaypointFollowerRos::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
     }
 
     WP_FOLLOW_PARAMS params = this->waypoint_follower->getMotionParams();
-
+    double conflictDist;
+    int collisionPlausible = 0;
     bool safeMotionPossible = false;
     // test several different motion param variants until we find one that does not conflict (hopefully the first)
     for (reduceAmount = 0; reduceAmount < 1; reduceAmount += SPEED_ADAPTION_STEPS) {
         //      printf("%f\n", reduceAmount);
-        params.reduced_trans_vel = (1 - reduceAmount) * params.max_trans_vel;
+        params.reduced_trans_vel = (1 - reduceAmount) * fmin(params.reduced_trans_vel + (SPEED_ADAPTION_STEPS * 1.5), params.max_trans_vel);
         XYTH_COORD currentpos;
         this->robTrack->valid2DPose(&currentpos);
-        if (! checkPosesInConflict(humanPoses,
+        conflictDist = checkPosesInConflict(humanPoses,
             humanVelocities,
             num_humans,
             currentpos,
@@ -297,10 +298,17 @@ bool WaypointFollowerRos::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
             &waypoints,
             PROJECTION_TIMESPAN,
             COLLISION_DISTANCE,
-            params)) {
-          safeMotionPossible = true;
-          break;
+            params);
+        if (conflictDist < 0) {
+            if (collisionPlausible == 0) {
+                safeMotionPossible = true;
+                break;
+            } else {
+                collisionPlausible--;
+            }
         } else {
+            collisionPlausible = 1;
+            ROS_DEBUG_NAMED("cyclic", "Human collision distance %f at velocity %f", conflictDist, params.reduced_trans_vel);
 //          ROS_DEBUG_NAMED("human", "Reducing max speed proportionally to %f", (1 - reduceAmount) * params.max_trans_vel);
         }
     }
