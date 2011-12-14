@@ -121,15 +121,17 @@ bool pose_init = false;
 // callback function for human pose
 void WaypointFollowerRos::humanPoseCallback(const geometry_msgs::PoseStamped& pose)
 {
-  NHPPlayerDriver::XYTH_COORD dat_pos;
-  dat_pos.x = pose.pose.position.x;
-  dat_pos.y = pose.pose.position.y;
+
   btScalar roll,pitch,yaw;
   geometry_msgs::PoseStamped poseMap;
   tf_->transformPose("/map", pose, poseMap);
   tf::Stamped<tf::Pose> tfpose;
   tf::poseStampedMsgToTF(poseMap, tfpose);
-  btMatrix3x3(tfpose.getRotation()).getRPY(roll, pitch, yaw, 1);
+  btMatrix3x3 mat = btMatrix3x3(tfpose.getRotation());
+  mat.getEulerYPR(yaw, pitch, roll);
+  NHPPlayerDriver::XYTH_COORD dat_pos;
+  dat_pos.x = poseMap.pose.position.x;
+  dat_pos.y = poseMap.pose.position.y;
   dat_pos.th = yaw;
   ROS_DEBUG_NAMED("human", "Observed human at %f, %f, %f", dat_pos.x, dat_pos.y, dat_pos.th );
   int id = 0; // TODO: Listen to topic which recognizes human identity, or pick most likely
