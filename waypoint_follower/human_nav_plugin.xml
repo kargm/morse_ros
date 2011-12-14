@@ -1,7 +1,0 @@
-<library path="lib/libwp_follower">
-  <class name="waypoint_follower/WaypointFollowerRos" type="human_wp_follow_plugin::WaypointFollowerRos" base_class_type="nav_core::BaseLocalPlanner">
-    <description>
-      A local path-planner following waypoints and reducing speed for humans
-    </description>
-  </class>
-</library>
