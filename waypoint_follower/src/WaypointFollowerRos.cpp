@@ -143,6 +143,17 @@ void WaypointFollowerRos::humanPoseCallback(const geometry_msgs::PoseStamped& po
   }
 
   human_tracker->handlePositionUpdate(dat_pos.x, dat_pos.y, dat_pos.th, id);
+  VELOCITY vel = human_tracker->getHumanVelocity(id);
+  if (vel.speedms > 0.1) {
+      // use velocity angle as yaw
+      mat.setEulerYPR(vel.heading_az, pitch, roll);
+      btQuaternion q;
+      mat.getRotation(q);
+      poseMap.pose.orientation.x = q.getX();
+      poseMap.pose.orientation.y = q.getY();
+      poseMap.pose.orientation.z = q.getZ();
+      poseMap.pose.orientation.w = q.getW();
+  }
 }
 
 bool WaypointFollowerRos::isGoalReached() {
