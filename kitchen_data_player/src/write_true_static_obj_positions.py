@@ -51,6 +51,54 @@ def get_cluster_number(x, y):
 
     return cluster, location
 
+# Publishes the (hard-coded) locations of the furniture using tf
+def publish_furniture():
+
+    #br = tf.TransformBroadcaster()
+    # Furniture
+
+    table_x = 2.60843
+    table_y = 2.62942
+    table_theta = 3.1415
+
+    stove_x = 0.358843
+    stove_y = 2.128373
+    stove_theta = 0
+
+    drawer_x = 0.575870
+    drawer_y = 2.551552
+    drawer_theta = 0
+
+    cupboard_x = 0.235389
+    cupboard_y = 3.151886
+    cupboard_theta = 0
+
+    br.sendTransform((table_x, table_y, 0),
+                     tf.transformations.quaternion_from_euler(0, 0, table_theta),
+                     rospy.Time.now(),
+                     "table",
+                     "map")
+
+    br.sendTransform((drawer_x, drawer_y, 0),
+                     tf.transformations.quaternion_from_euler(0, 0, drawer_theta),
+                     rospy.Time.now(),
+                     "drawer",
+                     "map")
+
+    br.sendTransform((stove_x, stove_y, 0),
+                     tf.transformations.quaternion_from_euler(0, 0, stove_theta),
+                     rospy.Time.now(),
+                     "stove",
+                     "map")
+
+    br.sendTransform((cupboard_x, cupboard_y, 0),
+                     tf.transformations.quaternion_from_euler(0, 0, cupboard_theta),
+                     rospy.Time.now(),
+                     "cupboard",
+                     "map")
+
+    
+
 posesReader = csv.DictReader(open(sys.argv[1], 'rb'), delimiter=',', quotechar='|')
 labelsReader = csv.DictReader(open(sys.argv[2], 'rb'), delimiter=',', quotechar='|')
 
@@ -61,6 +109,7 @@ FILE.write("instance,time,OBJX,OBJY,OBJTHETA,cluster,location\n")
 pose_pub = rospy.Publisher('kitchen_pose', PoseStamped)             # current pose
 poses_pub = rospy.Publisher('kitchen_poses', PoseArray)             # all poses
 obj_pub = rospy.Publisher('object_poses', PoseArray)                # object positions
+
 rospy.init_node('kitchen_player')
 
 human_positions = PoseArray()                     # array to store the poses of the human for display
@@ -69,9 +118,11 @@ human_positions.header.frame_id = 'map'
 obj_positions.header.frame_id = 'map'
 last_lefthand = 'start'
 last_righthand = 'start'
-
+br = tf.TransformBroadcaster()
+tf_listener = tf.TransformListener()
 
 for row in posesReader:
+    #time.sleep(1/2)
     # Write new csv-file with: instance, time, BECX, BEXY, BECTheta, 
     theta = 0
     # Calculate theta
@@ -83,6 +134,14 @@ for row in posesReader:
     trunk = 'NONE'
     lefthand = 'NONE'
     righthand = 'NONE'
+
+    quat = quaternion_from_euler(0,0,theta)
+    br.sendTransform((float(row['BECX'])/1000, float(row['BECY'])/1000, 0),
+                     quat,
+                     rospy.Time.now(),
+                     "human_pose",
+                     "map")
+
     for labelrow in labelsReader:
         labelsReader = csv.DictReader(open(sys.argv[2], 'rb'), delimiter=',', quotechar='|')
         if instance == labelrow['instance']:
@@ -91,7 +150,7 @@ for row in posesReader:
             trunk = labelrow['trunk']
              
     # Calculate Human position when standing still and interacting with objects
-    if trunk == 'StandingStill' and (((lefthand == 'TakingSomeThing' and last_lefthand != 'TakingSomeThing') or (lefthand == 'ReleasingGraspOfSomething' and last_lefthand != 'ReleasingGraspOfSomething')) or ((righthand == 'TakingSomething' and last_righthand !=  'TakingSomething') or (righthand == 'ReleasingGraspOfSomething' and last_righthand !='ReleasingGraspOfSomething'))):
+    if trunk == 'StandingStill' and (((lefthand == 'TakingSomeThing' and last_lefthand != 'TakingSomeThing') or (lefthand == 'ReleasingGraspOfSomething' and last_lefthand != 'ReleasingGraspOfSomething' and last_lefthand != 'ClosingADoor')) or ((righthand == 'TakingSomething' and last_righthand !=  'TakingSomething') or (righthand == 'ReleasingGraspOfSomething' and last_righthand !='ReleasingGraspOfSomething' and last_righthand != 'ClosingADoor'))):
         
         # Publish information on ROS-topics on the fly
         pose = PoseStamped()
@@ -106,14 +165,15 @@ for row in posesReader:
 
         human_positions.poses.append(pose.pose)
         
+        print("TF from table: %s, %s"%tf_listener.lookupTransform("human_pose", "table", rospy.Time(0)))
         poses_pub.publish(human_positions)
         pose_pub.publish(pose)
-        # time.sleep(1/30) # Add this if you want to play in realtime
 
     # Calculate object positions when grasping or releasing objects and calculate orientation of object to human (obj-pos looking at human body center)
     if trunk == 'StandingStill': 
         obj_pose = Pose()
-        if ((lefthand == 'TakingSomeThing' and last_lefthand != 'TakingSomeThing') or (lefthand == 'ReleasingGraspOfSomething' and last_lefthand != 'ReleasingGraspOfSomething')): # Object interation with left hand
+        if ((lefthand == 'TakingSomeThing' and last_lefthand != 'TakingSomeThing') \
+                or (lefthand == 'ReleasingGraspOfSomething' and last_lefthand != 'ReleasingGraspOfSomething' and last_lefthand != 'ClosingADoor')): # Object interation with left hand
             obj_pose.position.x = float(row['HALX'])/1000
             obj_pose.position.y = float(row['HALY'])/1000
 
@@ -135,7 +195,7 @@ for row in posesReader:
             print("Object position: %s,%s,%s,%s,%s,%s,%s"%(instance, row['time'], row['HALX'], row['HALY'], obj_theta, cluster, location))
 
         if ((righthand == 'TakingSomething' and last_righthand !=  'TakingSomething') \
-                or (righthand == 'ReleasingGraspOfSomething' and last_righthand !='ReleasingGraspOfSomething')): # Object interaction with right hand
+                or (righthand == 'ReleasingGraspOfSomething' and last_righthand !='ReleasingGraspOfSomething' and last_righthand != 'ClosingADoor')): # Object interaction with right hand
             obj_pose.position.x = float(row['HARX'])/1000 
             obj_pose.position.y = float(row['HARY'])/1000
 
@@ -153,8 +213,10 @@ for row in posesReader:
             
             cluster, location = get_cluster_number(pose.pose.position.x, pose.pose.position.y)
 
-            FILE.write("%s,%s,%s,%s,%s,%s,%s\n"%(instance, row['time'], row['HALX'], row['HALY'], obj_theta, cluster, location))
-            print("Object position: %s,%s,%s,%s,%s,%s,%s"%(instance, row['time'], row['HALX'], row['HALY'], obj_theta, cluster, location))
+            FILE.write("%s,%s,%s,%s,%s,%s,%s\n"%(instance, row['time'], row['HARX'], row['HARY'], obj_theta, cluster, location))
+            print("Object position: %s,%s,%s,%s,%s,%s,%s"%(instance, row['time'], row['HARX'], row['HARY'], obj_theta, cluster, location))
+
+        publish_furniture()
 
         obj_positions.poses.append(obj_pose)
         obj_pub.publish(obj_positions)
