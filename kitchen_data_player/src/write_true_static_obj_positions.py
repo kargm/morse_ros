@@ -57,20 +57,24 @@ def publish_furniture():
     #br = tf.TransformBroadcaster()
     # Furniture
 
+    # from logged object data
     table_x = 2.60843
     table_y = 2.62942
     table_theta = 3.1415
 
+    # from logged object data
     stove_x = 0.358843
     stove_y = 2.128373
     stove_theta = 0
 
-    drawer_x = 0.575870
-    drawer_y = 2.551552
+    # from semantic map
+    drawer_x = 0.32296494
+    drawer_y = 2.530835
     drawer_theta = 0
 
-    cupboard_x = 0.235389
-    cupboard_y = 3.151886
+    # from semantic map
+    cupboard_x = 0.19635946
+    cupboard_y = 3.107985
     cupboard_theta = 0
 
     br.sendTransform((table_x, table_y, 0),
