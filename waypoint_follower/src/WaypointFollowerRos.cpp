@@ -42,7 +42,7 @@ using namespace NHPPlayerDriver;
 double PROJECTION_TIMESPAN = 6.0;
 
 // for center to center distance between human and robot lower than this (in meters), consider them in collision
-double COLLISION_DISTANCE = 1.0;
+double COLLISION_DISTANCE = 1.3;
 
 int flushCountdown= 20;
 XYTH_COORD logPos;
@@ -308,10 +308,13 @@ bool WaypointFollowerRos::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
     double conflictDist;
     int collisionPlausible = 0;
     bool safeMotionPossible = false;
+    int i = 0;
     // test several different motion param variants until we find one that does not conflict (hopefully the first)
-    for (reduceAmount = 0; reduceAmount < 1; reduceAmount += SPEED_ADAPTION_STEPS) {
+    for (reduceAmount = 0; reduceAmount < 1 && i < 5; reduceAmount += SPEED_ADAPTION_STEPS) {
+        i++;
         //      printf("%f\n", reduceAmount);
-        params.reduced_trans_vel = (1 - reduceAmount) * fmin(params.reduced_trans_vel + (SPEED_ADAPTION_STEPS * 1.5), params.max_trans_vel);
+        // slowly accelerate after reducing speed
+        params.reduced_trans_vel = (1 - reduceAmount) * fmin(params.reduced_trans_vel + (SPEED_ADAPTION_STEPS * 1.2), params.max_trans_vel);
         XYTH_COORD currentpos;
         this->robTrack->valid2DPose(&currentpos);
         conflictDist = checkPosesInConflict(humanPoses,
@@ -331,13 +334,16 @@ bool WaypointFollowerRos::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
                 collisionPlausible--;
             }
         } else {
-            collisionPlausible = 1;
+            collisionPlausible = 2;
             ROS_DEBUG_NAMED("cyclic", "Human collision distance %f at velocity %f", conflictDist, params.reduced_trans_vel);
 //          ROS_DEBUG_NAMED("human", "Reducing max speed proportionally to %f", (1 - reduceAmount) * params.max_trans_vel);
         }
     }
     if (!safeMotionPossible) {
-        params.reduced_trans_vel = 0;
+        params.reduced_trans_vel = params.reduced_trans_vel - SPEED_ADAPTION_STEPS;
+        if (params.reduced_trans_vel < 0) {
+            params.reduced_trans_vel = 0;
+        }
     }
     ROS_DEBUG_NAMED("cyclic", "Reducing max speed to %f", params.reduced_trans_vel);
     // even if loop found no solution, max velocity is a low setting
