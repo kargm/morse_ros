@@ -202,7 +202,7 @@ for row in posesReader:
     # Calculate object positions when grasping or releasing objects and calculate orientation of object to human (obj-pos looking at human body center)
     if trunk == 'StandingStill': 
         obj_pose = Pose()
-        if ((lefthand == 'TakingSomeThing' and last_lefthand != 'TakingSomeThing') \
+        if ((lefthand == 'TakingSomething' and last_lefthand != 'TakingSomething') \
                 or (lefthand == 'ReleasingGraspOfSomething' and last_lefthand != 'ReleasingGraspOfSomething' and last_lefthand != 'ClosingADoor')): # Object interation with left hand
             obj_pose.position.x = float(row['HALX'])/1000
             obj_pose.position.y = float(row['HALY'])/1000
