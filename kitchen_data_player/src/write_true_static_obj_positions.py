@@ -238,59 +238,87 @@ for row in posesReader:
 
     # Calculate object positions when grasping or releasing objects and calculate orientation of object to human (obj-pos looking at human body center)
     if trunk == 'StandingStill': 
-        left = false
-        right = false
+        left = False
+        right = False
+        left_pose = Pose()
+        right_pose = Pose()
+        left_theta = 0
+        right_theta = 0
         
         if ((lefthand == 'TakingSomething' and last_lefthand !=  'TakingSomething') \
                 or (lefthand == 'ReleasingGraspOfSomething' and last_lefthand != 'ReleasingGraspOfSomething' and last_lefthand != 'ClosingADoor')): # Object interation with left hand
-            obj_pose = Pose()
-            obj_pose.position.x = float(row['HALX'])/1000
-            obj_pose.position.y = float(row['HALY'])/1000
+            left = True
+            left_pose = Pose()
+            left_pose.position.x = float(row['HALX'])/1000
+            left_pose.position.y = float(row['HALY'])/1000
 
             # calculate object orientation using object position and human position (without orientation)
             # obj_quat = quaternion_from_euler(0,0,theta + 3.1415)
-            deltax = pose.pose.position.x - obj_pose.position.x
-            deltay = pose.pose.position.y - obj_pose.position.y
-            obj_theta = math.atan2(deltay, deltax)
-            obj_quat = quaternion_from_euler(0,0,obj_theta)
+            deltax = pose.pose.position.x - left_pose.position.x
+            deltay = pose.pose.position.y - left_pose.position.y
+            left_theta = math.atan2(deltay, deltax)
+            obj_quat = quaternion_from_euler(0,0,left_theta)
             
-            obj_pose.orientation.x = float(obj_quat[0])
-            obj_pose.orientation.y = float(obj_quat[1])
-            obj_pose.orientation.z = float(obj_quat[2])
-            obj_pose.orientation.w = float(obj_quat[3])
-            obj_positions.poses.append(obj_pose)
+            left_pose.orientation.x = float(obj_quat[0])
+            left_pose.orientation.y = float(obj_quat[1])
+            left_pose.orientation.z = float(obj_quat[2])
+            left_pose.orientation.w = float(obj_quat[3])
+            #obj_positions.poses.append(obj_pose)
             
             cluster, location = get_cluster_number(pose.pose.position.x, pose.pose.position.y)
             
             #print("LEFT hand used at instance = %s"%row['instance'])
             #print("last lefthand: %s, lefthand: %s"%(last_lefthand, lefthand))
-            FILE.write("%s,%s,%s,%s,%s,%s,%s\n"%(instance, row['time'], row['HALX'], row['HALY'], obj_theta, cluster, location))
-            print("Object position: %s,%s,%s,%s,%s,%s,%s"%(instance, row['time'], row['HALX'], row['HALY'], obj_theta, cluster, location))
+            FILE.write("%s,%s,%s,%s,%s,%s,%s\n"%(instance, row['time'], row['HALX'], row['HALY'], left_theta, cluster, location))
+            print("Object position: %s,%s,%s,%s,%s,%s,%s"%(instance, row['time'], row['HALX'], row['HALY'], left_theta, cluster, location))
 
         if ((righthand == 'TakingSomething' and last_righthand !=  'TakingSomething') \
                 or (righthand == 'ReleasingGraspOfSomething' and last_righthand !='ReleasingGraspOfSomething' and last_righthand != 'ClosingADoor')): # Object interaction with right hand
-            obj_pose = Pose()
-            obj_pose.position.x = float(row['HARX'])/1000 
-            obj_pose.position.y = float(row['HARY'])/1000
+            #obj_pose = Pose()
+            right = True
+            right_pose.position.x = float(row['HARX'])/1000 
+            right_pose.position.y = float(row['HARY'])/1000
 
             # calculate object orientation using object position and human position (without orientation)
             # obj_quat = quaternion_from_euler(0,0,theta + 3.1415)
-            deltax = pose.pose.position.x - obj_pose.position.x
-            deltay = pose.pose.position.y - obj_pose.position.y
-            obj_theta = math.atan2(deltay,deltax)
-            obj_quat = quaternion_from_euler(0,0,obj_theta)
+            deltax = pose.pose.position.x - right_pose.position.x
+            deltay = pose.pose.position.y - right_pose.position.y
+            right_theta = math.atan2(deltay,deltax)
+            obj_quat = quaternion_from_euler(0,0,right_theta)
 
-            obj_pose.orientation.x = float(obj_quat[0])
-            obj_pose.orientation.y = float(obj_quat[1])
-            obj_pose.orientation.z = float(obj_quat[2])
-            obj_pose.orientation.w = float(obj_quat[3])
-            obj_positions.poses.append(obj_pose)
+            right_pose.orientation.x = float(obj_quat[0])
+            right_pose.orientation.y = float(obj_quat[1])
+            right_pose.orientation.z = float(obj_quat[2])
+            right_pose.orientation.w = float(obj_quat[3])
+            #obj_positions.poses.append(obj_pose)
             
             cluster, location = get_cluster_number(pose.pose.position.x, pose.pose.position.y)
             #print("RIGHT hand used at instance: = %s"%row['instance'])
             #print("last righthand: %s, righthand: %s"%(last_righthand, righthand))
-            FILE.write("%s,%s,%s,%s,%s,%s,%s\n"%(instance, row['time'], row['HARX'], row['HARY'], obj_theta, cluster, location))
-            print("Object position: %s,%s,%s,%s,%s,%s,%s"%(instance, row['time'], row['HARX'], row['HARY'], obj_theta, cluster, location))
+            FILE.write("%s,%s,%s,%s,%s,%s,%s\n"%(instance, row['time'], row['HARX'], row['HARY'], right_theta, cluster, location))
+            print("Object position: %s,%s,%s,%s,%s,%s,%s"%(instance, row['time'], row['HARX'], row['HARY'], right_theta, cluster, location))
+        
+        if right == True and left == False:            # Object interactions with right hand
+            obj_positions.poses.append(right_pose)
+        if left == True and right == False:            # Object interactions with left hand
+            obj_positions.poses.append(left_pose)
+        if left == True and right == True:             # Object interactions with both hands => use average point between 2 hand as reference and 
+            #obj_positions.poses.append(left_pose)      # calculate orientation to human from there
+            #obj_positions.poses.append(right_pose)
+            avg_pose = Pose()
+            avg_pose.position.x = float((left_pose.position.x + right_pose.position.x) / 2)
+            avg_pose.position.y = float((left_pose.position.y + right_pose.position.y) / 2)
+            
+            deltax = pose.pose.position.x - avg_pose.position.x
+            deltay = pose.pose.position.y - avg_pose.position.y
+            avg_theta = math.atan2(deltay,deltax)
+            avg_quat = quaternion_from_euler(0,0,avg_theta)
+            
+            avg_pose.orientation.x = float(avg_quat[0])
+            avg_pose.orientation.y = float(avg_quat[1])
+            avg_pose.orientation.z = float(avg_quat[2])
+            avg_pose.orientation.w = float(avg_quat[3])
+            obj_positions.poses.append(avg_pose)
             
         obj_pub.publish(obj_positions)
         last_lefthand = lefthand
