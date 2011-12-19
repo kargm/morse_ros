@@ -485,7 +485,7 @@ namespace NHPPlayerDriver {
     // allow moving forward within a range bounded by 0.1 and maximally 0.75 (45 degrees) in general,
     // or max according to params and distance to next goal (less tolerant near goal)
     if (this->waypoint_queue.empty()) {
-        local_trans_angle_range = 0.1;
+        local_trans_angle_range = 0.2;
     } else {
       // value between 0.3 and 1.2
         local_trans_angle_range = MINMAX(this->motionParams.trans_angle_range * fmin(current_distance_to_goal * 3, 1.0), 0.4, 1.2);

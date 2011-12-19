@@ -14,11 +14,10 @@
 namespace NHPPlayerDriver {
 
 // sensor of maximally what time in millisecs to consider for motion detection
-#define VELOCITY_EST_HORIZON 3000
+#define VELOCITY_EST_HORIZON 2000
 // how many sensor values to keep in FIFO buffer
 #define HISTORY_LENGTH 15
-// moving below that value in (m/s) is considered standing
-#define MINIMUM_MOTION_VELOCVITY 0.3
+
 
 typedef struct STRUCT_LIMP_6D_COORD{
   double x;

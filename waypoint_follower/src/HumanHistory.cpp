@@ -15,12 +15,10 @@
 
 // if the head is below that heigt, we consider the human sitting.
 #define HUMAN_DEFAULT_SITTING_HEAD_HEIGHT 1.6
-// sensor of maximally what time in millisecs to consider for motion detection
-#define VELOCITY_EST_HORIZON 3000
 // how many sensor values to keep in FIFO buffer
-#define HUMAN_HISTORY_LENGTH 15
+#define HUMAN_HISTORY_LENGTH 30
 // human moving below that value in (m/s) is considered standing
-#define MINIMUM_MOTION_VELOCVITY 0.3
+#define MINIMUM_MOTION_VELOCVITY 0.2
 
 namespace NHPPlayerDriver {
 
