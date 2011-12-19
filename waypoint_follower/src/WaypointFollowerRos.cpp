@@ -121,38 +121,49 @@ bool pose_init = false;
 // callback function for human pose
 void WaypointFollowerRos::humanPoseCallback(const geometry_msgs::PoseStamped& pose)
 {
-
+  ros::Time now = ros::Time::now()- ros::Duration(0.1);
   btScalar roll,pitch,yaw;
   geometry_msgs::PoseStamped poseMap;
-  tf_->transformPose("/map", pose, poseMap);
-  tf::Stamped<tf::Pose> tfpose;
-  tf::poseStampedMsgToTF(poseMap, tfpose);
-  btMatrix3x3 mat = btMatrix3x3(tfpose.getRotation());
-  mat.getEulerYPR(yaw, pitch, roll);
-  NHPPlayerDriver::XYTH_COORD dat_pos;
-  dat_pos.x = poseMap.pose.position.x;
-  dat_pos.y = poseMap.pose.position.y;
-  dat_pos.th = yaw;
-  ROS_DEBUG_NAMED("human", "Observed human at %f, %f, %f", dat_pos.x, dat_pos.y, dat_pos.th );
-  int id = 0; // TODO: Listen to topic which recognizes human identity, or pick most likely
+  try {
+      tf_->waitForTransform("/map", pose.header.frame_id, now, ros::Duration(3.0));
+      tf_->transformPose("/map", now, pose, "/map", poseMap);
 
-  int result;
-  if (id < 0 && id > 5) { // should never happen
-    ROS_ERROR("Error,bad ID %d", id);
-    result = 0;
-  }
+      tf::Stamped<tf::Pose> tfpose;
+      tf::poseStampedMsgToTF(poseMap, tfpose);
+      btMatrix3x3 mat = btMatrix3x3(tfpose.getRotation());
+      mat.getEulerYPR(yaw, pitch, roll);
+      NHPPlayerDriver::XYTH_COORD dat_pos;
+      dat_pos.x = poseMap.pose.position.x;
+      dat_pos.y = poseMap.pose.position.y;
+      dat_pos.th = yaw;
+      ROS_DEBUG_NAMED("human", "Observed human at %f, %f, %f", dat_pos.x, dat_pos.y, dat_pos.th );
+      int id = 0; // TODO: Listen to topic which recognizes human identity, or pick most likely
 
-  human_tracker->handlePositionUpdate(dat_pos.x, dat_pos.y, dat_pos.th, id);
-  VELOCITY vel = human_tracker->getHumanVelocity(id);
-  if (vel.speedms > 0.1) {
-      // use velocity angle as yaw
-      mat.setEulerYPR(vel.heading_az, pitch, roll);
-      btQuaternion q;
-      mat.getRotation(q);
-      poseMap.pose.orientation.x = q.getX();
-      poseMap.pose.orientation.y = q.getY();
-      poseMap.pose.orientation.z = q.getZ();
-      poseMap.pose.orientation.w = q.getW();
+      int result;
+      if (id < 0 && id > 5) { // should never happen
+          ROS_ERROR("Error,bad ID %d", id);
+          result = 0;
+      }
+
+      human_tracker->handlePositionUpdate(dat_pos.x, dat_pos.y, dat_pos.th, id);
+      VELOCITY vel = human_tracker->getHumanVelocity(id);
+      if (vel.speedms > 0.1) {
+          // use velocity angle as yaw
+          mat.setEulerYPR(vel.heading_az, pitch, roll);
+          btQuaternion q;
+          mat.getRotation(q);
+          poseMap.pose.orientation.x = q.getX();
+          poseMap.pose.orientation.y = q.getY();
+          poseMap.pose.orientation.z = q.getZ();
+          poseMap.pose.orientation.w = q.getW();
+      }
+      pub_human.publish(poseMap);
+  } catch (tf::ExtrapolationException &e) {
+      ROS_ERROR("Tf exception: %s", e.what());
+  } catch(tf::LookupException &e) {
+	    ROS_ERROR("Tf exception: %s", e.what());
+  } catch(tf::TransformException &e) {
+	    ROS_ERROR("Tf exception: %s", e.what());
   }
 }
 
