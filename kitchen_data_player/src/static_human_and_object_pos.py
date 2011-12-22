@@ -54,7 +54,7 @@ for row in posesReader:
             trunk = labelrow['trunk']
              
     # Calculate Human position when standing still and interacting with objects
-    if trunk == 'StandingStill' and ((lefthand != 'CarryingWhileLocomoting' and lefthand != 'Reaching' and lefthand != 'LoweringAnObject') or (righthand != 'CarryingWhileLocomoting' and  righthand != 'Reaching' and righthand != 'LoweringAnObject')):
+    if trunk == 'StandingStill' and ((lefthand == 'TakingSomeThing' or lefthand == 'ReleasingGraspOfSomething') or (righthand == 'TakingSomething' or righthand == 'ReleasingGraspOfSomething')):
 
         FILE.write("%s,%s,%s,%s,%s,%s,%s,%s\n"%(instance, row['time'], row['BECX'], row['BECY'], theta, lefthand, righthand, trunk)) 
         print ("%s,%s,%s,%s,%s,%s,%s,%s"%(instance, row['time'], row['BECX'], row['BECY'], theta, lefthand, righthand, trunk))
