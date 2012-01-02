@@ -34,8 +34,6 @@ echo "Using PYTHONPATH: $PYTHONPATH"
 
 
 echo "In case you have blend files left, attempting to delete."
-
-$MORSE_DIR/morse/bin/morse $MORSE_DIR/morse/share/examples/morse/scenarii/adapto_kitchens/apartment_jido.blend
-
-# Start using builder script
-#$MORSE_DIR/morse/bin/morse exec $MORSE_DIR/morse/share/examples/morse/scenarii/adapto_rebuild/ias_kitchen_big.py
+#rm -f *.blend
+#$MORSE_DIR/morse/bin/morse $MORSE_DIR/morse/share/examples/morse/scenarii/ROS_tutorial1_navstack.blend
+$MORSE_DIR/morse/bin/morse -exec $MORSE_DIR/morse/share/examples/morse/scenarii/apartment.py
