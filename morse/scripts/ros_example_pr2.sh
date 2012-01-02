@@ -25,9 +25,7 @@ if [ -z "$PYTHON3_EXECUTABLE" ]; then
 fi
 
 PYTHON_INST_DIR=`$PYTHON3_EXECUTABLE -c "import distutils.sysconfig, sys; sys.stdout.write(distutils.sysconfig.get_python_lib(0,0,''))"`
-#export PYTHONPATH=$PYYAML_DIR/pyyaml/lib/python3.2/site-packages:$MORSE_DIR/morse/$PYTHON_INST_DIR:$ROSLIB_DIR/src:/usr/$PYTHON_INST_DIR:$PYTHONPATH
 export PYTHONPATH=$PYYAML_DIR/pyyaml/lib/python3.2/site-packages:$MORSE_DIR/morse/$PYTHON_INST_DIR:$ROSLIB_DIR/src
-
 export MORSE_BLENDER=$BLENDER_DIR/bin/blender
 
 echo "Using PYTHONPATH: $PYTHONPATH"
