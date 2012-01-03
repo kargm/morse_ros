@@ -13,7 +13,7 @@
 <link name="drawer">
     <visual>
       <geometry>
-        <box size="0.564 0.519 0.01"/>
+        <box size="0.564 0.51 0.01"/>
       </geometry>
       <material name="white">
         <color rgba="1 1 1 1"/>
