@@ -237,6 +237,8 @@ tf_listener = tf.TransformListener()
 cluster = None
 location = None
 last_location = None
+final_location = None
+final_time = 0
 timesteps = 0
 true_location = None
 true_time = 0
@@ -393,6 +395,9 @@ for row in posesReader:
         # that the human acts on, too... or for the moment just check in which cluster the human stays the longest
         # and do not account for the time in between
         
+        final_location = last_location #only stored for the final location that is NOT navigation
+        final_time = float(timesteps)/30
+
         if last_location != "none":
             time = float(timesteps)/30 # motion tracking data recorded at 30 Hz
             if time > true_time:       # Here use the location candidate with the longest duration
@@ -412,8 +417,15 @@ for row in posesReader:
     # ************ MODEL BUILDING END
 
 # last object action is not covered by if cases above, so output it when all human poses have been precessed
-print("%s,%s,%s"%(semantic_instance, true_location, true_time)) 
-FILE.write("%s,%s,%s\n"%(semantic_instance, true_location, true_time))
+# Two cases have to be considered here: Either the human is within a valid location (most likely table) when
+# Motion capturing stops or it is already outside a valid location
+if final_location == 'none':
+    print("%s,%s,%s"%(semantic_instance, last_location, float(timesteps)/30)) 
+    FILE.write("%s,%s,%s\n"%(semantic_instance, last_location, float(timesteps)/30))
+else:
+    print("%s,%s,%s"%(semantic_instance, final_location, final_time)) 
+    FILE.write("%s,%s,%s\n"%(semantic_instance, final_location, final_time))
+
 semantic_instance += 1
-FILE.write("%s,navigation,%s\n"%(semantic_instance, float(timesteps)/30))
-print("%s,navigation,%s"%(semantic_instance, float(timesteps)/30))
+FILE.write("%s,navigation,%s\n"%(semantic_instance, 0))
+print("%s,navigation,%s"%(semantic_instance, 0))
