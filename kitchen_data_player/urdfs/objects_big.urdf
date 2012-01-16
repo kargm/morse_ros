@@ -75,7 +75,7 @@
 </joint>
 <joint name="cupboard0_table" type="fixed">
     <parent link="table"/>
-    <child link="cupboard_0"/>
+    <child link="cupboard0"/>
 </joint>
 <joint name="dishwasher_table" type="fixed">
     <parent link="table"/>
