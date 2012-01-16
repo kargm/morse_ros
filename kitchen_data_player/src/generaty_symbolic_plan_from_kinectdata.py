@@ -132,6 +132,28 @@ def publish_furniture():
     cupboard_theta = 0
     cupboard_depth = 0.3109611
 
+    cupboard0_x = 0.195677
+    cupboard0_y = 3.648405
+    cupboard0_theta = 0
+    cupboard0_depth = 0.309598
+
+    dishwasher_x = 0.3197569
+    dishwasher_y = 3.079585
+    dishwasher_theta = 0
+    dishwasher_depth = 0.5577561
+
+    br.sendTransform((cupboard0_x, cupboard0_y, 0),
+                     tf.transformations.quaternion_from_euler(0, 0, cupboard0_theta),
+                     rospy.Time.now(),
+                     "cupboard0",
+                     "map")
+
+    br.sendTransform((dishwasher_x, dishwasher_y, 0),
+                     tf.transformations.quaternion_from_euler(0, 0, dishwasher_theta),
+                     rospy.Time.now(),
+                     "dishwasher",
+                     "map")
+
     br.sendTransform((table_x, table_y, 0),
                      tf.transformations.quaternion_from_euler(0, 0, table_theta),
                      rospy.Time.now(),
