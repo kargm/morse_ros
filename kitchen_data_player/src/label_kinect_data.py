@@ -298,6 +298,12 @@ framecounter = 0
 moving_counter = 0
 standing_counter = 0
 standing_still = False
+timecounter = 0
+
+location_starttime = 0
+location_endtime = 0
+last_ctime = 0
+loc_duration = 0
 
 FILE = open(sys.argv[2],"w")
 FILE.write("instance,location,duration\n") 
@@ -342,7 +348,7 @@ for row in posesReader:
         if velocity > 3.6:
             #print("WARNING: Human is moving very fast! velocity: %s m/s, ddist: %s"%((velocity), float(delta_dist)))    
             pass
-        elif velocity < 0.4:
+        elif velocity < 0.5:
             #print("Standing Still")
             standing_counter += 1
         else:
@@ -350,20 +356,39 @@ for row in posesReader:
             moving_counter += 1
 
         # calculating velocities every 15 frames (i.e. every 0.5 seconds check if human was moving or not)
-        if framecounter%15 == 0:
+        frames = 15
+        if framecounter%frames == 0:
             #print("stand/move: %s/%s"%(standing_counter, moving_counter))
+
             if standing_counter > moving_counter:
                 #print("Standing Still")
+
                 standing_still = True
                 cluster, location = get_cluster_number(global_x, global_y)
 
+                # if we enter a new location
                 if last_location != location:
-                    print("___________________")
+                    # do not account for the human standing somewhere else
+                    if last_location != 'none':
+                        print("%s -> %s ( %f seconds)"%(semantic_instance, last_location, loc_duration))
+                        semantic_instance += 1
+                    loc_duration = 0
                     last_location = location
+                else: # if we are still in the same location
+                    pass
 
-                print("location: %s"%location)
+                timecounter += float(1)
+                ctime =  float(row['Hour']) * 3600 + float(row['Min']) * 60 + float(row['Sek']) + float(row['mSek'])/1000
+                delta_time = ctime - last_ctime
+                last_ctime = ctime
+                timecounter_time = timecounter/2 
+                loc_duration += delta_time
+                #print("----- %s ----time: %s:%s:%s:%s (delta: %s, TC: %s)"%(location, row['Hour'], row['Min'], row['Sek'], row['mSek'], delta_time, timecounter_time))
             else:
                 #print("Moving")
+                last_ctime =  float(row['Hour']) * 3600 + float(row['Min']) * 60 + float(row['Sek']) + float(row['mSek'])/1000
+                location_starttime = (float(row['Hour']) * 3600 + float(row['Min']) * 60 + float(row['Sek']) + float(row['mSek'])/1000)
+                timecounter = 0
                 pass
 
             standing_counter = 0
@@ -373,5 +398,9 @@ for row in posesReader:
 
     last_global_x = global_x
     last_global_y = global_y
+    #realtime
+    #time.sleep(0.033333333333)
 
     time.sleep(0.001)
+
+print("%s -> %s ( %f seconds)"%(semantic_instance, last_location, loc_duration))
