@@ -62,7 +62,7 @@ def get_cluster_number(x, y):
     location = ''
     #threshhold = 0.00001
     #threshhold = 0.0000000001
-    threshhold = 0.00000000001
+    threshhold = 0.00000001
 
     if p1 > p2 and p1 > p3 and p1 > p4 and p1 > threshhold:
         cluster = 1
@@ -285,6 +285,7 @@ global_x = 0
 global_y = 0
 last_global_x = 0
 last_global_y = 0
+location = None
 last_location = None
 true_location = None
 timesteps = 0
@@ -296,6 +297,7 @@ velocity = 0
 framecounter = 0
 moving_counter = 0
 standing_counter = 0
+standing_still = False
 
 FILE = open(sys.argv[2],"w")
 FILE.write("instance,location,duration\n") 
@@ -332,15 +334,15 @@ for row in posesReader:
         delta_x = global_x - last_global_x
         delta_y = global_y - last_global_y
         delta_dist = math.sqrt((delta_x * delta_x) + (delta_y * delta_y))
-        velocity = delta_dist / 30
- 
+        velocity = delta_dist * 30
+        
         # calculating velocities every frame
         # throw away frame if human speed is too high => this is most likely caused by jumps in kinect-data
         # appearing in the border regions of kinect (around 4m distance and at the end of the camera-region)
-        if velocity > 0.004:
-            print("WARNING: Human is moving very fast! velocity: %s m/s, ddist: %s"%((velocity*30), float(delta_dist)))    
-            #pass
-        elif velocity < 0.0006:
+        if velocity > 3.6:
+            #print("WARNING: Human is moving very fast! velocity: %s m/s, ddist: %s"%((velocity), float(delta_dist)))    
+            pass
+        elif velocity < 0.4:
             #print("Standing Still")
             standing_counter += 1
         else:
@@ -348,11 +350,17 @@ for row in posesReader:
             moving_counter += 1
 
         # calculating velocities every 15 frames (i.e. every 0.5 seconds check if human was moving or not)
-        if framecounter%7.5 == 0:
+        if framecounter%15 == 0:
             #print("stand/move: %s/%s"%(standing_counter, moving_counter))
             if standing_counter > moving_counter:
                 #print("Standing Still")
+                standing_still = True
                 cluster, location = get_cluster_number(global_x, global_y)
+
+                if last_location != location:
+                    print("___________________")
+                    last_location = location
+
                 print("location: %s"%location)
             else:
                 #print("Moving")
@@ -365,54 +373,5 @@ for row in posesReader:
 
     last_global_x = global_x
     last_global_y = global_y
-    
-    # ************ MODEL BUILDING START
-    # Here the actual model building starts. First get cluster and location of current human pose
-    cluster, location = get_cluster_number(global_x, global_y)
-    
-    if location == last_location:
-        timesteps += 1
-    if location != last_location:
-        # WARNING: This causes problems especially due to the stove and drawer positions beeing so close to 
-        # each other.Maybe here we should generate hypotheses, that are validated using the object positions 
-        # that the human acts on, too... or for the moment just check in which cluster the human stays the longest
-        # and do not account for the time in between
-        
-        final_location = last_location #only stored for the final location that is NOT navigation
-        final_time = float(timesteps)/30
 
-        if last_location != "none":
-            secs = float(timesteps)/30 # motion tracking data recorded at 30 Hz
-            if secs > true_time:       # Here use the location candidate with the longest duration
-                true_time = secs
-                true_location = last_location
-        else:                          # When human is navigation again, choose the location candidate with the highest duration and output it
-            if true_time > 0.2: # throw away all instances with durations smaller than 20 milliseconds
-                #print("%s,%s,%s"%(semantic_instance, true_location, true_time))    
-                FILE.write("%s,%s,%s\n"%(semantic_instance, true_location, true_time))
-                semantic_instance += 1
-                FILE.write("%s,navigation,%s\n"%(semantic_instance, float(timesteps)/30)) # Output navigation duration
-                #print("%s,navigation,%s"%(semantic_instance, float(timesteps)/30))
-                semantic_instance += 1
-                true_time = 0
-                timesteps = 0
-
-    last_location = location
-    # ************ MODEL BUILDING END
-    time.sleep(0.01)
-
-# last object action is not covered by if cases above, so output it when all human poses have been precessed
-# Two cases have to be considered here: Either the human is within a valid location (most likely table) when
-# Motion capturing stops or it is already outside a valid location
-if final_location == 'none':
-    #print("%s,%s,%s"%(semantic_instance, last_location, float(timesteps)/30)) 
-    FILE.write("%s,%s,%s\n"%(semantic_instance, last_location, float(timesteps)/30))
-else:
-    #print("%s,%s,%s"%(semantic_instance, final_location, final_time)) 
-    FILE.write("%s,%s,%s\n"%(semantic_instance, final_location, final_time))
-
-
-#print("Relative Distance plate -> table_gaussian_mean: %s, %s"%tf_listener.lookupTransform("map", "table_gauss_mean", rospy.Time(0)))
-#print("Relative_Distance drawer -> drawer_gaussian_mean %s, %s"%tf_listener.lookupTransform("map", "drawer_gauss_mean", rospy.Time(0)))
-#print("Relative_Distance stove -> stove_gaussian_mean: %s, %s"%tf_listener.lookupTransform("map", "stove_gauss_mean", rospy.Time(0)))
-#print("Relative_Distance cupboard -> cupboard_gaussian_mean: %s, %s"%tf_listener.lookupTransform("map", "cupboard_gauss_mean", rospy.Time(0)))
+    time.sleep(0.001)
