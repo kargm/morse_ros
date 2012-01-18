@@ -62,7 +62,7 @@ def get_cluster_number(x, y):
     location = ''
     #threshhold = 0.00001
     #threshhold = 0.0000000001
-    threshhold = 0.00000001
+    threshhold = 0.0000000001
 
     if p1 > p2 and p1 > p3 and p1 > p4 and p1 > threshhold:
         cluster = 1
@@ -345,8 +345,8 @@ for row in posesReader:
         # calculating velocities every frame
         # throw away frame if human speed is too high => this is most likely caused by jumps in kinect-data
         # appearing in the border regions of kinect (around 4m distance and at the end of the camera-region)
-        if velocity > 3.6:
-            #print("WARNING: Human is moving very fast! velocity: %s m/s, ddist: %s"%((velocity), float(delta_dist)))    
+        if velocity > 3:
+            print("WARNING: Human is moving very fast! velocity: %s m/s, ddist: %s"%((velocity), float(delta_dist)))    
             pass
         elif velocity < 0.5:
             #print("Standing Still")
@@ -371,6 +371,7 @@ for row in posesReader:
                     # do not account for the human standing somewhere else
                     if last_location != 'none':
                         print("%s -> %s ( %f seconds)"%(semantic_instance, last_location, loc_duration))
+                        FILE.write("%s,%s,%s\n"%(semantic_instance, last_location, loc_duration))
                         semantic_instance += 1
                     loc_duration = 0
                     last_location = location
@@ -404,3 +405,4 @@ for row in posesReader:
     time.sleep(0.001)
 
 print("%s -> %s ( %f seconds)"%(semantic_instance, last_location, loc_duration))
+FILE.write("%s,%s,%s\n"%(semantic_instance, last_location, loc_duration))
