@@ -39,12 +39,12 @@ TABLE_FILE = open("table.csv","w")
 STOVE_FILE = open("stove.csv","w")
 DRAWER_FILE = open("drawer.csv","w")
 CUPBOARD_FILE = open("cupboard.csv","w")
-NAV_FILE = open("navigation.csv","w")
+#NAV_FILE = open("navigation.csv","w")
 TABLE_FILE.write("instance,location,duration\n")
 STOVE_FILE.write("instance,location,duration\n")
 DRAWER_FILE.write("instance,location,duration\n")
 CUPBOARD_FILE.write("instance,location,duration\n")
-NAV_FILE.write("instance,location,duration\n")
+#NAV_FILE.write("instance,location,duration\n")
 
 for row in objReader:
     # Write new csv-file with: instance, time, BECX, BEXY, BECTheta, 
@@ -69,10 +69,10 @@ for row in objReader:
         cupboard_counter += 1
         CUPBOARD_FILE.write("%s,%s,%s\n"%(row['instance'], row['location'], row['duration']))
 
-    if (row['location'] == 'navigation'):
-        nav_sum += float(row['duration'])
-        nav_counter += 1
-        NAV_FILE.write("%s,%s,%s\n"%(row['instance'], row['location'], row['duration']))
+    #if (row['location'] == 'navigation'):
+    #    nav_sum += float(row['duration'])
+    #    nav_counter += 1
+    #    NAV_FILE.write("%s,%s,%s\n"%(row['instance'], row['location'], row['duration']))
 
 
 table_mean = table_sum / table_counter
@@ -83,12 +83,12 @@ stove_mean = stove_sum / stove_counter
 
 cupboard_mean = cupboard_sum / cupboard_counter
 
-nav_mean = nav_sum / nav_counter
+#nav_mean = nav_sum / nav_counter
 
 print('Table mean duration: %s s'%table_mean)
 print('Drawer mean duration: %s s'%drawer_mean)
 print('Stove mean duration: %s s'%stove_mean)
 print('Cupboard mean duration: %s s'%cupboard_mean)        
-print('Navigation mean duration: %s s'%nav_mean)
+#print('Navigation mean duration: %s s'%nav_mean)
         
 

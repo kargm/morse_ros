@@ -132,8 +132,8 @@ def publish_gaussians():
                      "cupboard_edge")
 
 def publish_kinect():
-    kinect_x = 1.3175
-    kinect_y = 0.0946
+    kinect_x = 1.200
+    kinect_y = 0.2946
 
     br.sendTransform((kinect_x, kinect_y, 0),
                      quaternion_from_euler(0,0,1.57075) ,
@@ -148,12 +148,12 @@ def publish_furniture():
     # Furniture
 
     # from logged object data
-    plate_x = 2.6
+    plate_x = 2.2
     plate_y = 4.11
     plate_theta = -1.57075
     
     # from semantic map
-    table_x = 2.99
+    table_x = 2.59
     table_y = 4.37
     table_theta = -1.5707963705062866
     table_depth = 0.8
