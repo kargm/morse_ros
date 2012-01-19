@@ -60,31 +60,36 @@ def get_cluster_number(x, y):
 
     cluster = -1
     location = ''
+    p = 0
     #threshhold = 0.00001
     #threshhold = 0.0000000001
-    threshhold = 0.0000001
+    threshhold = 0.000000001
 
     if p1 > p2 and p1 > p3 and p1 > p4 and p1 > threshhold:
         cluster = 1
         location = 'drawer'
+        p = p1
         #print("Human is in cluster %s with prob: %s"%(location, p1))
     elif p2 > p1 and p2 > p3 and p2 > p4 and p2 > threshhold:
         cluster = 2
         location = 'table'
+        p = p2
         #print("Human is in cluster %s with prob: %s"%(location, p2))
     elif p3 > p1 and p3 > p2 and p3 > p4 and p3 > threshhold:
         cluster = 3
         location = 'stove'
+        p = p3
         #print("Human is in cluster %s with prob: %s"%(location, p3))
     elif p4 > p1 and p4 > p2 and p4 > p3 and p4 > threshhold:
         cluster = 4
         location = 'cupboard'
+        p = p4
         #print("Human is in cluster %s with prob: %s"%(location, p4))
     else:
         cluster = -1
         location = 'none'
         #print("WARNING, could not find location of that object (p1,p2,p3,p4): %s, %s, %s, %s"%(p1, p2, p3, p4))
-    return cluster, location
+    return cluster, location, p
 
 # publishes the mean-values of the gaussians for the human positino
 def publish_gaussians():
@@ -109,7 +114,7 @@ def publish_gaussians():
                      "stove_gauss_mean",
                      "placemat_edge")
 
-    br.sendTransform((0.42658, -0.107175 , 0), 
+    br.sendTransform((0.42658, 0.107175 , 0), 
                      quaternion_from_euler(0,0,0),
                      rospy.Time.now(),
                      "cupboard_gauss_mean",
@@ -281,8 +286,8 @@ global_x = 0
 global_y = 0
 last_global_x = 0
 last_global_y = 0
-location = None
-last_location = None
+location = 'none'
+last_location = 'none'
 true_location = None
 timesteps = 0
 true_time = 0
@@ -298,11 +303,17 @@ timecounter = 0
 
 location_starttime = 0
 location_endtime = 0
+ctime = 0
 last_ctime = 0
 loc_duration = 0
+delta_time = 0
+
+p_sum = 0
+p_count = 0
+p_avg = 0
 
 FILE = open(sys.argv[2],"w")
-FILE.write("instance,location,duration\n") 
+FILE.write("instance,location,duration, probability\n") 
 
 for row in posesReader:
     publish_furniture()
@@ -329,76 +340,82 @@ for row in posesReader:
         #print("humantrans: x: %s, y: %s"%(human_trans[0], human_trans[1]))
        
     except (tf.Exception, tf.LookupException, tf.ConnectivityException):
-        print('.')
+        print('WARNING: TF could not lookup human_pose->map transformation')
 
-    # calculate velocities to find out if human is moving or standing
-    if last_global_x != 0 and last_global_y != 0:
-        delta_x = global_x - last_global_x
-        delta_y = global_y - last_global_y
-        delta_dist = math.sqrt((delta_x * delta_x) + (delta_y * delta_y))
-        velocity = delta_dist * 30
+    frames = 15
+
+    if framecounter%frames == 1:
+        last_global_x = global_x
+        last_global_y = global_y
         
-        # calculating velocities every frame
-        # throw away frame if human speed is too high => this is most likely caused by jumps in kinect-data
-        # appearing in the border regions of kinect (around 4m distance and at the end of the camera-region)
-        if velocity > 3:
-            print("WARNING: Human is moving very fast! velocity: %s m/s, ddist: %s"%((velocity), float(delta_dist)))    
-            pass
-        elif velocity < 0.5:
-            #print("Standing Still")
-            standing_counter += 1
-        else:
-            #print("Moving")
-            moving_counter += 1
-
-        # calculating velocities every 15 frames (i.e. every 0.5 seconds check if human was moving or not)
-        frames = 15
-        if framecounter%frames == 0:
+    if framecounter%frames == 0:
             #print("stand/move: %s/%s"%(standing_counter, moving_counter))
+        
+        # Calculate travelled distance and velocity in current frame
+        if last_global_x != 0 and last_global_y != 0:
+            delta_x = global_x - last_global_x
+            delta_y = global_y - last_global_y
+            delta_dist = math.sqrt((delta_x * delta_x) + (delta_y * delta_y))
+            velocity = delta_dist * frames
 
-            if standing_counter > moving_counter:
-                #print("Standing Still")
+            # If human travelled less than 10 cm, consider him as standing
+            if delta_dist < 0.02:
+                standing_counter += 1
 
-                standing_still = True
-                cluster, location = get_cluster_number(global_x, global_y)
+            # if human is standing
+            if standing_counter > 0:
+                # get his current location
+                cluster, location, p = get_cluster_number(global_x, global_y)
 
-                # if we enter a new location
+                # if we are standing in a new location than before
                 if last_location != location:
-                    # do not account for the human standing somewhere else
-                    if last_location != 'none':
-                        print("%s -> %s ( %f seconds)"%(semantic_instance, last_location, loc_duration))
-                        FILE.write("%s,%s,%s\n"%(semantic_instance, last_location, loc_duration))
+                    
+                    last_ctime = float(row['time']) #remember time when location was entered
+                    
+                    if p_count != 0:
+                    #    print("P: %s"%(p_sum/p_count))
+                        p_avg = p_sum/p_count
+                    # resetP probability counter and set probability to initial
+                    p_count = 1
+                    p_sum = p
+
+                    # Write out to file and screen and do not account for human standing somewhere else...
+                    if last_location != 'none' and loc_duration > 0.00000001:
+                        print("%s -> %s ( %f seconds, p = %s)"%(semantic_instance, last_location, loc_duration, p_avg))
+                        FILE.write("%s,%s,%s,%s\n"%(semantic_instance, last_location, loc_duration,p_avg))
                         semantic_instance += 1
+
+                    # reset duration
                     loc_duration = 0
                     last_location = location
-                else: # if we are still in the same location
-                    pass
 
-                timecounter += float(1)
-                ctime =  float(row['time'])
-                delta_time = ctime - last_ctime
-                last_ctime = ctime
-                timecounter_time = timecounter/2 
-                loc_duration += delta_time
-                #print("----- %s ----time: %s:%s:%s:%s (delta: %s, TC: %s)"%(location, row['Hour'], row['Min'], row['Sek'], row['mSek'], delta_time, timecounter_time))
+                else: # if we are still in the same location, accumulate time the human spends at the location
+                    last_location = location
+                    p_sum += p
+                    p_count += 1
+                    ctime =  float(row['time'])
+                    delta_time = ctime - last_ctime
+                    #print("----- %s ----time: %s (delta: %s)"%(location, ctime, delta_time))
+                    loc_duration = delta_time
+            # if the human is moving
             else:
                 #print("Moving")
+                location = 'navigation'
                 last_ctime =  float(row['time'])
                 #location_starttime = (float(row['Hour']) * 3600 + float(row['Min']) * 60 + float(row['Sek']) + float(row['mSek'])/1000)
                 timecounter = 0
-                pass
 
-            standing_counter = 0
-            moving_counter = 0
+        standing_counter = 0
+        moving_counter = 0
 
-        framecounter += 1
+    framecounter += 1
 
     last_global_x = global_x
     last_global_y = global_y
     #realtime
     #time.sleep(0.033333333333)
 
-    time.sleep(0.001)
+    time.sleep(0.005)
 
-print("%s -> %s ( %f seconds)"%(semantic_instance, last_location, loc_duration))
-FILE.write("%s,%s,%s\n"%(semantic_instance, last_location, loc_duration))
+print("%s -> %s ( %f seconds, p = %s)"%(semantic_instance, last_location, loc_duration, p_avg))
+FILE.write("%s,%s,%s,%s\n"%(semantic_instance, last_location, loc_duration, p_avg))
