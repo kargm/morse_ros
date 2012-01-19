@@ -62,7 +62,7 @@ def get_cluster_number(x, y):
     location = ''
     #threshhold = 0.00001
     #threshhold = 0.0000000001
-    threshhold = 0.0000000001
+    threshhold = 0.0000001
 
     if p1 > p2 and p1 > p3 and p1 > p4 and p1 > threshhold:
         cluster = 1
