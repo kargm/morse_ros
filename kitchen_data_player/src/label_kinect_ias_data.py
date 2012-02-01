@@ -45,8 +45,8 @@ def get_cluster_number(x, y):
         tf_listener.waitForTransform("map", "cupboard_gauss_mean", rospy.Time(0), rospy.Duration(0.1))
         (cupboard_gauss_mean, cupboard_gauss_rot) = tf_listener.lookupTransform("map", "cupboard_gauss_mean", rospy.Time(0))
 
-        tf_listener.waitForTransform("map", "drawer_gauss_mean", rospy.Time(0), rospy.Duration(0.1))
-        (drawer_gauss_mean, drawer_gauss_rot) = tf_listener.lookupTransform("map", "drawer_gauss_mean", rospy.Time(0))
+        tf_listener.waitForTransform("map", "drawer55_gauss_mean", rospy.Time(0), rospy.Duration(0.1))
+        (drawer_gauss_mean, drawer_gauss_rot) = tf_listener.lookupTransform("map", "drawer55_gauss_mean", rospy.Time(0))
 
         tf_listener.waitForTransform("map", "stove_gauss_mean", rospy.Time(0), rospy.Duration(0.1))
         (stove_gauss_mean, stove_gauss_rot) = tf_listener.lookupTransform("map", "stove_gauss_mean", rospy.Time(0))
@@ -66,7 +66,7 @@ def get_cluster_number(x, y):
         p4_max =  calculate_gaussian_prob(cupboard_gauss_mean[0], cupboard_gauss_mean[1],cupboard_gauss_mean[0], cupboard_gauss_mean[1], 0.0706725, 0.0726388)
 
     except (tf.Exception, tf.LookupException, tf.ConnectivityException):
-        print('nein') 
+        print('TF Lookup exception while trying to look up Gaussian means') 
 
     cluster = -1
     location = ''
@@ -79,22 +79,22 @@ def get_cluster_number(x, y):
         cluster = 1
         location = 'drawer'
         p = p1/p1_max
-        #print("Human is in cluster %s with prob: %s"%(location, p1))
+        print("Human is in cluster %s with prob: %s"%(location, p1))
     elif p2 > p1 and p2 > p3 and p2 > p4 and p2 > threshhold:
         cluster = 2
         location = 'table'
         p = p2/p2_max
-        #print("Human is in cluster %s with prob: %s"%(location, p2))
+        print("Human is in cluster %s with prob: %s"%(location, p2))
     elif p3 > p1 and p3 > p2 and p3 > p4 and p3 > threshhold:
         cluster = 3
         location = 'stove'
         p = p3/p3_max
-        #print("Human is in cluster %s with prob: %s"%(location, p3))
+        print("Human is in cluster %s with prob: %s"%(location, p3))
     elif p4 > p1 and p4 > p2 and p4 > p3 and p4 > threshhold:
         cluster = 4
         location = 'cupboard'
         p = p4/p4_max
-        #print("Human is in cluster %s with prob: %s"%(location, p4))
+        print("Human is in cluster %s with prob: %s"%(location, p4))
     else:
         cluster = -1
         location = 'none'
@@ -147,16 +147,17 @@ def publish_furniture():
     #br = tf.TransformBroadcaster()
     # Furniture
 
-    # from logged object data
-    plate_x = 2.2
-    plate_y = 4.11
-    plate_theta = -1.57075
+    # from logged object data (here relative to table_middle)
+    plate_x = -0.15
+    plate_y = 0.4
+    plate_theta = 3.1415
     
-    # from semantic map
-    table_x = 2.59
-    table_y = 4.37
-    table_theta = -1.5707963705062866
-    table_depth = 0.8
+    # from semantic map (Here generated in reference to countertop middle)
+    #table_x = 2.59
+    #table_y = 4.37
+    #table_theta = -1.5707963705062866
+
+    table_depth = 0.60
     table_theta = 3.1415
 
     # from logged object data
@@ -242,14 +243,14 @@ def publish_furniture():
                      "dishwasher",
                      "map")
 
-    br.sendTransform((table_x, table_y, 0),
-                     tf.transformations.quaternion_from_euler(0, 0, table_theta),
+    br.sendTransform((0, 0, 0),
+                     tf.transformations.quaternion_from_euler(0, 0, 0),
                      rospy.Time.now(),
                      "table",
-                     "map")
+                     "table_middle")
                      
-    br.sendTransform((0, table_depth/2, 0),
-                     tf.transformations.quaternion_from_euler(0, 0, 0),
+    br.sendTransform((-table_depth/2, 0, 0),
+                     tf.transformations.quaternion_from_euler(0, 0, 3.1415),
                      rospy.Time.now(),
                      "table_edge",
                      "table")
@@ -258,7 +259,7 @@ def publish_furniture():
                      tf.transformations.quaternion_from_euler(0, 0, plate_theta),
                      rospy.Time.now(),
                      "plate",
-                     "map")
+                     "table_middle")
 
     br.sendTransform((drawer55_x, drawer55_y, 0),
                      tf.transformations.quaternion_from_euler(0, 0, drawer55_theta),
@@ -273,18 +274,12 @@ def publish_furniture():
                      "drawer55_edge",
                      "drawer55")
 
-    br.sendTransform((stove_x, stove_y, 0),
-                     tf.transformations.quaternion_from_euler(0, 0, stove_theta),
-                     rospy.Time.now(),
-                     "stove",
-                     "map")
-                     
     # object that is on the dishwasher
     br.sendTransform((0, 0, 0),
                      tf.transformations.quaternion_from_euler(0, 0, 0),
                      rospy.Time.now(),
                      "placemat",
-                     "dishwaser")
+                     "dishwasher")
     
     br.sendTransform((-dishwasher_depth/2, 0, 0),
                      tf.transformations.quaternion_from_euler(0, 0, 3.1415),
@@ -304,8 +299,9 @@ def publish_furniture():
                      "drawer115")
     try:
         now = rospy.Time.now() - rospy.Duration(0.0)
-        tf_listener.waitForTransform("stove_edge", "placemat", rospy.Time(0), rospy.Duration(0.001))
-        (placemat_trans, placemat_rot) = tf_listener.lookupTransform("stove_edge", "placemat", rospy.Time(0))
+        tf_listener.waitForTransform("dishwasher_edge", "placemat", rospy.Time(0), rospy.Duration(0.001))
+        (placemat_trans, placemat_rot) = tf_listener.lookupTransform("dishwasher_edge", "placemat", rospy.Time(0))
+
         tf_listener.waitForTransform("table_edge", "plate", rospy.Time(0), rospy.Duration(0.001))
         (plate_trans, plate_rot) = tf_listener.lookupTransform("table_edge", "plate", rospy.Time(0))
         #print("Trans: %s, %s, %s"%(trans[0], trans[1], trans[2]))
@@ -316,8 +312,8 @@ def publish_furniture():
                      "placemat_edge",
                      "dishwasher_edge")
                      
-        br.sendTransform((plate_trans[0], 0, 0),
-                     tf.transformations.quaternion_from_euler(0, 0, plate_theta - table_theta),
+        br.sendTransform((0, plate_trans[1], 0),
+                     tf.transformations.quaternion_from_euler(0, 0, 0),
                      rospy.Time.now(),
                      "plate_edge",
                      "table_edge")
@@ -370,8 +366,8 @@ FILE.write("instance,location,duration,probability\n")
 
 for row in posesReader:
     publish_furniture()
-    publish_gaussians()
     publish_kinect()
+    publish_gaussians()
 
     #TODO: include and calculate orientation
     theta = 0
@@ -480,3 +476,20 @@ for row in posesReader:
 
 print("%s -> %s ( %f seconds, p = %s)"%(semantic_instance, last_location, loc_duration, last_p_avg))
 FILE.write("%s,%s,%s,%s\n"%(semantic_instance, last_location, loc_duration, last_p_avg))
+
+tf_listener.waitForTransform("map", "table_gauss_mean", rospy.Time(0), rospy.Duration(0.1))
+(table_gauss_mean, table_gauss_rot) = tf_listener.lookupTransform("map", "table_gauss_mean", rospy.Time(0))
+
+tf_listener.waitForTransform("map", "cupboard_gauss_mean", rospy.Time(0), rospy.Duration(0.1))
+(cupboard_gauss_mean, cupboard_gauss_rot) = tf_listener.lookupTransform("map", "cupboard_gauss_mean", rospy.Time(0))
+
+tf_listener.waitForTransform("map", "drawer55_gauss_mean", rospy.Time(0), rospy.Duration(0.1))
+(drawer_gauss_mean, drawer_gauss_rot) = tf_listener.lookupTransform("map", "drawer55_gauss_mean", rospy.Time(0))
+
+tf_listener.waitForTransform("map", "stove_gauss_mean", rospy.Time(0), rospy.Duration(0.1))
+(stove_gauss_mean, stove_gauss_rot) = tf_listener.lookupTransform("map", "stove_gauss_mean", rospy.Time(0))
+
+print("table gauss mean: %s, %s, %s"%table_gauss_mean)
+print("cupboard gauss mean (drawer115): %s, %s, %s"%cupboard_gauss_mean)
+print("drawer gauss mean (drawer55): %s, %s, %s"%drawer_gauss_mean)
+print("dishwasher: %s, %s, %s"%stove_gauss_mean)
