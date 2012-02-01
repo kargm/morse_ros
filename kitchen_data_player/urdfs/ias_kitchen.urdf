@@ -13,7 +13,7 @@
 <link name="drawer55">
     <visual>
       <geometry>
-        <box size="0.78 0.58 0.01"/>
+        <box size="0.58 0.78 0.01"/>
       </geometry>
       <material name="white">
         <color rgba="1 1 1 1"/>
@@ -51,6 +51,17 @@
       </material>
     </visual>
 </link>
+
+<link name="countertop_kitchenette">
+    <visual>
+      <geometry>
+        <box size="2.05 0.575 0.01"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+</link>
   
 <joint name="drawer55_countertop_middle" type="fixed">
     <parent link="countertop_middle"/>
@@ -67,6 +78,10 @@
 <joint name="table_countertop_middle" type="fixed">
     <parent link="countertop_middle"/>
     <child link="table_middle"/>
+</joint>
+<joint name="countertop_kitchenette_countertop_middle" type="fixed">
+    <parent link="countertop_middle"/>
+    <child link="countertop_kitchenette"/>
 </joint>
 
 </robot>
