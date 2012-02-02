@@ -132,8 +132,8 @@ def publish_gaussians():
                      "drawer115_edge")
 
 def publish_kinect():
-    kinect_x = -1.34
-    kinect_y = 1.285
+    kinect_x = -1.249
+    kinect_y = 1.34
 
     br.sendTransform((kinect_x, kinect_y, 0),
                      quaternion_from_euler(0,0,0) ,
@@ -172,14 +172,17 @@ def publish_furniture():
     stove_depth = 0.5766061
 
     # from semantic map (Drawer55)
-    drawer55_x = 1.0533205
+    #drawer55_x = 1.0533205
+    drawer55_x = 1.1533205
     drawer55_y = 1.1516107
     drawer55_theta = -0.08859264105558395
     drawer55_depth = 0.580982
 
     # from semantic map (Drawer155)
-    drawer115_x = -1.87053
-    drawer115_y = 1.1917095
+    #drawer115_x = -1.87053
+    #drawer115_y = 1.1917095
+    drawer115_x = -1.57053
+    drawer115_y = 1.3917095
     drawer115_theta = -0.08859264105558395
     drawer115_depth = 0.6
 
@@ -188,8 +191,10 @@ def publish_furniture():
     dishwasher_theta =-0.08859264850616455
     dishwasher_depth = 0.580982
 
-    countertop_middle_x = -1.9426385
-    countertop_middle_y = 2.0035133
+    #countertop_middle_x = -1.9426385
+    #countertop_middle_y = 2.0035133
+    countertop_middle_x = -1.5426385
+    countertop_middle_y = 2.29133
     countertop_middle_theta = -1.6593890190124512
     countertop_middle_width = 0.79999995
     countertop_middle_depth = 2.49
@@ -219,7 +224,7 @@ def publish_furniture():
                      "countertop_middle_edge",
                      "countertop_middle")
 
-    br.sendTransform((1.51, 0.395, 0),
+    br.sendTransform((1.41, 0.395, 0),
                      tf.transformations.quaternion_from_euler(0, 0, 0),
                      rospy.Time.now(),
                      "table_middle",
