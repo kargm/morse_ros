@@ -79,22 +79,22 @@ def get_cluster_number(x, y):
         cluster = 1
         location = 'drawer'
         p = p1/p1_max
-        print("Human is in cluster %s with prob: %s"%(location, p1))
+        #print("Human is in cluster %s with prob: %s"%(location, p1))
     elif p2 > p1 and p2 > p3 and p2 > p4 and p2 > threshhold:
         cluster = 2
         location = 'table'
         p = p2/p2_max
-        print("Human is in cluster %s with prob: %s"%(location, p2))
+        #print("Human is in cluster %s with prob: %s"%(location, p2))
     elif p3 > p1 and p3 > p2 and p3 > p4 and p3 > threshhold:
         cluster = 3
         location = 'stove'
         p = p3/p3_max
-        print("Human is in cluster %s with prob: %s"%(location, p3))
+        #print("Human is in cluster %s with prob: %s"%(location, p3))
     elif p4 > p1 and p4 > p2 and p4 > p3 and p4 > threshhold:
         cluster = 4
         location = 'cupboard'
         p = p4/p4_max
-        print("Human is in cluster %s with prob: %s"%(location, p4))
+        #print("Human is in cluster %s with prob: %s"%(location, p4))
     else:
         cluster = -1
         location = 'none'
@@ -186,7 +186,7 @@ def publish_furniture():
     drawer115_theta = -0.08859264105558395
     drawer115_depth = 0.6
 
-    dishwasher_x = 1.1171718
+    dishwasher_x = 1.0941718
     dishwasher_y = 0.44037533
     dishwasher_theta =-0.08859264850616455
     dishwasher_depth = 0.580982
