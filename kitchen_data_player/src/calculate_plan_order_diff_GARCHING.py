@@ -51,8 +51,12 @@ for row in planReader:
 
 seq=difflib.SequenceMatcher(a=plan.lower(), b=model_plan.lower())
 seq.ratio()
+print('_______________________________________')
 print('Similarity: %15s            ([ %s ]  %s --> plan %s)'%(seq.ratio(), sys.argv[1], model_plan, plan))
-print('Levenshtein: %15s            ([ %s ]  %s --> plan %s)'%(levenshtein(plan, model_plan), sys.argv[1], model_plan, plan))
+levenshtein_distance = levenshtein(plan, model_plan)
+# max levenshtein_dist = 14 for our model
+conf_value = (14 - float(levenshtein_distance)) / 14
+print('Levenshtein: %15s  (LD: %s)          ([ %s ]  %s --> plan %s)'%(conf_value, levenshtein_distance, sys.argv[1], model_plan, plan))
 
 
         
