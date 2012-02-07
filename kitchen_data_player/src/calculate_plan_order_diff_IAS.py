@@ -4,6 +4,7 @@ import math
 import sys
 import time
 import difflib
+import jellyfish
 
 
 # Usage: calculate_plan_confidence_value.py symbolic_plan.csv
@@ -12,7 +13,7 @@ planReader = csv.DictReader(open(sys.argv[1], 'rb'), delimiter=',', quotechar='|
 
 model_plan = 'ADADCDBDBDBDCD'
 plan = ''
-threshhold = 0.0005
+threshhold = 0.000025
 
 def levenshtein(s1, s2):
     if len(s1) < len(s2):
@@ -51,13 +52,16 @@ for row in planReader:
 
 seq=difflib.SequenceMatcher(a=plan.lower(), b=model_plan.lower())
 seq.ratio()
-print('_______________________________________')
-print('Similarity: %15s            ([ %s ]  %s --> plan %s)'%(seq.ratio(), sys.argv[1], model_plan, plan))
+#print('_______________________________________')
+#print('Difflib: %15s            ([ %s ]  %s --> plan %s)'%(seq.ratio(), sys.argv[1], model_plan, plan))
 
 levenshtein_distance = levenshtein(plan, model_plan)
 # max levenshtein_dist = 14 for our model
 conf_value = (14 - float(levenshtein_distance)) / 14
 print('Levenshtein: %15s  (LD: %s)          ([ %s ]  %s --> plan %s)'%(conf_value, levenshtein_distance, sys.argv[1], model_plan, plan))
 
-
-        
+#print("Levenshtein: %s"%jellyfish.levenshtein_distance(plan, model_plan))
+#print("DamerauLevenshtein: %s"%jellyfish.damerau_levenshtein_distance(plan, model_plan))
+#print("Jaro: %s"%jellyfish.jaro_distance(plan, model_plan))
+#print("Jaro-Winkler: %s"%jellyfish.jaro_winkler(plan, model_plan))       
+#print("Hamming: %s"%jellyfish.hamming_distance(plan, model_plan))

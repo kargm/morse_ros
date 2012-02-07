@@ -12,7 +12,7 @@ planReader = csv.DictReader(open(sys.argv[1], 'rb'), delimiter=',', quotechar='|
 
 model_plan = 'ADADCDBDBDBDCD'
 plan = ''
-threshhold = 0.0005
+threshhold = 0.00005
 
 def levenshtein(s1, s2):
     if len(s1) < len(s2):
@@ -51,8 +51,8 @@ for row in planReader:
 
 seq=difflib.SequenceMatcher(a=plan.lower(), b=model_plan.lower())
 seq.ratio()
-print('_______________________________________')
-print('Similarity: %15s            ([ %s ]  %s --> plan %s)'%(seq.ratio(), sys.argv[1], model_plan, plan))
+#print('_______________________________________')
+#print('Similarity: %15s            ([ %s ]  %s --> plan %s)'%(seq.ratio(), sys.argv[1], model_plan, plan))
 levenshtein_distance = levenshtein(plan, model_plan)
 # max levenshtein_dist = 14 for our model
 conf_value = (14 - float(levenshtein_distance)) / 14
