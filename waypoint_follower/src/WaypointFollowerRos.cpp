@@ -157,7 +157,6 @@ void WaypointFollowerRos::humanPoseCallback(const geometry_msgs::PoseStamped& po
           poseMap.pose.orientation.z = q.getZ();
           poseMap.pose.orientation.w = q.getW();
       }
-      pub_human.publish(poseMap);
   } catch (tf::ExtrapolationException &e) {
       ROS_ERROR("Tf exception: %s", e.what());
   } catch(tf::LookupException &e) {
