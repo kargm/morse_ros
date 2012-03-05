@@ -36,4 +36,4 @@ echo "Using PYTHONPATH: $PYTHONPATH"
 echo "In case you have blend files left, attempting to delete."
 #rm -f *.blend
 #$MORSE_DIR/morse/bin/morse $MORSE_DIR/morse/share/examples/morse/scenarii/ROS_tutorial1_navstack.blend
-$MORSE_DIR/morse/bin/morse -exec $MORSE_DIR/morse/share/examples/morse/scenarii/apartment.py
+$MORSE_DIR/morse/bin/morse edit $MORSE_DIR/morse/share/examples/morse/scenarii/apartment.py

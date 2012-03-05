@@ -36,4 +36,4 @@ echo "Using PYTHONPATH: $PYTHONPATH"
 echo "In case you have blend files left, attempting to delete."
 
 # Start using builder script
-$MORSE_DIR/morse/bin/morse exec $MORSE_DIR/morse/share/morse/examples/scenarii/garching_b21.py
+$MORSE_DIR/morse/bin/morse edit $MORSE_DIR/morse/share/morse/examples/scenarii/garching_b21.py
