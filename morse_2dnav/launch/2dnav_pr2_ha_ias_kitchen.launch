@@ -1,7 +1,14 @@
 <launch>
 
-  <include file="$(find morse_tf)/launch/morse_pr2_tf.launch"/>
- 
+   <param name="robot_description" command="cat $(find morse_2dnav)/urdf/pr2.urdf"/>
+   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"> 
+    <remap from="/joint_states" to="/pr2/pr2_posture" />
+  </node>
+  
+  <node name="fake_localization" pkg="fake_localization" type="fake_localization" >
+     <remap from="/base_pose_ground_truth" to="/pr2/Pose_sensor" />
+  </node>
+
   <include file="$(find morse_2dnav)/launch/morse_humanAware/move_base_humanAware_pr2.xml"/>
 
   <include file="$(find human_nav_node)/launch/ias_kitchen.launch"/>
@@ -10,12 +17,10 @@
 
   <node pkg="kuka_arm" type="Jido_park_arm.py" name="Jido_park_arm"/>
 
-  <node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
+  <!--node pkg="nav_pcontroller" type="nav_pcontroller" name="nav_pcontroller" output="screen">
     <remap from="~laser_1" to="/Jido/Sick"/>
     <remap from="/goal" to="/nav_pcontroller/goal"/>
     <rosparam file="$(find morse_2dnav)/launch/nav_pcontroller_params.yaml" command="load" />
-  </node>
-
-  <node name="test_morse_nodes" pkg="morse_2dnav" type="test_morse_nodes.py"/>
+  </node-->
 
 </launch>
