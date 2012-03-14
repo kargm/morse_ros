@@ -30,4 +30,4 @@ export MORSE_BLENDER=$BLENDER_DIR/bin/blender
 
 echo "Using PYTHONPATH: $PYTHONPATH"
 
-$MORSE_DIR/morse/bin/morse edit $MORSE_DIR/morse/share/morse/examples/scenarii/ros_example_pr2.py
+$MORSE_DIR/morse/bin/morse edit $MORSE_DIR/morse/share/morse/examples/scenarii/ias_kitchen_pr2.py
