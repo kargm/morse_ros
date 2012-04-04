@@ -38,4 +38,4 @@ echo $MORSE_ROOT
 
 # Full unit test does not work at the moment due to ROS Actionlib / PY3 problems...
 #$MORSE_DIR/morse-src/testing/middlewares/ros/actions.py 
-$MORSE_DIR/morse/bin/morse -exec $MORSE_DIR/morse-src/testing/middlewares/ros/actions.py 
+$MORSE_DIR/morse/bin/morse run $MORSE_DIR/morse-src/testing/middlewares/ros/actions.py 
