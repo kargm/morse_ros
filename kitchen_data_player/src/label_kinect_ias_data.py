@@ -4,7 +4,7 @@ import math
 import sys
 import time
 
-import roslib; roslib.load_manifest('kitchen_data_player')
+import roslib; roslib.load_manifest('kitchen_data_player'); roslib.load_manifest('nav_msgs')
 import rospy
 import tf
 from tf.transformations import quaternion_from_euler
@@ -12,6 +12,7 @@ from tf.transformations import quaternion_from_euler
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import PoseArray
+from nav_msgs.msg import Odometry
 
 # This script takes as input kinect data recorded in the Garching Lab using the setup from the TUM kitchen dataset. I generated a symbolic task description based 
 # on the location model the is hardcoded here.
@@ -330,7 +331,7 @@ def publish_furniture():
 posesReader = csv.DictReader(open(sys.argv[1], 'rb'), delimiter=',', quotechar='|')
 
 # Init ROSnode
-pose_pub = rospy.Publisher('kitchen_pose', PoseStamped)             # current pose
+pose_pub = rospy.Publisher('/Human/Pose', Odometry)             # current pose
 
 rospy.init_node('kitchen_player')
 
@@ -377,7 +378,10 @@ for row in posesReader:
 
     #TODO: include and calculate orientation
     theta = 0
-    
+    odometry = Odometry()
+    odometry.header.frame_id = "/map"
+    odometry.child_frame_id = "/human_pose"
+
     quat = quaternion_from_euler(0,0,0)
     br.sendTransform((float(row['z']), float(row['x']), 0),
                      quat,
@@ -393,6 +397,13 @@ for row in posesReader:
         global_x = human_trans[0]
         global_y = human_trans[1]
         #print("humantrans: x: %s, y: %s"%(human_trans[0], human_trans[1]))
+        # odometry.pose.pose.position.x = float(row['y'])
+        # odometry.pose.pose.position.y = float(row['z'])
+        odometry.pose.pose.position.x = global_x
+        odometry.pose.pose.position.y = global_y
+        odometry.header.stamp = rospy.Time.now()
+        # fill pose
+        pose_pub.publish(odometry)
        
     except (tf.Exception, tf.LookupException, tf.ConnectivityException):
         print('WARNING: TF could not lookup human_pose->map transformation')
@@ -476,9 +487,9 @@ for row in posesReader:
     last_global_x = global_x
     last_global_y = global_y
     #realtime
-    #time.sleep(0.033333333333)
+    time.sleep(0.033333333333)
 
-    time.sleep(0.001)
+    #time.sleep(0.001)
 
 print("%s -> %s ( %f seconds, p = %s)"%(semantic_instance, last_location, loc_duration, last_p_avg))
 FILE.write("%s,%s,%s,%s\n"%(semantic_instance, last_location, loc_duration, last_p_avg))
