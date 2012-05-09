@@ -4,7 +4,7 @@ import math
 import sys
 import time
 
-import roslib; roslib.load_manifest('kitchen_data_player')
+import roslib; roslib.load_manifest('kitchen_data_player');  roslib.load_manifest('nav_msgs')
 import rospy
 import tf
 from tf.transformations import quaternion_from_euler
@@ -12,6 +12,7 @@ from tf.transformations import quaternion_from_euler
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import PoseArray
+from nav_msgs.msg import Odometry
 
 # This script parses poses.csv and labels.csv of the TUM kitchen dataset and creates a new csv-file that contains positions, labels
 # and timestamps of poses where the human stood still and interacted with objects
@@ -264,7 +265,7 @@ def publish_furniture():
 posesReader = csv.DictReader(open(sys.argv[1], 'rb'), delimiter=',', quotechar='|')
 
 # Init ROSnode
-pose_pub = rospy.Publisher('kitchen_pose', PoseStamped)             # current pose
+pose_pub = rospy.Publisher('/Human/Pose', Odometry)             # current pose
 
 rospy.init_node('kitchen_player')
 
@@ -291,6 +292,8 @@ for row in posesReader:
                      "human_pose",
                      "kinect")
 
+    global_x = 0
+    global_y = 0
     # get human position in reference to map
     try:
         now = rospy.Time.now() - rospy.Duration(0.0)
@@ -298,15 +301,23 @@ for row in posesReader:
         (human_trans, human_rot) = tf_listener.lookupTransform("map", "human_pose", rospy.Time(0))
         global_x = human_trans[0]
         global_y = human_trans[1]
-        #print("humantrans: x: %s, y: %s"%(human_trans[0], human_trans[1]))
-       
+        print("humantrans: x: %s, y: %s"%(human_trans[0], human_trans[1]))
+        
+
     except (tf.Exception, tf.LookupException, tf.ConnectivityException):
         print('.')
 
     get_cluster_number(global_x, global_y)
+    human_pose = Odometry()
+    human_pose.header.stamp = now
+    human_pose.pose.pose.position.x = global_x
+    human_pose.pose.pose.position.y = global_y
+    human_pose.pose.pose.orientation = quat
+    pose_pub.publish(human_pose)
+
     
     #time.sleep(0.033) #realtime
-    time.sleep(0.005)
+    time.sleep(0.05)
     
 #print("Relative Distance plate -> table_gaussian_mean: %s, %s"%tf_listener.lookupTransform("plate_edge", "table_gaussian_mean", rospy.Time(0)))
 #print("Relative_Distance drawer -> drawer_gaussian_mean %s, %s"%tf_listener.lookupTransform("drawer_edge", "drawer_gaussian_mean", rospy.Time(0)))

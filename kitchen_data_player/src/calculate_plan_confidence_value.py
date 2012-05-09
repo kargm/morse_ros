@@ -40,7 +40,7 @@ p = 0
 confidence = 0
 
 # gaussians
-table_mean = 2.1076
+table_mean = 2.107
 table_dev = 1.2662
 cupboard_mean = 3.4926
 cupboard_dev = 0.843
@@ -76,7 +76,7 @@ for row in objReader:
     if (float(row['probability']) > 0.005):
         confidence_sum += confidence
         confidence_counter += 1
-        #print("confidence: %s (p=%s, location= %s)"%(confidence, p, row['location']))
+        print("confidence: %s (p=%s, location= %s)"%(confidence, p, row['location']))
     else:
         #print("Skipping insecure value: %s"%row['probability'])
         pass

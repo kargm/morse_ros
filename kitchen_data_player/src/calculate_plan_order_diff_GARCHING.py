@@ -12,7 +12,7 @@ planReader = csv.DictReader(open(sys.argv[1], 'rb'), delimiter=',', quotechar='|
 
 model_plan = 'ADADCDBDBDBDCD'
 plan = ''
-threshhold = 0.00005
+threshhold = 0.005
 
 def levenshtein(s1, s2):
     if len(s1) < len(s2):
