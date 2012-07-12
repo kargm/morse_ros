@@ -13,6 +13,7 @@ from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import PoseArray
 from std_msgs.msg import String
+from nav_msgs.msg import Odometry
 
 # This script takes as input kinect data recorded in the Garching Lab using the setup from the TUM kitchen dataset. I generated a symbolic task description based 
 # on the location model the is hardcoded here.
@@ -67,7 +68,7 @@ def get_cluster_number(x, y):
         p4_max =  calculate_gaussian_prob(cupboard_gauss_mean[0], cupboard_gauss_mean[1],cupboard_gauss_mean[0], cupboard_gauss_mean[1], 0.0706725, 0.0726388)
 
     except (tf.Exception, tf.LookupException, tf.ConnectivityException):
-        print('nein') 
+        print('.') 
 
     cluster = -1
     location = ''
@@ -132,15 +133,19 @@ def publish_gaussians():
                      "cupboard_edge")
 
 def publish_kinect():
-    kinect_x = 1.3175
-    kinect_y = 0.0946
-
-    br.sendTransform((kinect_x, kinect_y, 0),
-                     quaternion_from_euler(0,0,1.57075) ,
-                     rospy.Time.now(),
-                     "kinect",
-                     "map")
-
+    #kinect_x = 1.3175
+    #kinect_y = 0.0946
+    #kinect_theta = 1.57075
+     kinect_x = 0
+     kinect_y = 0
+     kinect_theta = 0
+     
+     br.sendTransform((kinect_x, kinect_y, 0),
+                      quaternion_from_euler(0,0,kinect_theta) ,
+                      rospy.Time.now(),
+                      "kinect",
+                      "map")
+     
 # Publishes the (hard-coded) locations of the furniture using tf
 def publish_furniture():
     # from logged object data
@@ -288,7 +293,7 @@ posesReader = csv.DictReader(open(sys.argv[1], 'rb'), delimiter=',', quotechar='
 
 
 # Init ROSnode
-pose_pub = rospy.Publisher('kitchen_pose', PoseStamped)             # current pose
+pose_pub = rospy.Publisher('/Human/Pose', Odometry)  # current pose
 obj_pub = rospy.Publisher('pr2/CameraMain', String)  # object publisher
 
 rospy.init_node('kitchen_player')
@@ -332,7 +337,7 @@ FILE.write("instance,location,duration,probability\n")
 for row in posesReader:
     publish_furniture()
     publish_gaussians()
-    publish_kinect()
+    #publish_kinect()
     poses_time = float(row['time'])
     
 
@@ -345,12 +350,41 @@ for row in posesReader:
                      rospy.Time.now(),
                      "human_pose",
                      "map")
+
+    #TODO: include and calculate orientation
+    theta = 0
+    odometry = Odometry()
+    odometry.header.frame_id = "/map"
+    odometry.child_frame_id = "/human_pose"
+    # get human position in reference to map
+    try:
+        now = rospy.Time.now() - rospy.Duration(0.0)
+        tf_listener.waitForTransform("map", "human_pose", rospy.Time(0), rospy.Duration(0.001))
+        (human_trans, human_rot) = tf_listener.lookupTransform("map", "human_pose", rospy.Time(0))
+        global_x = human_trans[0]
+        global_y = human_trans[1]
+        #print("humantrans: x: %s, y: %s"%(human_trans[0], human_trans[1]))
+        # odometry.pose.pose.position.x = float(row['y'])
+        # odometry.pose.pose.position.y = float(row['z'])
+        odometry.pose.pose.position.x = global_x
+        odometry.pose.pose.position.y = global_y
+        odometry.pose.pose.orientation.w = 1
+        odometry.header.stamp = rospy.Time.now()
+        # fill pose
+        pose_pub.publish(odometry)
+       
+    except (tf.Exception, tf.LookupException, tf.ConnectivityException):
+        print('WARNING: TF could not lookup human_pose->map transformation')
+
     objectReader = csv.DictReader(open(sys.argv[2], 'rb'), delimiter=',', quotechar='|')
 
+    # In TUM kitchen data there seems to be an offset of ca. 10s between timestamps  of rfid file and poses file
+    obj_time_offset = 10
+
     for obj_row in objectReader:
-         if (abs(poses_time - float(obj_row['time'])) < 0.1):
+         if (abs(poses_time - (float(obj_row['time']) - obj_time_offset)) < 0.1):
               # Cut off last 2 symbols since they are "-1" in kitchen dataset!
-              print("Detected object: %s at location <%s,%s,%s>"%(obj_row['object'][:-2], obj_row['obj_x'], obj_row['obj_y'], obj_row['obj_z']))
+              print("Detected object: %s at location <%s,%s,%s>, human location: <%s, %s, 0>. Action: %s"%(obj_row['object'][:-2], obj_row['obj_x'], obj_row['obj_y'], obj_row['obj_z'], float(row['BECX'])/1000, float(row['BECY'])/1000, obj_row['action']))
               obj_string = String()
               message = str("(")
               message = message + "(" + str(obj_row['object'][:-2]) + " " + "-" + " " + str(obj_row['obj_x']) + " " + str(obj_row['obj_y']) + " " + str(obj_row['obj_z']) + " 0 0 0 1 " ")"
@@ -457,7 +491,7 @@ for row in posesReader:
     #realtime
     time.sleep(0.033333333333)
 
-    #time.sleep(0.0002)
+    #time.sleep(0.015)
 
 print("%s -> %s ( %f seconds, p = %s)"%(semantic_instance, last_location, loc_duration, last_p_avg))
 FILE.write("%s,%s,%s,%s\n"%(semantic_instance, last_location, loc_duration, last_p_avg))

@@ -324,7 +324,7 @@ for row in posesReader:
             #print("LEFT hand used at instance = %s"%row['instance'])
             #print("last lefthand: %s, lefthand: %s"%(last_lefthand, lefthand))
             FILE.write("%s,%s,%s,%s,%s,%s,%s\n"%(instance, row['time'], row['HALX'], row['HALY'], left_theta, cluster, location))
-            #print("Object position: %s,%s,%s,%s,%s,%s,%s"%(instance, row['time'], row['HALX'], row['HALY'], left_theta, cluster, location))
+            print("---- Object position at instance: %s,time: %s, pose: <%s,%s> ,%s,%s,%s"%(instance, row['time'], row['HARX'], row['HARY'], right_theta, cluster, location))
 
         if ((righthand == 'TakingSomething' and last_righthand !=  'TakingSomething') \
                 or (righthand == 'ReleasingGraspOfSomething' and last_righthand !='ReleasingGraspOfSomething' and last_righthand != 'ClosingADoor')): # Object interaction with right hand
@@ -350,7 +350,7 @@ for row in posesReader:
             #print("RIGHT hand used at instance: = %s"%row['instance'])
             #print("last righthand: %s, righthand: %s"%(last_righthand, righthand))
             FILE.write("%s,%s,%s,%s,%s,%s,%s\n"%(instance, row['time'], row['HARX'], row['HARY'], right_theta, cluster, location))
-            #print("Object position: %s,%s,%s,%s,%s,%s,%s"%(instance, row['time'], row['HARX'], row['HARY'], right_theta, cluster, location))
+            print("---- Object position at instance: %s,time: %s, pose: <%s,%s> ,%s,%s,%s"%(instance, row['time'], row['HARX'], row['HARY'], right_theta, cluster, location))
         
         if right == True and left == False:            # Object interactions with right hand
             obj_positions.poses.append(right_pose)
