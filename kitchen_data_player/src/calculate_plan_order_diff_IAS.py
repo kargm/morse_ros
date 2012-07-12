@@ -4,14 +4,17 @@ import math
 import sys
 import time
 import difflib
-import jellyfish
+#import jellyfish
 
 
 # Usage: calculate_plan_confidence_value.py symbolic_plan.csv
 
 planReader = csv.DictReader(open(sys.argv[1], 'rb'), delimiter=',', quotechar='|')
 
-model_plan = 'ADADCDBDBDBDCD'
+# model-plan for robot table-setting
+#model_plan = 'ADADCDBDBDBDCD'
+# model-plan for human table-setting
+model_plan = 'ADCDBD'
 plan = ''
 threshhold = 0.000025
 

@@ -39,13 +39,21 @@ confidence_counter = 0
 p = 0
 confidence = 0
 
-# gaussians
-table_mean = 2.1076
-table_dev = 1.2662
-drawer_mean = 3.1934
-drawer_dev = 1.0323
-dishwasher_mean = 1.0371
-dishwasher_dev = 0.5608
+# mean times (1D as gaussians) for robot_table_setting
+#table_mean = 2.1076
+#table_dev = 1.2662
+#drawer_mean = 3.1934
+#drawer_dev = 1.0323
+#dishwasher_mean = 1.0371
+#dishwasher_dev = 0.5608
+
+# mean times (as 1D gaussians) for human table setting
+table_mean = 4.85
+table_dev = 0.7167
+drawer_mean = 5.58
+drawer_dev = 0.8833
+dishwasher_mean = 2.6167
+dishwasher_dev = 0.7167
 
 for row in objReader:
     # Write new csv-file with: instance, time, BECX, BEXY, BECTheta, 

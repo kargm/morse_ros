@@ -39,7 +39,7 @@ confidence_counter = 0
 p = 0
 confidence = 0
 
-# gaussians
+# gaussians for robot table setting
 table_mean = 2.107
 table_dev = 1.2662
 cupboard_mean = 3.4926
@@ -48,6 +48,16 @@ drawer_mean = 3.1934
 drawer_dev = 1.0323
 stove_mean = 1.0371
 stove_dev = 0.5608
+
+# gaussians for human table setting
+#table_mean = 4.85
+#table_dev = 0.863
+#cupboard_mean = 6.35
+#cupboard_dev = 0.4833
+#drawer_mean = 5.5833
+#drawer_dev = 0.8833
+#stove_mean = 2.6167
+#stove_dev = 0.7167
 
 for row in objReader:
     # Write new csv-file with: instance, time, BECX, BEXY, BECTheta, 
@@ -76,14 +86,14 @@ for row in objReader:
     if (float(row['probability']) > 0.005):
         confidence_sum += confidence
         confidence_counter += 1
-        print("confidence: %s (p=%s, location= %s)"%(confidence, p, row['location']))
+        #print("confidence: %s (p=%s, location= %s)"%(confidence, p, row['location']))
     else:
         #print("Skipping insecure value: %s"%row['probability'])
         pass
 
 confidence_mean = confidence_sum / confidence_counter
 
-print('[%s] Mean confidence: %s s'%(sys.argv[1], confidence_mean))
+print('[%s] Mean confidence: %s .'%(sys.argv[1], confidence_mean))
 
         
 
