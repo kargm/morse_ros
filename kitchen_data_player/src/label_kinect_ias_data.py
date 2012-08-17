@@ -401,6 +401,7 @@ for row in posesReader:
         # odometry.pose.pose.position.y = float(row['z'])
         odometry.pose.pose.position.x = global_x
         odometry.pose.pose.position.y = global_y
+        odometry.pose.pose.orientation.w = 1
         odometry.header.stamp = rospy.Time.now()
         # fill pose
         pose_pub.publish(odometry)
