@@ -1,0 +1,5 @@
+<launch>
+
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find b21scripts)/maps/garching_lab.yaml"/> 
+
+</launch>
