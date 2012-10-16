@@ -1,9 +1,9 @@
 #include $(shell rospack find mk)/cmake.mk
-BLENDVERSION=2.63a
+BLENDVERSION=2.61
 # TODO: get the right variant depending on system
 BLENDRELEASE=blender-${BLENDVERSION}-linux-glibc27-x86_64
 BLENDTAR=${BLENDRELEASE}.tar.bz2
-BLENDURL=http://ftp.halifax.rwth-aachen.de/blender/release/Blender2.63/${BLENDTAR}
+BLENDURL=http://download.blender.org/release/Blender2.61/${BLENDTAR}
 
 all: bin/blender
 
