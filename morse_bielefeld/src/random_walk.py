@@ -12,37 +12,49 @@ import actionlib
 # goal message and the result message.
 #import actionlib_tutorials.msg
 
-def fibonacci_client():
-    # Creates the SimpleActionClient, passing the type of the action
-    # (FibonacciAction) to the constructor.
-
+def start_position():
     client = actionlib.SimpleActionClient('Motion_Controller/move_base', MoveBaseAction)
-    # Waits until the action server has started up and started
-    # listening for goals.
     client.wait_for_server()
-
-    # Creates a goal to send to the action server.
-
-    goal = MoveBaseGoal(Pose(Point(2,0,0.0), Quaternion(0.0,0.0,0.0,1.0)))
-    # Sends the goal to the action server.
-    #client.send_goal(goal)
-    print("Sending a first goal to the robot...(timeout=5sec)")
+    goal = MoveBaseGoal(Pose(Point(0,-3,0.0), Quaternion(0.0,0.0,0.0,1.0)))
+    print("Sending the robot to cupboard 2...(timeout=5sec)")
     status = client.send_goal_and_wait(goal, rospy.Duration(5))
-
     print("Got this status: " + str(status))
-    # Waits for the server to finish performing the action.
     client.wait_for_result()
+    return client.get_result()
 
-    # Prints out the result of executing the action
-    return client.get_result()  # A FibonacciResult
+def cupboard_1():
+    client = actionlib.SimpleActionClient('Motion_Controller/move_base', MoveBaseAction)
+    client.wait_for_server()
+    goal = MoveBaseGoal(Pose(Point(2,2,0.0), Quaternion(0.0,0.0,0.0,1.0)))
+    print("Sending the robot to cupboard 2...(timeout=5sec)")
+    status = client.send_goal_and_wait(goal, rospy.Duration(5))
+    print("Got this status: " + str(status))
+    client.wait_for_result()
+    return client.get_result()
+
+def cupboard_2():
+    client = actionlib.SimpleActionClient('Motion_Controller/move_base', MoveBaseAction)
+    client.wait_for_server()
+    goal = MoveBaseGoal(Pose(Point(2,0,0.0), Quaternion(0.0,0.0,0.0,1.0)))
+    print("Sending the robot to cupboard 2...(timeout=5sec)")
+    status = client.send_goal_and_wait(goal, rospy.Duration(5))
+    print("Got this status: " + str(status))
+    client.wait_for_result()
+    return client.get_result()
+
+
 
 if __name__ == '__main__':
     try:
         # Initializes a rospy node so that the SimpleActionClient can
         # publish and subscribe over ROS.
-        rospy.init_node('fibonacci_client_py')
-        result = fibonacci_client()
-        print("Result: s" + str(result))
-        #print "Result:", ', '.join([str(n) for n in result.sequence])
+        rospy.init_node('random_walk_client')
+        result = cupboard_1()
+        print("Reached CB1: s" + str(result))
+        result = start_position()
+        print("Reached Start: s" + str(result))
+        result = cupboard_2()
+        print("Reached CB2: s" + str(result))
+
     except rospy.ROSInterruptException:
         print "program interrupted before completion"
