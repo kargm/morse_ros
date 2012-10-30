@@ -35,6 +35,6 @@ echo "Using PYTHONPATH: $PYTHONPATH"
 
 echo "In case you have blend files left, attempting to delete."
 
-$MORSE_DIR/morse/bin/morse edit $MORSE_DIR/morse-src/examples/scenarii/bielefeld.py
+$MORSE_DIR/morse/bin/morse run $MORSE_DIR/morse-src/examples/scenarii/bielefeld.py
 # Start using builder script
 #$MORSE_DIR/morse/bin/morse exec $MORSE_DIR/morse/share/examples/morse/scenarii/adapto_rebuild/ias_kitchen_big.py
