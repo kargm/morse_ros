@@ -1,0 +1,26 @@
+enable_jlo: false
+      
+slowdown_far: 0.20
+slowdown_near: 0.08
+safety_dist: 0.06
+repelling_dist: 0.10
+repelling_gain: 0.5
+repelling_gain_max: 0.015
+
+vel_ang_max: 0.6
+vel_lin_max: 0.5
+acc_ang_max: 0.4
+acc_lin_max: 0.4
+loop_rate: 30
+p: 1.2
+
+n_lasers: 1
+complete_blind_spots: false
+
+speed_filter_name: /nav_pcontroller
+footprint:
+  top: 0.33
+  bottom: -0.33
+  right: 0.33
+  left: -0.33
+  tolerance: 0.0
