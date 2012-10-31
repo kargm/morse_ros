@@ -14,7 +14,7 @@
   <depend package="roslib"/>
   <depend package="std_msgs"/>
   <depend package="actionlib_msgs"/>
-  <depend package="morsetesting"/>
+  <depend package="move_base_msgs"/>
 
 </package>
 
