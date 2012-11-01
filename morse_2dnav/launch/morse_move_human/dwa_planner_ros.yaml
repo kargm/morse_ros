@@ -2,7 +2,7 @@ DWAPlannerROS:
   acc_lim_th: 2.0
   acc_lim_x: 1.5
   acc_lim_y: 1.5
-  xy_goal_tolerance: 0.5
+  xy_goal_tolerance: 0.25
   yaw_goal_tolerance: 0.2
   # if the robot ever reaches the goal xy location it will simply rotate in place, even if it ends up outside the goal tolerance while it is doing so. (false)
   latch_xy_goal_tolerance: true
