@@ -1,5 +1,7 @@
 <launch>
 
+  <node name="morse" pkg="morse" type="bielefeld.py" />
+
  <include file="$(find morse_2dnav)/launch/2dnav_human_empty.launch"/>
  <node name="AC_Client" pkg="morse_bielefeld" type="random_walk.py"/> 
 
