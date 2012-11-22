@@ -20,11 +20,51 @@ if __name__ == '__main__':
     FILE = open(sys.argv[1],"w")
     FILE.write("instance,time,BECX,BECY,BECZ,BEC_ROTX,BEC_ROTY,BEC_ROTZ\n") 
     instance = 0
+    transform_found = False
+    neck = ""
 
-    while not rospy.is_shutdown():
+    while not transform_found and not rospy.is_shutdown():
+        try:
+            listener.waitForTransform("/map", "/neck_1", rospy.Time(0), rospy.Duration(1.0))
+            (trans,rot) = listener.lookupTransform('/map', '/neck_1', rospy.Time(0))
+            print("SUCCESS: Found neck_1 transform!")
+            neck = "neck_1"
+            transform_found = True
+        except (tf.LookupException, tf.ConnectivityException, tf.Exception):
+            print( "Trying transform from map to neck_1!")
+
+        try:
+            listener.waitForTransform("/map", "/neck_2", rospy.Time(0), rospy.Duration(1.0))
+            (trans,rot) = listener.lookupTransform('/map', '/neck_2', rospy.Time(0))
+            print("SUCCESS: Found neck_2 transform!")
+            neck = "neck_2"
+            transform_found = True
+        except (tf.LookupException, tf.ConnectivityException, tf.Exception):
+            print("Trying transform from map to neck_2!")
+
+        try:
+            listener.waitForTransform("/map", "/neck_3", rospy.Time(0), rospy.Duration(1.0))
+            (trans,rot) = listener.lookupTransform('/map', '/neck_3', rospy.Time(0))
+            print("SUCCESS: Found neck_3 transform!")
+            neck = "neck_3"
+            transform_found = True
+        except (tf.LookupException, tf.ConnectivityException, tf.Exception):
+            print("Trying transform from map to neck_3!")
+
         try:
             listener.waitForTransform("/map", "/neck_4", rospy.Time(0), rospy.Duration(1.0))
             (trans,rot) = listener.lookupTransform('/map', '/neck_4', rospy.Time(0))
+            print("SUCCESS: Found neck_4 transform!")
+            neck = "neck_4"
+            transform_found = True
+        except (tf.LookupException, tf.ConnectivityException, tf.Exception):
+            print("Trying transform from map to neck_4!")
+
+
+    while not rospy.is_shutdown():
+        try:
+            listener.waitForTransform("/map", neck, rospy.Time(0), rospy.Duration(1.0))
+            (trans,rot) = listener.lookupTransform('/map', neck, rospy.Time(0))
 
             now = rospy.Time.now()
             human_pos = Odometry()
