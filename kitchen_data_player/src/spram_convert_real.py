@@ -86,7 +86,7 @@ if __name__ == '__main__':
             print("Human is at %s %s %s (time: %s.%s)"%(trans[0], trans[1], trans[2], now.secs, now.nsecs))
             FILE.write("%s,%s,%s,%s,%s,%s,%s,%s,%s\n"%(instance,now,trans[0],trans[1],trans[2],rot[0],rot[1],rot[2],rot[3]))
             instance = instance + 1
-            rospy.sleep(0.04)
+            rospy.sleep(0.08)
 
         except (tf.LookupException, tf.ConnectivityException, tf.Exception):
             print("Could not find transform from map to neck_1!")
