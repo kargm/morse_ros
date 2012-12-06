@@ -15,7 +15,8 @@
   <depend package="std_msgs"/>
   <depend package="actionlib_msgs"/>
   <depend package="move_base_msgs"/>
-
+  <depend package="geometry_msgs"/>
+  <depend package="tf"/>
 </package>
 
 
