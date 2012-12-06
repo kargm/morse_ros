@@ -3,14 +3,14 @@ import roslib; roslib.load_manifest('morse_bielefeld'); roslib.load_manifest('tf
 import rospy
 from tf.transformations import euler_from_quaternion
 from nav_msgs.msg import Odometry
-
+from geometry_msgs.msg import Quaternion
 
 def human_callback(data):
     # TODO: Calculate yaw
-    quaternion = 
-    yaw = euler_from_quaternion(data.pose.pose.orientation)
-    print("Yaw: %s"%yaw[1])
-    print("[%s] Human is at  %s" %(data.header.stamp, data.pose.pose.position.x,data.pose.pose.position.y))
+    quaternion = [data.pose.pose.orientation.x, data.pose.pose.orientation.y, data.pose.pose.orientation.z, data.pose.pose.orientation.w]
+    yaw = euler_from_quaternion(quaternion)[2]
+    #print("Yaw: %s"%yaw[1])
+    print("[%s] Human is at  %s,%s,%s" %(data.header.stamp, data.pose.pose.position.x,data.pose.pose.position.y, yaw))
 
 def robot_callback(data):
     print("Robot is at  %s" % data.pose.pose.position.x)
