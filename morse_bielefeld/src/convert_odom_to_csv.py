@@ -1,29 +1,41 @@
 #!/usr/bin/env python
 import roslib; roslib.load_manifest('morse_bielefeld'); roslib.load_manifest('tf') 
 import rospy
+import sys
+import message_filters
 from tf.transformations import euler_from_quaternion
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Quaternion
+from approxsync import ApproximateSynchronizer
 
-def human_callback(data):
+#out_file = open(sys.argv[1],"w")
+#out_file.write("time,human_x,human_y,human_yaw,robot_x,robot_y,robot_yaw\n")
+human_topic = "/Human/Human_pose"
+robot_topic = "/Jido/Robot_pose"
+
+def callback(human_data, robot_data):
     # TODO: Calculate yaw
-    quaternion = [data.pose.pose.orientation.x, data.pose.pose.orientation.y, data.pose.pose.orientation.z, data.pose.pose.orientation.w]
-    yaw = euler_from_quaternion(quaternion)[2]
-    #print("Yaw: %s"%yaw[1])
-    print("[%s] Human is at  %s,%s,%s" %(data.header.stamp, data.pose.pose.position.x,data.pose.pose.position.y, yaw))
+    human_quaternion = [human_data.pose.pose.orientation.x, human_data.pose.pose.orientation.y, human_data.pose.pose.orientation.z, human_data.pose.pose.orientation.w]
+    robot_quaternion = [robot_data.pose.pose.orientation.x, robot_data.pose.pose.orientation.y, robot_data.pose.pose.orientation.z, robot_data.pose.pose.orientation.w]
 
-def robot_callback(data):
-    print("Robot is at  %s" % data.pose.pose.position.x)
+    human_yaw = euler_from_quaternion(human_quaternion)[2]
+    robot_yaw = euler_from_quaternion(robot_quaternion)[2]
 
-def human_listener():
-    rospy.init_node('listener', anonymous=True)
-    rospy.Subscriber("/Human/Human_pose", Odometry, human_callback)
-    rospy.spin()
+    print("%s,%s,%s,%s,%s,%s,%s" %(human_data.header.stamp, human_data.pose.pose.position.x,human_data.pose.pose.position.y, human_yaw,robot_data.pose.pose.position.x,robot_data.pose.pose.position.y, robot_yaw))
 
-def robot_listener():
-    rospy.Subscriber("/Jido/Robot_pose", Odometry, robot_callback)
+def time_synchronizer():
+    rospy.init_node('synchronizer', anonymous=True)
+
+    #sync = message_filters.TimeSynchronizer 
+    sync = ApproximateSynchronizer
+
+    human_sub = message_filters.Subscriber(human_topic, Odometry)
+    robot_sub = message_filters.Subscriber(robot_topic, Odometry)
+    ts = sync(0.016, [human_sub, robot_sub], 1)
+    ts.registerCallback(callback)
     rospy.spin()
 
 if __name__ == '__main__':
-    human_listener()
-    #robot_listener()
+    print("time,human_x,human_y,human_yaw,robot_x,robot_y,robot_yaw")
+    time_synchronizer()
+
