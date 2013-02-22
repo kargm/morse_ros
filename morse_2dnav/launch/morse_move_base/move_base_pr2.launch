@@ -1,8 +1,5 @@
 <launch>
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" clear_params="true">
-    <remap from="/base_scan" to="/pr2/Sick"/>
-    <remap from="/cmd_vel" to="/pr2/Motion_Controller"/>
-    <remap from="/odom" to="/pr2/Odometry"/>
     
     <param name="footprint_padding" value="0.01" />
     <param name="controller_frequency" value="10.0" />
