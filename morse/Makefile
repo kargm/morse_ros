@@ -1,7 +1,7 @@
 #include $(shell rospack find mk)/cmake.mk
-ADAPTOBRANCH=adapto_0.2
+ADAPTOBRANCH=adapto_0.3
 # TODO: put tag in here
-MORSERELEASE=adapto_0.2.8
+MORSERELEASE=adapto_0.3.1
 
 
 all: morse update
@@ -22,8 +22,7 @@ update: morse-src
 morse-src/build/bin: update
   #create dir if does not exist
 	mkdir -p morse-src/build
-	cd morse-src/build;cmake  -D BUILD_ROS_SUPPORT=ON -D CMAKE_INSTALL_PREFIX=`pwd`/../../morse ..
-
+	cd morse-src/build;cmake -DPYTHON_EXECUTABLE=/usr/bin/python3.2 -D BUILD_ROS_SUPPORT=ON -D CMAKE_INSTALL_PREFIX=`pwd`/../../morse ..
 clean:
 	rm -rf morse
 	rm -rf morse-src
