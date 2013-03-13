@@ -25,15 +25,9 @@ if [ -z "$PYTHON3_EXECUTABLE" ]; then
 fi
 
 PYTHON_INST_DIR=`$PYTHON3_EXECUTABLE -c "import distutils.sysconfig, sys; sys.stdout.write(distutils.sysconfig.get_python_lib(0,0,''))"`
-export PYTHONPATH=$PYYAML_DIR/pyyaml/lib/python3.2/site-packages:$MORSE_DIR/morse/$PYTHON_INST_DIR:$ROSLIB_DIR/src:/usr/$PYTHON_INST_DIR
-
+export PYTHONPATH=$PYYAML_DIR/pyyaml/lib/python3.2/site-packages:$MORSE_DIR/morse/$PYTHON_INST_DIR:/usr/$PYTHON_INST_DIR:/opt/ros/fuerte/lib/python2.7/dist-packages
 
 export MORSE_BLENDER=$BLENDER_DIR/bin/blender
 
 echo "Using PYTHONPATH: $PYTHONPATH"
-
-
-echo "In case you have blend files left, attempting to delete."
-#rm -f *.blend
-#$MORSE_DIR/morse/bin/morse $MORSE_DIR/morse/share/examples/morse/scenarii/ROS_tutorial1_navstack.blend
 $MORSE_DIR/morse/bin/morse edit $MORSE_DIR/morse/share/morse/examples/scenarii/apartment.py
