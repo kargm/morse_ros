@@ -1,7 +1,7 @@
 # include $(shell rospack find mk)/cmake.mk
 #include $(shell rospack find mk)/cmake.mk
 
-PYYAMLRELEASE=PyYAML-3.09
+PYYAMLRELEASE=PyYAML-3.10
 
 PYYAMLTAR=${PYYAMLRELEASE}.tar.gz
 PYYAMLURL=http://pyyaml.org/download/pyyaml/${PYYAMLTAR}
@@ -21,4 +21,4 @@ ${PYYAMLTAR}:
 	wget ${PYYAMLURL}
 
 pyyaml: ${PYYAMLRELEASE}
-	cd ${PYYAMLRELEASE};python3.2 setup.py install --prefix `pwd`/../pyyaml
+	cd ${PYYAMLRELEASE};python3.3 setup.py install --prefix `pwd`/../pyyaml
