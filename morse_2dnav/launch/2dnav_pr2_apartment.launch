@@ -5,12 +5,12 @@
   
   <node name="tuck_arms" pkg="pr2_tuck_arms_action" type="tuck_arms.py" args="-lt"/>
   
- <node name="amcl" pkg="amcl" type="amcl">
+ <!--node name="amcl" pkg="amcl" type="amcl">
 	<remap from="/scan" to="/base_scan" />
-  </node>
-  <!--node name="fake_localization" pkg="fake_localization" type="fake_localization" >
-     <remap from="/base_pose_ground_truth" to="/james/robot_pose" />
   </node-->
+  <node name="fake_localization" pkg="fake_localization" type="fake_localization" >
+     <remap from="/base_pose_ground_truth" to="/james/robot_pose" />
+  </node>
 
   <include file="$(find morse_2dnav)/launch/morse_move_base/move_base_pr2.launch"/>
   
