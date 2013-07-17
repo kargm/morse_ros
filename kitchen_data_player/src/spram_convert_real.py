@@ -8,8 +8,8 @@ import math
 import tf
 from nav_msgs.msg import Odometry
 
-# This file subscribes to TF data from Openni Tracker and writes the transform from /map to /neck_1 into a poses.csv. 
-# Also ist uses object detections and writes the file objects.csv
+# This file subscribes to TF data from Openni Tracker and writes the transform from /map to /neck_1 into 
+# the file provided as argument. 
 
 if __name__ == '__main__':
     rospy.init_node('spram_converter')
@@ -22,6 +22,11 @@ if __name__ == '__main__':
     instance = 0
     transform_found = False
     neck = ""
+
+    # HACK TO SKIP SEARCH... 
+    transform_found = True
+    neck = "neck_1"
+
 
     while not transform_found and not rospy.is_shutdown():
         try:
@@ -89,6 +94,6 @@ if __name__ == '__main__':
             rospy.sleep(0.08)
 
         except (tf.LookupException, tf.ConnectivityException, tf.Exception):
-            print("Could not find transform from map to neck_1!")
+            print("Could not find transform from map to neck!")
 
        
