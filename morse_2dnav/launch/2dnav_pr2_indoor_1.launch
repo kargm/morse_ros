@@ -1,0 +1,19 @@
+<launch>
+  <param name="robot_description" command="cat $(find morse_2dnav)/urdf/pr2.urdf"/>
+   
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/> 
+  
+  <node name="tuck_arms" pkg="pr2_tuck_arms_action" type="tuck_arms.py" args="-lt"/>
+  
+ <!--node name="amcl" pkg="amcl" type="amcl">
+	<remap from="/scan" to="/base_scan" />
+  </node-->
+  <node name="fake_localization" pkg="fake_localization" type="fake_localization" >
+     <remap from="/base_pose_ground_truth" to="/james/robot_pose" />
+  </node>
+
+  <include file="$(find morse_2dnav)/launch/morse_move_base/move_base_pr2.launch"/>
+  
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find morse_2dnav)/maps/tut1_map.yaml"/> 
+
+</launch>
