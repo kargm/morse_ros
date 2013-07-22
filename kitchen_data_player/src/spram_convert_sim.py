@@ -29,6 +29,8 @@ def callback(data):
 
     FILE.write("%s,%s,%s,%s,%s,%s,%s,%s,%s\n"%(instance,now,x,y,z,rx,ry,rz,rw))
     sys.stdout.write(".")
+    if instance % 100 == 0:
+        print("\n%s"%instance)
 
 if __name__ == '__main__':
 
