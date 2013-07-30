@@ -122,7 +122,7 @@ bool pose_init = false;
 void WaypointFollowerRos::humanPoseCallback(const geometry_msgs::PoseStamped& pose)
 {
   ros::Time now = ros::Time::now()- ros::Duration(0.1);
-  btScalar roll,pitch,yaw;
+  tfScalar roll, pitch, yaw;
   geometry_msgs::PoseStamped poseMap;
   try {
       tf_->waitForTransform("/map", pose.header.frame_id, now, ros::Duration(3.0));
@@ -130,7 +130,7 @@ void WaypointFollowerRos::humanPoseCallback(const geometry_msgs::PoseStamped& po
 
       tf::Stamped<tf::Pose> tfpose;
       tf::poseStampedMsgToTF(poseMap, tfpose);
-      btMatrix3x3 mat = btMatrix3x3(tfpose.getRotation());
+      tf::Matrix3x3 mat = tf::Matrix3x3(tfpose.getRotation());
       mat.getEulerYPR(yaw, pitch, roll);
       NHPPlayerDriver::XYTH_COORD dat_pos;
       dat_pos.x = poseMap.pose.position.x;
@@ -150,7 +150,7 @@ void WaypointFollowerRos::humanPoseCallback(const geometry_msgs::PoseStamped& po
       if (vel.speedms > 0.1) {
           // use velocity angle as yaw
           mat.setEulerYPR(vel.heading_az, pitch, roll);
-          btQuaternion q;
+          tf::Quaternion q;
           mat.getRotation(q);
           poseMap.pose.orientation.x = q.getX();
           poseMap.pose.orientation.y = q.getY();
@@ -196,10 +196,10 @@ bool WaypointFollowerRos::setPlan(const std::vector<geometry_msgs::PoseStamped>&
         wp.x = planwp.pose.position.x;
         wp.y = planwp.pose.position.y;
         newWaypoints.push_back(wp);
-        btScalar roll,pitch,yaw;
+        tfScalar roll,pitch,yaw;
         tf::Stamped<tf::Pose> tfpose;
         tf::poseStampedMsgToTF(planwp, tfpose);
-        btMatrix3x3(tfpose.getRotation()).getRPY(roll, pitch, yaw, 1);
+        tf::Matrix3x3(tfpose.getRotation()).getRPY(roll, pitch, yaw, 1);
         finalheading = yaw;
         ROS_DEBUG_NAMED("plan", "Waypoint Follower waypoint: (%f, %f, %f)", planwp.pose.position.x, planwp.pose.position.y, yaw);
     }
@@ -235,8 +235,8 @@ bool WaypointFollowerRos::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
       tf::Stamped<tf::Pose> global_pose_robot;
       tf_->transformPose("/map", ros::Time(0), costmap_pose, "/map", global_pose_robot);
 
-      btScalar roll,pitch,yaw;
-      btMatrix3x3(global_pose_robot.getRotation()).getRPY(roll, pitch, yaw, 1);
+      tfScalar roll,pitch,yaw;
+      tf::Matrix3x3(global_pose_robot.getRotation()).getRPY(roll, pitch, yaw, 1);
       // ROS_DEBUG_NAMED("cyclic","Robot position: %f, %f, %s ",
       //     global_pose_robot.getOrigin().getX(),
       //     global_pose_robot.getOrigin().getY(),
