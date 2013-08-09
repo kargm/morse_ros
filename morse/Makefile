@@ -1,7 +1,7 @@
 #include $(shell rospack find mk)/cmake.mk
 ADAPTOBRANCH=adapto_0.3
 # TODO: put tag in here
-MORSERELEASE=adapto_0.3.2
+MORSERELEASE=adapto_0.3.3
 
 
 all: morse update
