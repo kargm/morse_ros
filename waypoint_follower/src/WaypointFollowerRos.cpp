@@ -171,7 +171,7 @@ bool WaypointFollowerRos::isGoalReached() {
 }
 
 bool WaypointFollowerRos::setPlan(const std::vector<geometry_msgs::PoseStamped>& orig_global_plan) {
-	ROS_DEBUG_NAMED("plan", "Waypoint Follower got new plan");
+    ROS_DEBUG_NAMED("plan", "Waypoint Follower got new plan");
 
     //reset the global plan
     global_plan_.clear();
@@ -212,8 +212,8 @@ bool WaypointFollowerRos::setPlan(const std::vector<geometry_msgs::PoseStamped>&
     	this->waypoint_follower->resetGoal();
     	return false;
     }
-
-	return true;
+    ROS_DEBUG_NAMED("plan", "New plan set");
+    return true;
 }
 
 

@@ -47,7 +47,7 @@ private:
   //bool isHumanOnPath(float safetyDistance);
 
   void turnVelocityInGoal(VELOCITY_COMMAND & cmd);
-  void updateGoalForNextWaypoint();
+  void updateGoalForNextWaypoint(int skip);
   void updateVelocityBetweenWaypoints(VELOCITY_COMMAND & cmd, double current_distance_to_goal);
   void updateDrivingDirection(double & angle_towards_goal_absolute, double & current_distance_to_goal, double & start_driving_forward_turning_angle);
   int prunePlan();

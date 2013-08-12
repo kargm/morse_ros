@@ -128,8 +128,11 @@ namespace NHPPlayerDriver {
   //	return (abs(NORMALIZE(gaz2 - gaz1)) < 0.1);
   //}
 
+    /**
+     * return the number of points that can be skipped
+     */
   inline int WaypointFollower::prunePlan() {
-	  //removes all waypoints of front of plan which have been passed
+
 
 	  double loop_distance = -1;
 	  int startIndex = 0;
@@ -151,15 +154,12 @@ namespace NHPPlayerDriver {
 
 	  // assume first local minimum is the first point we care about (plausible global minimum)
 	  std::list<XYTH_COORD>::iterator it = newWaypoints.begin();
-	  XYTH_COORD cur_wp;
-	  cur_wp.x = it->x;
-	  cur_wp.y = it->y;
-	  cur_wp.th = it->th;
+
 	  double min_distance = DISTANCE2D(this->x, this->y, it->x, it->y);
-    ROS_DEBUG_NAMED("prune", "Loop distance min: (%f, %f)-(%f,%f) =  %f",this->x, this->y, it->x, it->y, loop_distance);
+    ROS_DEBUG_NAMED("prune", "Loop distance min: (%f, %f)-(%f,%f) =  %f", this->x, this->y, it->x, it->y, min_distance);
 	  it++;
-	  for (; it != newWaypoints.end();
-			  it++) {
+    // find the waypoint that is closest to the robot
+	  for (; it != newWaypoints.end(); it++) {
     	  loop_distance = DISTANCE2D(this->x, this->y, it->x, it->y);
     	  ROS_DEBUG_NAMED("prune", "Loop distance min: (%f, %f)-(%f,%f) =  %f",this->x, this->y, it->x, it->y, loop_distance);
 			  if (loop_distance < min_distance) {
@@ -173,44 +173,47 @@ namespace NHPPlayerDriver {
     ROS_DEBUG_NAMED("prune", "startIndex at %d", startIndex);
 
 	  int count = 0;
-	  int skip = 0;
+	  unsigned int skip = 0;
+    loop_distance = -1;
     // now find how many points can be skipped
-	  for (it = newWaypoints.begin(); it != newWaypoints.end();
-			  it++) {
-		  if (count < startIndex) {
+    for (it = newWaypoints.begin(); it != newWaypoints.end(); it++) {
+			if (count < startIndex) {
+	      count++;
 			  skip++;
 		  } else {
 			  loop_distance = DISTANCE2D(this->x, this->y, it->x, it->y);
-			  ROS_DEBUG_NAMED("prune", "Loop distance: (%f, %f)-(%f,%f) =  %f",this->x, this->y, it->x, it->y, loop_distance);
+			  ROS_DEBUG_NAMED("prune", "2nd Loop distance: (%f, %f)-(%f,%f) =  %f",this->x, this->y, it->x, it->y, loop_distance);
 			  if (loop_distance < skipdistance) {
 				  skip++;
 			  } else {
 				  break;
 			  }
 		  }
-		  cur_wp.x = it->x;
-		  cur_wp.y = it->y;
-		  cur_wp.th = it->th;
-	  }
+	  } // end for
+
 	  // skip is index of first wp after minimum outside skipdistance
-      // Variable it points at first wp we cannot skip
-	  // loopdistance is -1 or distance to wp at it
-    // cur_wp is the first wp in the list or last waypoint we can skip
 
 	  ROS_DEBUG_NAMED("prune", "Close point index: %d", skip);
 
-	  // also if the distance robot - nextwaypoint is smaller than the distance between both waypoints
-    if (skip == 0 && it != newWaypoints.end()) {
+    // If robot is between two waypoints, skip the first.
+    if (skip < newWaypoints.size() - 1) {
+        XYTH_COORD waypoint1, waypoint2;
+        it = newWaypoints.begin();
+        advance(it, skip);
+        waypoint1.x = it->x;
+        waypoint1.y = it->y;
+        waypoint1.th = it->th;
         it++;
-      // it is next wp
+        waypoint2.x = it->x;
+        waypoint2.y = it->y;
+        waypoint2.th = it->th;
+        double wp_distance = DISTANCE2D(waypoint1.x, waypoint1.y, waypoint2.x, waypoint2.y);
+        double robot_distance = DISTANCE2D(this->x, this->y, waypoint2.x, waypoint2.y);
+        ROS_DEBUG_NAMED("prune", "next %f, both: %f", wp_distance, robot_distance);
+        if (wp_distance >= robot_distance) {
+            skip++;
+        }
     }
-	  if (loop_distance >= 0) {
-		  double current_pace = DISTANCE2D(cur_wp.x, cur_wp.y, it->x, it->y);
-		  ROS_DEBUG_NAMED("prune", "next %f, both: %f", loop_distance, current_pace);
-		  if (loop_distance <= current_pace) {
-			  skip++;
-		  }
-	  }
 
 	  ROS_DEBUG_NAMED("prune", "Skipping points: %d", skip);
 	  return skip;
@@ -230,18 +233,19 @@ namespace NHPPlayerDriver {
             newPoint.th = it->th;
             this->waypoint_queue.push_back(newPoint);
     }
+    ROS_DEBUG_NAMED("plan", "New queue of length %zu ", this->waypoint_queue.size());
+
     int skip = this->prunePlan();
-    ROS_DEBUG_NAMED("plan","New queue of length %zu ", this->waypoint_queue.size());
-    for (int var = 0; var < skip +1; ++var) {
-        this->updateGoalForNextWaypoint();
-    }
+
+    this->updateGoalForNextWaypoint(skip);
+    ROS_DEBUG_NAMED("plan", "Pruned new plan to size %zu ", this->waypoint_queue.size());
     this->final_gaz = final_heading;
     goal_ready = true;
     robot_movement_allowed = true;
     direction_already_computed_p = false;
     pathBlockedTimestamp = -1;
 
-    ROS_DEBUG_NAMED("velo","Changed waypoints with final heading %f", this->final_gaz);
+    ROS_DEBUG_NAMED("plan", "Changed waypoints with final heading %f", this->final_gaz);
     return result;
   }
 
@@ -318,7 +322,7 @@ namespace NHPPlayerDriver {
       this->last_known_distance_to_goal = current_distance_to_goal;
     }
 
-    if (this->waypoint_queue.size()>2) {
+    if (this->waypoint_queue.size() > 2) {
         // if turning made us leave goal point very far, return to goal
         turning_in_goal = false;
     }
@@ -335,16 +339,16 @@ namespace NHPPlayerDriver {
     } else {
     	// either more waypoints are left or we are not quite in final location
 
-    	if (!this->waypoint_queue.empty()) {
+    	if ( ! this->waypoint_queue.empty()) {
         int skip = 0;
         if (current_distance_to_goal < this->motionParams.wp_success_distance) {
-            skip++;
+            skip = 1;
         }
+        // prune points from the beginning
         skip += this->prunePlan();
-    		for (int var = 0; var < skip; ++var) {
-    			this->updateGoalForNextWaypoint();
-    		}
-        current_distance_to_goal = DISTANCE2D(this->x,this->y,this->gx, this->gy);
+        this->updateGoalForNextWaypoint(skip);
+
+        current_distance_to_goal = DISTANCE2D(this->x, this->y, this->gx, this->gy);
         this->last_known_distance_to_goal = current_distance_to_goal;
     	}
 
@@ -413,27 +417,40 @@ namespace NHPPlayerDriver {
   /**
    * selects the next waypoint of the trajectory
    */
-  inline void WaypointFollower::updateGoalForNextWaypoint() {
-	if (this->waypoint_queue.empty()) {
-      return;
-	}
-	XYTH_COORD next_wp = this->waypoint_queue.front(); // take first item
+  inline void WaypointFollower::updateGoalForNextWaypoint(int skip) {
 
-    this->waypoint_queue.pop_front(); // remove first item from queue
-    this->gx = next_wp.x;
-    this->gy = next_wp.y;
+      if (this->waypoint_queue.empty() || skip <= 0) {
+          return;
+      }
 
-    //humanOnPath = isHumanOnPath(agentOnPathSafetyDistance);
-    humanOnPath = false; // checked by planner, safe max velocity is set.
+      XYTH_COORD next_wp;
+      for (int var = 0; var < skip - 1; ++var) {
+          if (this->waypoint_queue.size() == 1) {
+              break;
+          }
+          this->waypoint_queue.pop_front();
 
-    // the target angle on the next waypoint is the angle pointing to the waypoint after that, or the final angle
-    if (this->waypoint_queue.empty()) {
-      this->gaz = this->final_gaz;
-    } else {
-      XYTH_COORD over_next_wp = this->waypoint_queue.front();
-      this->gaz = atan2(over_next_wp.y - next_wp.y, over_next_wp.x - next_wp.x);
-    }
-    ROS_DEBUG_NAMED("velo", "Going next to waypoint (%f, %f)", next_wp.x, next_wp.y);
+      }
+      next_wp = this->waypoint_queue.front();
+      // remove first item from queue
+      this->waypoint_queue.pop_front();
+
+      this->gx = next_wp.x;
+      this->gy = next_wp.y;
+
+
+      //humanOnPath = isHumanOnPath(agentOnPathSafetyDistance);
+      humanOnPath = false; // checked by planner, safe max velocity is set.
+
+      // the target angle on the next waypoint is the angle pointing to the waypoint after that, or the final angle
+      if (this->waypoint_queue.empty()) {
+          ROS_DEBUG_NAMED("velo", "Waypoint size (%zu)", this->waypoint_queue.size());
+          this->gaz = this->final_gaz;
+      } else {
+          XYTH_COORD over_next_wp = this->waypoint_queue.front();
+          this->gaz = atan2(over_next_wp.y - next_wp.y, over_next_wp.x - next_wp.x);
+      }
+      ROS_DEBUG_NAMED("velo", "Going next to waypoint (%f, %f)", next_wp.x, next_wp.y);
   }
 
   /**
