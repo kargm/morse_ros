@@ -158,11 +158,11 @@ void WaypointFollowerRos::humanPoseCallback(const geometry_msgs::PoseStamped& po
           poseMap.pose.orientation.w = q.getW();
       }
   } catch (tf::ExtrapolationException &e) {
-      ROS_ERROR("Tf exception: %s", e.what());
+      ROS_ERROR("Tf exception human CB: %s", e.what());
   } catch(tf::LookupException &e) {
-	    ROS_ERROR("Tf exception: %s", e.what());
+	    ROS_ERROR("Tf exception human CB: %s", e.what());
   } catch(tf::TransformException &e) {
-	    ROS_ERROR("Tf exception: %s", e.what());
+	    ROS_ERROR("Tf exception human CB: %s", e.what());
   }
 }
 
