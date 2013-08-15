@@ -233,7 +233,9 @@ bool WaypointFollowerRos::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
 	}
   try {
       tf::Stamped<tf::Pose> global_pose_robot;
-      tf_->transformPose("/map", ros::Time(0), costmap_pose, "/map", global_pose_robot);
+      ros::Time now = ros::Time::now();
+      tf_->waitForTransform("/map", costmap_pose.frame_id_.c_str(), now, ros::Duration(0.1));
+      tf_->transformPose("/map", now, costmap_pose, "/map", global_pose_robot);
 
       tfScalar roll,pitch,yaw;
       tf::Matrix3x3(global_pose_robot.getRotation()).getRPY(roll, pitch, yaw, 1);
