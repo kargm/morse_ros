@@ -20,6 +20,7 @@
 
   <export>
     <nav_core plugin="${prefix}/wp_follow_plugin.xml" />
+    <cpp cflags="-I${prefix}/include -I${prefix}/cfg/cpp" lflags="-L${prefix}/lib -lwp_follower"/>
   </export>
 
 </package>
