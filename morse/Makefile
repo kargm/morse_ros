@@ -17,7 +17,7 @@ morse-src:
 update: morse-src
 	cd morse-src;git fetch
 	cd morse-src;git checkout ${ADAPTOBRANCH}
-	cd morse-src;git reset --hard ${MORSERELEASE}
+	#cd morse-src;git reset --hard ${MORSERELEASE}
 
 morse-src/build/bin: update
   #create dir if does not exist
