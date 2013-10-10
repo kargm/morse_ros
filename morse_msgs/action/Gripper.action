@@ -1,0 +1,7 @@
+# Goal
+bool grasp
+---
+# Define the result
+bool success
+---
+# Define a feedback message
