@@ -1,0 +1,8 @@
+# Goal
+bool open
+string door
+---
+# Define the result
+bool success
+---
+# Define a feedback message
