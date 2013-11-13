@@ -1,0 +1,8 @@
+# Goal
+bool open
+string drawer
+---
+# Define the result
+bool success
+---
+# Define a feedback message
