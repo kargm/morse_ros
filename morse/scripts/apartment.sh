@@ -30,4 +30,4 @@ export PYTHONPATH=$PYYAML_DIR/pyyaml/lib/python3.2/site-packages:$MORSE_DIR/mors
 export MORSE_BLENDER=$BLENDER_DIR/bin/blender
 
 echo "Using PYTHONPATH: $PYTHONPATH"
-$MORSE_DIR/morse/bin/morse edit $MORSE_DIR/morse/share/morse/examples/scenarii/apartment.py
+$MORSE_DIR/morse/bin/morse edit $MORSE_DIR/morse/share/morse/examples/scenarii/apartment_kitchen.py
