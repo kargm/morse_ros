@@ -12,7 +12,7 @@ morse: morse-src/build/bin
 morse-src:
 	mkdir morse-src
 	cd morse-src;git init
-	cd morse-src;git remote add origin "https://github.com/hcaigroup/morse-src.git"
+	cd morse-src;git remote add origin "https://github.com/hcaigroup/morse.git"
 
 update: morse-src
 	cd morse-src;git fetch
